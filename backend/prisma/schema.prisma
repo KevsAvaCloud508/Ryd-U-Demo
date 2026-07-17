@@ -1,0 +1,15 @@
+// Esquema de Prisma para Ryd-U.
+// Por ahora solo define el datasource (PostgreSQL 17) y el generador del cliente.
+// Los modelos se agregarán más adelante, un módulo a la vez.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Los modelos (User, Driver, Passenger, Vehicle, Route, Trip, Request, Notification, ...)
+// se definirán aquí durante el desarrollo de cada módulo.
