@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 72" fill="none">
+  <g stroke="#ffffff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- R -->
+    <path d="M14 54 L14 20 C14 14 18 12 24 12 C33 12 35 18 35 23 C35 29 31 33 22 33 L14 33 M26 33 C31 40 34 47 40 53"/>
+    <!-- y -->
+    <path d="M54 27 C54 38 56 45 62 45 C68 45 70 37 70 27 M70 27 C70 40 71 52 68 60 C66 66 60 66 55 63"/>
+    <!-- d -->
+    <path d="M100 14 L100 46 C100 51 102 54 106 54 M100 46 C100 38 96 33 89 33 C82 33 79 39 79 46 C79 52 82 54 87 54 C93 54 97 50 100 46"/>
+    <!-- U (más alta, con cola ascendente) -->
+    <path d="M132 8 L132 44 C132 51 137 55 145 55 C153 55 158 50 158 42 L158 8 M158 30 C168 24 178 18 192 12"/>
+  </g>
+</svg>
