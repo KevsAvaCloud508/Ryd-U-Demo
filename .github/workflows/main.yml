@@ -1,0 +1,17 @@
+name: Pipeline_Para_MacKevin
+on: 
+    workflow_dispatch:
+    push:
+      branches: ["Q/A"]
+    pull_request:
+      branches: ["Q/A"]
+          # Se ejecuta cada vez que subes código
+jobs:
+  build:
+    runs-on: self-hosted # ¡Esto es lo que dirige el trabajo a tu Mac!
+    steps:
+      - uses: actions/checkout@v4
+      - name: Saludo de prueba
+        run: echo "¡Hola! Esta pipeline se está ejecutando en la mac de Kevin."
+      - name: Ver versión de macOS
+        run: sw_vers
