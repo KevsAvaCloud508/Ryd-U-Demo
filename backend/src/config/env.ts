@@ -6,7 +6,6 @@ dotenv.config();
 /**
  * Configuración centralizada de la aplicación.
  * Lee las variables de entorno y expone valores tipados con defaults seguros.
- * No abre conexiones ni contiene lógica de negocio.
  */
 export const env = {
   port: Number(process.env.PORT ?? 4000),
