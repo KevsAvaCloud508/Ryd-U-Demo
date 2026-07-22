@@ -39,9 +39,14 @@ export function LandingPage() {
             Conecta con estudiantes de tu comunidad que hacen tu misma ruta. Elige tu rol: viaja como pasajero u
             ofrece asientos como conductor.
           </p>
-          <div className="mt-6 flex items-center gap-3">
+
+            <Pill variant="dark" className="mt-4">
+            <i className="bi bi-people mr-1"></i> ¿Cómo quieres usar Ryd-U?
+            </Pill>
+
+          <div className="mt-4 flex items-center gap-3">
             <Link to="/registro?role=STUDENT">
-              <Button>
+              <Button variant="ghost">
                 <i className="bi bi-person-walking" /> Soy Pasajero
               </Button>
             </Link>
