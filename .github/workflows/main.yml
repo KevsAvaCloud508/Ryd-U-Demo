@@ -1,6 +1,11 @@
 name: Pipeline_Para_MacKevin
-on: [push] # Se ejecuta cada vez que subes código
-
+on: 
+    workflow_dispatch:
+    push:
+      branches: ["Q/A"]
+    pull_request:
+      branches: ["Q/A"]
+          # Se ejecuta cada vez que subes código
 jobs:
   build:
     runs-on: self-hosted # ¡Esto es lo que dirige el trabajo a tu Mac!
