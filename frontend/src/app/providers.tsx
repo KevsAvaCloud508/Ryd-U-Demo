@@ -5,9 +5,7 @@ import { router } from './router';
 import { store } from './store';
 
 /**
- * Componente que envuelve la aplicación con todos los providers globales:
- * el store de Redux y el router. Es el único punto donde se cablean estas
- * dependencias de infraestructura.
+ * Componente que envuelve la aplicación con todos los providers 
  */
 export function Providers() {
   return (
