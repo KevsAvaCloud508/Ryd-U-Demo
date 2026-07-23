@@ -7,7 +7,9 @@ export function LandingPage() {
     <div className="min-h-screen bg-black text-[#e5e7eb]">
       {/* Barra superior */}
       <div className="flex h-16 items-center gap-6 border-b border-line px-7">
-        <img className="h-6 w-auto" src="/logo.svg" alt="RydU" />
+        <Link to="/">
+          <img className="h-6 w-auto" src="/logo.svg" alt="RydU" />
+        </Link>
         <div className="flex gap-[22px] text-sm font-semibold text-muted">
           <a href="#inicio" className="text-white">Inicio</a>
           <a href="#como-funciona">Como funciona</a>
@@ -205,7 +207,9 @@ export function LandingPage() {
       <footer id="contacto" className="border-t border-line px-12 py-10">
         <div className="grid grid-cols-3 gap-[18px]">
           <div>
+            <Link to="/">
             <img className="h-6 w-auto mb-3" src="/logo.svg" alt="RydU" />
+            </Link>
             <p className="text-[13px] text-muted leading-relaxed">
               Plataforma de ridesharing exclusiva para universitarios verificados. Ahorra, viaja seguro y conoce gente nueva.
             </p>
