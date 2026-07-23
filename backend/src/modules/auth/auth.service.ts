@@ -3,8 +3,8 @@ import bcrypt from 'bcrypt';
 import { appRoleByRoleName, roleNameByAppRole } from '../../shared/utils/roles';
 import { signAuthToken } from '../../shared/utils/jwt';
 import { HttpError } from '../../shared/utils/http-error';
-import { createUser, findRoleByName, findUserByEmail } from './auth.repository';
-import type { RegisterInput } from './auth.dto';
+import { createUser, findRoleByName, findUserByEmail, findUserById } from './auth.repository';
+import type { LoginInput, RegisterInput } from './auth.dto';
 import type { AuthResult, AuthUser } from './auth.types';
 
 const SALT_ROUNDS = 10;
@@ -68,4 +68,34 @@ export async function register(input: RegisterInput): Promise<AuthResult> {
   const authUser = toAuthUser(user);
   const token = signAuthToken({ sub: authUser.id, role: authUser.role });
   return { user: authUser, token };
+}
+
+export async function login(input: LoginInput): Promise<AuthResult> {
+  const user = await findUserByEmail(input.email);
+  if (!user) {
+    throw new AuthError('Correo o contraseña incorrectos.', 401);
+  }
+
+  const passwordMatches = await bcrypt.compare(input.password, user.passwordHash);
+  if (!passwordMatches) {
+    throw new AuthError('Correo o contraseña incorrectos.', 401);
+  }
+
+  const authUser = toAuthUser(user);
+  // El admin puede entrar desde cualquier pestaña del login; para el resto,
+  // el rol de la cuenta debe coincidir con el seleccionado.
+  if (authUser.role !== 'ADMIN' && authUser.role !== input.role) {
+    throw new AuthError('Esta cuenta no está registrada con el rol seleccionado.', 403);
+  }
+
+  const token = signAuthToken({ sub: authUser.id, role: authUser.role });
+  return { user: authUser, token };
+}
+
+export async function getCurrentUser(userId: string): Promise<AuthUser> {
+  const user = await findUserById(userId);
+  if (!user) {
+    throw new AuthError('Usuario no encontrado.', 404);
+  }
+  return toAuthUser(user);
 }
