@@ -27,4 +27,11 @@ export const signupSchema = z
     path: ['confirmPassword'],
   });
 
+export const loginSchema = z.object({
+  email: eduMxEmail,
+  password: z.string().min(1, 'La contrasena es obligatoria.'),
+  role: z.enum(['STUDENT', 'DRIVER']),
+});
+
+export type LoginFormValues = z.infer<typeof loginSchema>;
 export type SignupFormValues = z.infer<typeof signupSchema>;

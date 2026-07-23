@@ -10,7 +10,22 @@ export interface RegisterPayload {
   role: Role;
 }
 
+export interface LoginPayload {
+  email: string;
+  password: string;
+  role: Role;
+}
+
 export interface AuthResponse {
   user: AuthUser;
   token: string;
+}
+
+export interface ForgotPasswordPayload {
+  email: string;
+}
+
+export interface ResetPasswordPayload {
+  token: string;
+  newPassword: string;
 }

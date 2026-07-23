@@ -27,4 +27,31 @@ export const registerSchema = z.object({
   role: z.enum(ROLE_VALUES, { message: 'El rol debe ser STUDENT o DRIVER.' }),
 });
 
+export const loginSchema = z.object({
+  email: eduMxEmail,
+  password: z.string().min(1, 'La contrasena es obligatoria.'),
+  role: z.enum(ROLE_VALUES, { message: 'El rol debe ser STUDENT o DRIVER.' }),
+});
+
+export const updateProfileSchema = z.object({
+  firstName: z.string().trim().min(2, 'El nombre debe tener al menos 2 caracteres.').optional(),
+  lastNamePaternal: z.string().trim().min(2, 'El apellido paterno debe tener al menos 2 caracteres.').optional(),
+  lastNameMaternal: z.string().trim().optional(),
+  phone: z.string().trim().min(10, 'El telefono debe tener al menos 10 caracteres.').optional(),
+  photoUrl: z.string().url('URL de foto invalida.').optional(),
+});
+
+export const forgotPasswordSchema = z.object({
+  email: z.string().trim().toLowerCase().email('Correo invalido.'),
+});
+
+export const resetPasswordSchema = z.object({
+  token: z.string().min(1, 'El token es obligatorio.'),
+  newPassword: z.string().min(8, 'La contrasena debe tener al menos 8 caracteres.'),
+});
+
 export type RegisterInput = z.infer<typeof registerSchema>;
+export type LoginInput = z.infer<typeof loginSchema>;
+export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
+export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
