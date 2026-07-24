@@ -45,8 +45,8 @@ export function PassengerHomePage() {
     <div className="min-h-screen bg-black text-[#e5e7eb]">
       <Navbar
         links={[
-          { label: 'Inicio', href: '/pasajero/inicio', active: true },
-          { label: 'Buscar', href: '/pasajero/buscar' },
+          { label: 'Inicio', href: '/pasajero/inicio-preview', active: true },
+          { label: 'Buscar', href: '/pasajero/buscar-preview' },
           { label: 'Actividad', href: '/pasajero/actividad' },
           { label: 'Perfil', href: '/pasajero/perfil' },
         ]}
