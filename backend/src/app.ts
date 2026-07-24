@@ -1,7 +1,8 @@
 import cors from 'cors';
-import express, { type Application } from 'express';
+import express, { type Application, type NextFunction, type Request, type Response } from 'express';
 
 import { env } from './config/env.js';
+import { authRouter } from './modules/auth/auth.routes.js';
 
 /**
  * Construye y configura la instancia de Express.
@@ -21,9 +22,14 @@ export function createApp(): Application {
     res.json({ status: 'ok' });
   });
 
-  // Las rutas de los módulos se registrarán aquí:
-  // app.use('/api/auth', authRouter);
-  // app.use('/api/users', usersRouter);
+  app.use('/api/auth', authRouter);
+
+  // Manejador de errores centralizado: cualquier excepción no controlada por un
+  // módulo termina aquí en lugar de tirar el proceso.
+  app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+    console.error(err);
+    res.status(500).json({ message: 'Error interno del servidor.' });
+  });
 
   return app;
 }

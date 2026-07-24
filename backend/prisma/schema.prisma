@@ -1,6 +1,5 @@
-// Esquema de Prisma para Ryd-U.
-// Por ahora solo define el datasource (PostgreSQL 17) y el generador del cliente.
-// Los modelos se agregarán más adelante, un módulo a la vez.
+// Esquema de Prisma para Ryd-U-Demo.
+// Modelos para el módulo de registro (auth).
 
 generator client {
   provider = "prisma-client-js"
@@ -11,5 +10,39 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Los modelos (User, Driver, Passenger, Vehicle, Route, Trip, Request, Notification, ...)
-// se definirán aquí durante el desarrollo de cada módulo.
+model User {
+  id              String    @id @default(uuid()) @map("id_usuario") @db.Uuid
+  firstName       String    @map("nombre") @db.VarChar(100)
+  lastNamePaternal String   @map("apellido_paterno") @db.VarChar(100)
+  lastNameMaternal String?  @map("apellido_materno") @db.VarChar(100)
+  email           String?   @unique @map("correo") @db.VarChar(150)
+  phone           String?   @map("telefono") @db.VarChar(15)
+  passwordHash    String    @map("contraseña") @db.VarChar(255)
+  photoUrl        String?   @map("foto_perfil")
+  isActive        Boolean?  @default(true) @map("estado")
+  registeredAt    DateTime? @default(now()) @map("fecha_registro") @db.Timestamp(6)
+
+  roles UserRole[]
+
+  @@map("usuario")
+}
+
+model Role {
+  id    Int    @id @default(autoincrement()) @map("id_rol")
+  name  String @unique @map("nombre") @db.VarChar(30)
+
+  users UserRole[]
+
+  @@map("rol")
+}
+
+model UserRole {
+  userId String @map("id_usuario") @db.Uuid
+  roleId Int    @map("id_rol")
+
+  user User @relation(fields: [userId], references: [id])
+  role Role @relation(fields: [roleId], references: [id])
+
+  @@id([userId, roleId])
+  @@map("usuariorol")
+}

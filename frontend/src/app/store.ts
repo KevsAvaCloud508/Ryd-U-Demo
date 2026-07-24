@@ -1,14 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit';
 
+import { authReducer } from '../features/auth/store/auth.slice';
+
 /**
  * Store global de Redux Toolkit.
  *
- * Configuración inicial únicamente: todavía no hay slices ni reducers de negocio.
- * Cada feature registrará su propio reducer en el objeto `reducer` más adelante.
+ * Cada feature registra su propio reducer en el objeto `reducer`.
  */
 export const store = configureStore({
   reducer: {
-    // ejemplo: auth: authReducer,
+    auth: authReducer,
   },
 });
 
