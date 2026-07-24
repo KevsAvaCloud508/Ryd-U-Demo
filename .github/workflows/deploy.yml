@@ -2,7 +2,7 @@ name: Deploy Local (Docker)
 
 on:
   workflow_run:
-    workflows: [" Build y Compilación Local"] # Escucha al archivo anterior
+    workflows: ["Build y Compilación Local"] # Escucha al archivo anterior
     types:
       - completed
     branches:
