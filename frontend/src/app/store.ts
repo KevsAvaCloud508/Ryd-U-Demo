@@ -1,6 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
 
 import { authReducer } from '../features/auth/store/auth.slice';
+import { requestsReducer } from '../features/requests/store/requests.slice';
+import { ratingsReducer } from '../features/ratings/store/ratings.slice';
+import { notificationsReducer } from '../features/notifications/store/notifications.slice';
 
 /**
  * Store global de Redux Toolkit.
@@ -10,6 +13,9 @@ import { authReducer } from '../features/auth/store/auth.slice';
 export const store = configureStore({
   reducer: {
     auth: authReducer,
+    requests: requestsReducer,
+    ratings: ratingsReducer,
+    notifications: notificationsReducer,
   },
 });
 

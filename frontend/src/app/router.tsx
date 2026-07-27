@@ -3,6 +3,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import { LoginPage } from '../features/auth/pages/LoginPage';
 import { SignupPage } from '../features/auth/pages/SignupPage';
 import { VerificationPage } from '../features/verification/pages/VerificationPage';
+import { PassengerActivityPage } from '../features/passengers/pages/ActivityPage';
 import { LandingPage } from '../pages/LandingPage';
 
 /**
@@ -13,4 +14,5 @@ export const router = createBrowserRouter([
   { path: '/acceso', element: <LoginPage /> },
   { path: '/registro', element: <SignupPage /> },
   { path: '/pasajero/validacion', element: <VerificationPage /> },
+  { path: '/pasajero/actividad', element: <PassengerActivityPage /> },
 ]);
