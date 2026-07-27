@@ -3,6 +3,11 @@ import express, { type Application, type NextFunction, type Request, type Respon
 
 import { env } from './config/env.js';
 import { authRouter } from './modules/auth/auth.routes.js';
+import { routesRouter } from './modules/routes/routes.routes.js';
+import { tripsRouter } from './modules/trips/trips.routes.js';
+import { requestsRouter } from './modules/requests/requests.routes.js';
+import { ratingsRouter } from './modules/ratings/ratings.routes.js';
+import { notificationsRouter } from './modules/notifications/notifications.routes.js';
 
 /**
  * Construye y configura la instancia de Express.
@@ -17,12 +22,21 @@ export function createApp(): Application {
   app.use(cors({ origin: env.corsOrigin }));
   app.use(express.json());
 
+  // Archivos subidos a disco local (fotos de perfil y documentos) cuando no
+  // hay credenciales de Cloudinary configuradas.
+  app.use('/uploads', express.static(env.uploadsDir));
+
   // Endpoint mínimo para verificar que el servidor está vivo.
   app.get('/health', (_req, res) => {
     res.json({ status: 'ok' });
   });
 
   app.use('/api/auth', authRouter);
+  app.use('/api/routes', routesRouter);
+  app.use('/api/trips', tripsRouter);
+  app.use('/api/requests', requestsRouter);
+  app.use('/api/ratings', ratingsRouter);
+  app.use('/api/notifications', notificationsRouter);
 
   // Manejador de errores centralizado: cualquier excepción no controlada por un
   // módulo termina aquí en lugar de tirar el proceso.

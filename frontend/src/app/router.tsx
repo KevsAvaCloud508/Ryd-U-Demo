@@ -5,6 +5,7 @@ import { SignupPage } from '../features/auth/pages/SignupPage';
 import { VerificationPage } from '../features/verification/pages/VerificationPage';
 import { PassengerHomePage } from '../features/passengers/pages/HomePage';
 import { PassengerSearchPage } from '../features/passengers/pages/SearchPage';
+import { PassengerActivityPage } from '../features/passengers/pages/ActivityPage';
 import { LandingPage } from '../pages/LandingPage';
 import { ProtectedRoute } from '../shared/routes/ProtectedRoute';
 
@@ -19,6 +20,7 @@ export const router = createBrowserRouter([
   { path: '/pasajero/validacion', element: <VerificationPage /> },
   { path: '/pasajero/inicio-preview', element: <PassengerHomePage /> },
   { path: '/pasajero/buscar-preview', element: <PassengerSearchPage /> },
+  { path: '/pasajero/actividad-preview', element: <PassengerActivityPage /> },
 
   // Rutas protegidas - Pasajero
   {
@@ -27,6 +29,7 @@ export const router = createBrowserRouter([
     children: [
       { path: 'inicio', element: <PassengerHomePage /> },
       { path: 'buscar', element: <PassengerSearchPage /> },
+      { path: 'actividad', element: <PassengerActivityPage /> },
     ],
   },
 ]);

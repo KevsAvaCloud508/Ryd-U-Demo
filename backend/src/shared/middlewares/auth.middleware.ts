@@ -24,3 +24,14 @@ export function requireAuth(req: AuthenticatedRequest, res: Response, next: Next
     res.status(401).json({ message: 'Token inválido o expirado.' });
   }
 }
+
+// Restringe el acceso a los roles indicados. Debe usarse después de `requireAuth`.
+export function requireRole(...roles: AuthTokenPayload['role'][]) {
+  return (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
+    if (!req.user || !roles.includes(req.user.role)) {
+      res.status(403).json({ message: 'No tienes permiso para acceder a este recurso.' });
+      return;
+    }
+    next();
+  };
+}
