@@ -1,5 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom';
 
+import { DriverLayout } from '../features/driver/layout/DriverLayout';
+import { DriverDashboardPage } from '../features/driver/pages/DashboardPage';
 import { LoginPage } from '../features/auth/pages/LoginPage';
 import { SignupPage } from '../features/auth/pages/SignupPage';
 import { LandingPage } from '../pages/LandingPage';
@@ -31,6 +33,7 @@ export const router = createBrowserRouter([
     path: '/conductor',
     element: <DriverLayout />,
     children: [
+      { path: 'panel', element: <DriverDashboardPage /> },
       { path: 'validacion', element: <DriverVerificationPage /> },
       { path: 'ganancias', element: <DriverEarningsPage /> },
     ],
