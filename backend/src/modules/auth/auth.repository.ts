@@ -26,6 +26,36 @@ export interface CreateUserData {
   roleId: number;
 }
 
+export interface UpdateProfileData {
+  firstName?: string;
+  lastNamePaternal?: string;
+  lastNameMaternal?: string | null;
+  phone?: string;
+  photoUrl?: string;
+}
+
+export function updateUserProfile(id: string, data: UpdateProfileData) {
+  return prisma.user.update({
+    where: { id },
+    data: {
+      ...(data.firstName !== undefined && { firstName: data.firstName }),
+      ...(data.lastNamePaternal !== undefined && { lastNamePaternal: data.lastNamePaternal }),
+      ...(data.lastNameMaternal !== undefined && { lastNameMaternal: data.lastNameMaternal }),
+      ...(data.phone !== undefined && { phone: data.phone }),
+      ...(data.photoUrl !== undefined && { photoUrl: data.photoUrl }),
+    },
+    ...userWithRoles,
+  });
+}
+
+export function updateUserPassword(id: string, passwordHash: string) {
+  return prisma.user.update({
+    where: { id },
+    data: { passwordHash },
+    ...userWithRoles,
+  });
+}
+
 export function createUser(data: CreateUserData) {
   return prisma.user.create({
     data: {
