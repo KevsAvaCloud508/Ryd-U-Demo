@@ -1,5 +1,6 @@
 // Exportación de componentes
 export * from './Button';
+export * from './Sidebar';
 export * from './Pill';
 export * from './Avatar';
 export * from './Card';
