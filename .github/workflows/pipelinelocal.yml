@@ -1,0 +1,45 @@
+name: CI/CD Pipeline Local
+
+on:
+  push:
+    branches: ["Q/A"]
+  pull_request:
+    branches: ["Q/A"]
+
+jobs:
+  build-local:
+    name: 1. Build y Compilación Local
+    runs-on: self-hosted
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v4
+        
+      - name: Instalar dependencias del Backend
+        working-directory: ./backend
+        run: npm install
+        
+      - name: Generar cliente de Prisma
+        working-directory: ./backend
+        run: npx prisma generate
+        
+      - name: Instalar dependencias del Frontend
+        working-directory: ./frontend
+        run: npm install
+        
+      - name: Compilar Frontend (Vite)
+        working-directory: ./frontend
+        run: npm run build
+
+  deploy-local:
+    name: 2. Deploy Local (Docker)
+    needs: build-local 
+    runs-on: self-hosted
+    steps:
+      - name: Descargar el código aprobado
+        uses: actions/checkout@v4
+
+      - name: Detener contenedores anteriores
+        run: docker compose down
+        
+      - name: Construir y levantar nueva versión
+        run: docker compose up -d --build

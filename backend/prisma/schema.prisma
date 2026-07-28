@@ -1,6 +1,5 @@
-// Esquema de Prisma para Ryd-U.
-// Por ahora solo define el datasource (PostgreSQL 17) y el generador del cliente.
-// Los modelos se agregarán más adelante, un módulo a la vez.
+// Esquema de Prisma para Ryd-U-Demo.
+// Modelos completos para soportar la funcionalidad de viajes y actividad.
 
 generator client {
   provider = "prisma-client-js"
@@ -11,5 +10,185 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Los modelos (User, Driver, Passenger, Vehicle, Route, Trip, Request, Notification, ...)
-// se definirán aquí durante el desarrollo de cada módulo.
+enum EstadoViaje {
+  Pendiente
+  EnProceso @map("En Proceso")
+  Terminado
+
+  @@map("estado_viaje")
+}
+
+enum EstadoSolicitud {
+  Pendiente
+  Aceptado
+  Rechazado
+  Cancelado
+
+  @@map("estado_solicitud")
+}
+
+enum EstadoDocumento {
+  Pendiente
+  Aceptado
+  Rechazado
+
+  @@map("estado_documento")
+}
+
+enum TipoDocumento {
+  INE
+  LicenciaConduccion    @map("Licencia Conduccion")
+  CredencialEstudiante  @map("Credencial Estudiante")
+  PolizaVigente         @map("Poliza Vigente")
+
+  @@map("tipo_doc")
+}
+
+model User {
+  id              String    @id @default(uuid()) @map("id_usuario") @db.Uuid
+  firstName       String    @map("nombre") @db.VarChar(100)
+  lastNamePaternal String   @map("apellido_paterno") @db.VarChar(100)
+  lastNameMaternal String?  @map("apellido_materno") @db.VarChar(100)
+  email           String?   @unique @map("correo") @db.VarChar(150)
+  phone           String?   @map("telefono") @db.VarChar(15)
+  passwordHash    String    @map("contraseña") @db.VarChar(255)
+  photoUrl        String?   @map("foto_perfil")
+  isActive        Boolean?  @default(true) @map("estado")
+  registeredAt    DateTime? @default(now()) @map("fecha_registro") @db.Timestamp(6)
+
+  roles           UserRole[]
+  vehicles        Vehicle[]
+  tripsAsDriver   Trip[]                @relation("DriverTrips")
+  requests        TripRequest[]
+  ratingsGiven    Rating[]              @relation("RatingsGiven")
+  ratingsReceived Rating[]             @relation("RatingsReceived")
+  notifications   Notification[]
+  documents       VerificationDocument[]
+
+  @@map("usuario")
+}
+
+model Role {
+  id    Int    @id @default(autoincrement()) @map("id_rol")
+  name  String @unique @map("nombre") @db.VarChar(30)
+
+  users UserRole[]
+
+  @@map("rol")
+}
+
+model UserRole {
+  userId String @map("id_usuario") @db.Uuid
+  roleId Int    @map("id_rol")
+
+  user User @relation(fields: [userId], references: [id])
+  role Role @relation(fields: [roleId], references: [id])
+
+  @@id([userId, roleId])
+  @@map("usuariorol")
+}
+
+model Vehicle {
+  id        String   @id @default(uuid()) @map("id_vehiculo") @db.Uuid
+  userId    String   @map("id_usuario") @db.Uuid
+  brand     String   @map("marca") @db.VarChar(50)
+  model     String   @map("modelo") @db.VarChar(50)
+  color     String   @map("color") @db.VarChar(30)
+  plates    String   @unique @map("placas") @db.VarChar(15)
+  capacity  Int      @map("capacidad") @db.SmallInt
+  year      Int?     @map("año") @db.SmallInt
+  isVerified Boolean? @default(false) @map("verificado")
+
+  owner User   @relation(fields: [userId], references: [id])
+  trips  Trip[]
+
+  @@map("vehiculo")
+}
+
+model Route {
+  id              String   @id @default(uuid()) @map("id_ruta") @db.Uuid
+  origin          String   @map("origen") @db.VarChar(200)
+  destination     String   @map("destino") @db.VarChar(200)
+  description     String?  @map("descripcion")
+  distanceKm      Decimal? @default(0.00) @map("distancia") @db.Decimal(6, 2)
+  estimatedMinutes Int?    @default(0) @map("tiempo_estimado")
+
+  trips Trip[]
+
+  @@map("ruta")
+}
+
+model Trip {
+  id                  String      @id @default(uuid()) @map("id_viaje") @db.Uuid
+  driverId            String      @map("id_conductor") @db.Uuid
+  vehicleId           String      @map("id_vehiculo") @db.Uuid
+  routeId             String      @map("id_ruta") @db.Uuid
+  date                DateTime    @map("fecha") @db.Date
+  departureTime       DateTime    @map("hora_salida") @db.Time(6)
+  availableSeats      Int         @map("lugares_disponibles") @db.SmallInt
+  cost                Decimal?    @default(0.00) @map("costo") @db.Decimal(8, 2)
+  status              EstadoViaje? @default(Pendiente) @map("estado")
+
+  driver   User          @relation("DriverTrips", fields: [driverId], references: [id])
+  vehicle  Vehicle       @relation(fields: [vehicleId], references: [id])
+  route    Route         @relation(fields: [routeId], references: [id])
+  requests TripRequest[]
+  ratings  Rating[]
+
+  @@map("viaje")
+}
+
+model TripRequest {
+  id          String           @id @default(uuid()) @map("id_solicitud") @db.Uuid
+  tripId      String           @map("id_viaje") @db.Uuid
+  passengerId String           @map("id_pasajero") @db.Uuid
+  requestedAt DateTime?        @default(now()) @map("fecha_solicitud") @db.Timestamp(6)
+  status      EstadoSolicitud? @default(Pendiente) @map("estado")
+
+  trip      Trip @relation(fields: [tripId], references: [id])
+  passenger User @relation(fields: [passengerId], references: [id])
+
+  @@map("solicitudviaje")
+}
+
+model Rating {
+  id          String    @id @default(uuid()) @map("id_calificacion") @db.Uuid
+  tripId      String    @map("id_viaje") @db.Uuid
+  raterId     String    @map("id_emisor") @db.Uuid
+  rateeId     String    @map("id_receptor") @db.Uuid
+  score       Int?      @map("puntuacion") @db.SmallInt
+  requestedAt DateTime? @default(now()) @map("fecha_solicitud") @db.Timestamp(6)
+
+  trip   Trip @relation(fields: [tripId], references: [id])
+  rater  User @relation("RatingsGiven", fields: [raterId], references: [id])
+  ratee  User @relation("RatingsReceived", fields: [rateeId], references: [id])
+
+  @@map("calificacion")
+}
+
+model Notification {
+  id          String    @id @default(uuid()) @map("id_notificacion") @db.Uuid
+  userId      String    @map("id_usuario") @db.Uuid
+  title       String    @map("titulo") @db.VarChar(100)
+  message     String    @map("mensaje")
+  isRead      Boolean?  @default(false) @map("leida")
+  requestedAt DateTime? @default(now()) @map("fecha_solicitud") @db.Timestamp(6)
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("notificacion")
+}
+
+model VerificationDocument {
+  id          String           @id @default(uuid()) @map("id_documento") @db.Uuid
+  userId      String           @map("id_usuario") @db.Uuid
+  type        TipoDocumento    @map("tipo_documento")
+  fileUrl     String           @map("url_archivo")
+  status      EstadoDocumento? @default(Pendiente) @map("estado")
+  notes       String?          @map("observaciones")
+  uploadedAt  DateTime?        @default(now()) @map("fecha_subida") @db.Timestamp(6)
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("documentoverificacion")
+}
