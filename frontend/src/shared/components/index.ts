@@ -19,5 +19,5 @@ export { MapPreview } from './MapPreview';
 export { MapRoute } from './MapRoute';
 export { RatingModal } from './RatingModal';
 export { NotificationDropdown } from './NotificationDropdown';
-export { FieldLabel } from './InputField';
 export { MiniStat } from './MiniStat';
+export { FieldLabel } from './InputField';
