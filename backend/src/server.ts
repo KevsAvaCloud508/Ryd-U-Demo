@@ -7,5 +7,5 @@ import { env } from './config/env.js';
 const app = createApp();
 
 app.listen(env.port, () => {
-  console.log(`🚀 Ryd-U API escuchando en http://localhost:${env.port} (${env.nodeEnv})`);
+  console.log(`Ryd-U API escuchando en http://localhost:${env.port} (${env.nodeEnv})`);
 });
