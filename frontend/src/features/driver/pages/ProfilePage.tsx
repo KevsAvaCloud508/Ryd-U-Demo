@@ -48,7 +48,7 @@ export function DriverProfilePage() {
       <div className="mt-8 flex gap-[30px]">
         {/* Left — Profile card (40%) */}
         <div className="flex w-[40%] flex-col items-center rounded-[24px] border border-[#353535] bg-[#222222] px-9 py-9">
-          <Avatar initial="J" size={104} variant="solid" />
+          <Avatar initial="J" size={104} />
 
           {/* Name */}
           <h2 className="mt-4 text-center text-[40px] font-extrabold leading-tight text-white">
