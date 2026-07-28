@@ -20,5 +20,3 @@ export { MapRoute } from './MapRoute';
 export { RatingModal } from './RatingModal';
 export { NotificationDropdown } from './NotificationDropdown';
 export { FieldLabel } from './InputField';
-export { IconInput } from './IconInput';
-export { MiniStat } from './MiniStat';
