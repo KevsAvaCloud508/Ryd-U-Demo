@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # 1. Tu Base de Datos
+  db:
+    image: postgres:15-alpine
+    container_name: qa_postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: admin_rydu
+      POSTGRES_PASSWORD: password_seguro_123
+      POSTGRES_DB: rydu_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  # 2. Tu Backend (Express + Prisma)
+  backend:
+    build:
+      context: ./backend
+    container_name: qa_backend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      # Conexión automática a la base de datos de arriba usando las mismas credenciales
+      - DATABASE_URL=postgresql://admin_rydu:password_seguro_123@db:5432/rydu_db
+      - PORT=3000
+    depends_on:
+      - db
+
+  # 3. Tu Frontend (React + Vite)
+  frontend:
+    build:
+      context: ./frontend
+    container_name: qa_frontend
+    restart: always
+    ports:
+      - "80:80" 
+    depends_on:
+      - backend
+
+# Volumen para persistir los datos de PostgreSQL
+volumes:
+  pgdata:
