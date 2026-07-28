@@ -4,6 +4,9 @@ import { LoginPage } from '../features/auth/pages/LoginPage';
 import { SignupPage } from '../features/auth/pages/SignupPage';
 import { LandingPage } from '../pages/LandingPage';
 import { DriverLayout } from '../features/driver/layout/DriverLayout';
+import { DriverEarningsPage } from '../features/driver/pages/EarningsPage';
+import { DriverProfilePage } from '../features/driver/pages/ProfilePage';
+import { ProtectedRoute } from '../shared/routes/ProtectedRoute';
 import { DriverProfilePage } from '../features/driver/pages/ProfilePage';
 
 /**
@@ -15,12 +18,19 @@ export const router = createBrowserRouter([
   { path: '/acceso', element: <LoginPage /> },
   { path: '/registro', element: <SignupPage /> },
 
-  // Vistas de conductor (con sidebar y navegación)
+  // Rutas protegidas - Conductor
+  {
+    path: '/conductor',
+    element: <ProtectedRoute allowedRoles={['DRIVER']} />,
+    children: [
+      { path: 'perfil', element: <DriverProfilePage /> },
+    ],
+  },
   {
     path: '/conductor',
     element: <DriverLayout />,
     children: [
-      { path: 'perfil', element: <DriverProfilePage /> },
+      { path: 'ganancias', element: <DriverEarningsPage /> },
     ],
   },
 ]);

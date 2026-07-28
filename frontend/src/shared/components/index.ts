@@ -1,7 +1,9 @@
 // Exportación de componentes
 export { Button } from './Button';
 export { PageHeader } from './PageHeader';
+export { Segmented } from './Segmented';
 export { Avatar } from './Avatar';
+export { StatCard } from './StatCard';
 export { Card } from './Card';
 export { DataTable } from './DataTable';
 export { Modal } from './Modal';
@@ -17,5 +19,5 @@ export { MapPreview } from './MapPreview';
 export { MapRoute } from './MapRoute';
 export { RatingModal } from './RatingModal';
 export { NotificationDropdown } from './NotificationDropdown';
-export { MiniStat } from './MiniStat';
 export { FieldLabel } from './InputField';
+export { MiniStat } from './MiniStat';
