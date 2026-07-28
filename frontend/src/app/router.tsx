@@ -6,6 +6,7 @@ import { VerificationPage } from '../features/verification/pages/VerificationPag
 import { PassengerHomePage } from '../features/passengers/pages/HomePage';
 import { PassengerSearchPage } from '../features/passengers/pages/SearchPage';
 import { PassengerActivityPage } from '../features/passengers/pages/ActivityPage';
+import { PassengerProfilePage } from '../features/passengers/pages/ProfilePage';
 import { LandingPage } from '../pages/LandingPage';
 import { ProtectedRoute } from '../shared/routes/ProtectedRoute';
 
@@ -30,6 +31,7 @@ export const router = createBrowserRouter([
       { path: 'inicio', element: <PassengerHomePage /> },
       { path: 'buscar', element: <PassengerSearchPage /> },
       { path: 'actividad', element: <PassengerActivityPage /> },
+      { path: 'perfil', element: <PassengerProfilePage /> },
     ],
   },
 ]);

@@ -3,8 +3,8 @@ import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/tool
 import { tokenStorage } from '../../../shared/utils/token-storage';
 import { extractErrorMessage } from '../../../shared/utils/error-message';
 import type { AuthUser } from '../../../shared/types/auth';
-import { fetchCurrentUser, loginRequest, registerRequest } from '../services/auth.service';
-import type { LoginPayload, RegisterPayload } from '../types/auth.types';
+import { fetchCurrentUser, loginRequest, registerRequest, updateProfileRequest } from '../services/auth.service';
+import type { LoginPayload, RegisterPayload, UpdateProfilePayload } from '../types/auth.types';
 
 interface AuthState {
   user: AuthUser | null;
@@ -48,6 +48,14 @@ export const restoreSession = createAsyncThunk('auth/restoreSession', async (_: 
   } catch (error) {
     tokenStorage.clear();
     return rejectWithValue(extractErrorMessage(error, 'La sesión ya no es válida.'));
+  }
+});
+
+export const updateProfile = createAsyncThunk('auth/updateProfile', async (payload: UpdateProfilePayload, { rejectWithValue }) => {
+  try {
+    return await updateProfileRequest(payload);
+  } catch (error) {
+    return rejectWithValue(extractErrorMessage(error, 'No se pudo actualizar el perfil.'));
   }
 });
 
@@ -100,6 +108,18 @@ const authSlice = createSlice({
       .addCase(restoreSession.rejected, (state) => {
         state.isInitializing = false;
         state.user = null;
+      })
+      .addCase(updateProfile.pending, (state) => {
+        state.status = 'loading';
+        state.error = null;
+      })
+      .addCase(updateProfile.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.user = action.payload;
+      })
+      .addCase(updateProfile.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = (action.payload as string) ?? 'No se pudo actualizar el perfil.';
       });
   },
 });

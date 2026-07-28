@@ -3,8 +3,9 @@ import bcrypt from 'bcrypt';
 import { appRoleByRoleName, roleNameByAppRole } from '../../shared/utils/roles';
 import { signAuthToken } from '../../shared/utils/jwt';
 import { HttpError } from '../../shared/utils/http-error';
-import { createUser, findRoleByName, findUserByEmail, findUserById } from './auth.repository';
-import type { LoginInput, RegisterInput } from './auth.dto';
+import crypto from 'crypto';
+import { createUser, findRoleByName, findUserByEmail, findUserById, updateUserPassword, updateUserProfile } from './auth.repository';
+import type { ForgotPasswordInput, LoginInput, RegisterInput, ResetPasswordInput, UpdateProfileInput } from './auth.dto';
 import type { AuthResult, AuthUser } from './auth.types';
 
 const SALT_ROUNDS = 10;
@@ -98,4 +99,74 @@ export async function getCurrentUser(userId: string): Promise<AuthUser> {
     throw new AuthError('Usuario no encontrado.', 404);
   }
   return toAuthUser(user);
+}
+
+/**
+ * Actualiza el perfil del usuario autenticado.
+ * Solo modifica los campos enviados (patch parcial).
+ */
+export async function updateProfile(userId: string, input: UpdateProfileInput): Promise<AuthUser> {
+  const existing = await findUserById(userId);
+  if (!existing) {
+    throw new AuthError('Usuario no encontrado.', 404);
+  }
+
+  const updated = await updateUserProfile(userId, {
+    ...(input.firstName !== undefined && { firstName: input.firstName }),
+    ...(input.lastNamePaternal !== undefined && { lastNamePaternal: input.lastNamePaternal }),
+    ...(input.lastNameMaternal !== undefined && { lastNameMaternal: input.lastNameMaternal }),
+    ...(input.phone !== undefined && { phone: input.phone }),
+    ...(input.photoUrl !== undefined && { photoUrl: input.photoUrl }),
+  });
+
+  return toAuthUser(updated);
+}
+
+// Almacena tokens de reset en memoria (en produccion usar Redis o DB)
+const resetTokens = new Map<string, { userId: string; expiresAt: number }>();
+
+/**
+ * Solicita restablecimiento de contrasena.
+ * Genera un token unico y lo almacena con expiracion de 1 hora.
+ * En produccion, aqui se enviaria un email con el token.
+ */
+export async function forgotPassword(input: ForgotPasswordInput): Promise<{ message: string }> {
+  const user = await findUserByEmail(input.email);
+  if (!user) {
+    // Por seguridad, siempre devolver el mismo mensaje aunque el email no exista
+    return { message: 'Si el correo esta registrado, recibiras instrucciones para restablecer tu contrasena.' };
+  }
+
+  const token = crypto.randomBytes(32).toString('hex');
+  const expiresAt = Date.now() + 60 * 60 * 1000; // 1 hora
+
+  resetTokens.set(token, { userId: user.id, expiresAt });
+
+  // En produccion: enviar email con el token
+  // await sendPasswordResetEmail(user.email, token);
+  console.log(`[Password Reset] Token para ${user.email}: ${token}`);
+
+  return { message: 'Si el correo esta registrado, recibiras instrucciones para restablecer tu contrasena.' };
+}
+
+/**
+ * Restablece la contrasena usando el token recibido por email.
+ * El token expira despues de 1 hora.
+ */
+export async function resetPassword(input: ResetPasswordInput): Promise<{ message: string }> {
+  const tokenData = resetTokens.get(input.token);
+  if (!tokenData) {
+    throw new AuthError('Token invalido o expirado.', 400);
+  }
+
+  if (Date.now() > tokenData.expiresAt) {
+    resetTokens.delete(input.token);
+    throw new AuthError('Token invalido o expirado.', 400);
+  }
+
+  const passwordHash = await bcrypt.hash(input.newPassword, SALT_ROUNDS);
+  await updateUserPassword(tokenData.userId, passwordHash);
+  resetTokens.delete(input.token);
+
+  return { message: 'Contrasena restablecida correctamente. Ya puedes iniciar sesion.' };
 }

@@ -2,8 +2,8 @@ import { useCallback } from 'react';
 
 import { useAppDispatch, useAppSelector } from '../../../shared/hooks/redux';
 import type { Role } from '../../../shared/types/auth';
-import { loginUser, logout, registerUser } from '../store/auth.slice';
-import type { LoginPayload, RegisterPayload } from '../types/auth.types';
+import { loginUser, logout, registerUser, updateProfile } from '../store/auth.slice';
+import type { LoginPayload, RegisterPayload, UpdateProfilePayload } from '../types/auth.types';
 
 // Punto único de acceso al estado y las acciones de autenticación desde cualquier componente.
 export function useAuth() {
@@ -22,6 +22,11 @@ export function useAuth() {
 
   const signOut = useCallback(() => dispatch(logout()), [dispatch]);
 
+  const editProfile = useCallback(
+    (payload: UpdateProfilePayload) => dispatch(updateProfile(payload)).unwrap(),
+    [dispatch],
+  );
+
   return {
     user,
     role: user?.role as Role | undefined,
@@ -32,5 +37,6 @@ export function useAuth() {
     login,
     register,
     logout: signOut,
+    editProfile,
   };
 }

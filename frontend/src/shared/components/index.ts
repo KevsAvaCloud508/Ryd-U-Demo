@@ -17,3 +17,4 @@ export * from './DataTable';
 export { RatingModal } from './RatingModal';
 
 export { FieldLabel } from './InputField';
+export { ListRow, Divider } from './ListRow';
