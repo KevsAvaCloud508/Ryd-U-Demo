@@ -2,9 +2,7 @@ import { createBrowserRouter } from 'react-router-dom';
 
 import { LoginPage } from '../features/auth/pages/LoginPage';
 import { SignupPage } from '../features/auth/pages/SignupPage';
-import { VerificationPage } from '../features/verification/pages/VerificationPage';
 import { LandingPage } from '../pages/LandingPage';
-import { ProtectedRoute } from '../shared/routes/ProtectedRoute';
 import { DriverLayout } from '../features/driver/layout/DriverLayout';
 import { DriverProfilePage } from '../features/driver/pages/ProfilePage';
 
