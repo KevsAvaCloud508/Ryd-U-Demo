@@ -1,6 +1,8 @@
 // Exportación de componentes
+export { ActionButtons } from './ActionButtons';
 export { PageHeader } from './PageHeader';
 export { StatCard } from './StatCard';
+export { StatusBadge } from './StatusBadge';
 export { Button } from './Button';
 export { Avatar } from './Avatar';
 export { Card } from './Card';
