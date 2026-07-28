@@ -1,6 +1,23 @@
 // Exportación de componentes
 export { ActionButtons } from './ActionButtons';
-export { Avatar } from './Avatar';
 export { PageHeader } from './PageHeader';
 export { StatCard } from './StatCard';
 export { StatusBadge } from './StatusBadge';
+export { Button } from './Button';
+export { Avatar } from './Avatar';
+export { Card } from './Card';
+export { DataTable } from './DataTable';
+export { Modal } from './Modal';
+export { Pill } from './Pill';
+export { Segmented } from './Segmented';
+export { ListRow, Divider } from './ListRow';
+export { Sidebar } from './Sidebar';
+export { StopRow } from './StopRow';
+export { SeatPicker } from './SeatPicker';
+export { Navbar } from './Navbar';
+export { MapPreview } from './MapPreview';
+export { MapRoute } from './MapRoute';
+export { RatingModal } from './RatingModal';
+export { NotificationDropdown } from './NotificationDropdown';
+export { MiniStat } from './MiniStat';
+export { FieldLabel } from './InputField';
