@@ -3,6 +3,7 @@ import express, { type Application, type NextFunction, type Request, type Respon
 
 import { env } from './config/env.js';
 import { authRouter } from './modules/auth/auth.routes.js';
+import { vehicleRouter } from './modules/vehicles/vehicle.routes.js';
 import { routesRouter } from './modules/routes/routes.routes.js';
 import { tripsRouter } from './modules/trips/trips.routes.js';
 import { requestsRouter } from './modules/requests/requests.routes.js';
@@ -32,6 +33,7 @@ export function createApp(): Application {
   });
 
   app.use('/api/auth', authRouter);
+  app.use('/api/vehicles', vehicleRouter);
   app.use('/api/routes', routesRouter);
   app.use('/api/trips', tripsRouter);
   app.use('/api/requests', requestsRouter);

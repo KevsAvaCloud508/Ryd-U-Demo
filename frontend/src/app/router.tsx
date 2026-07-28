@@ -7,6 +7,7 @@ import { PassengerHomePage } from '../features/passengers/pages/HomePage';
 import { PassengerSearchPage } from '../features/passengers/pages/SearchPage';
 import { PassengerActivityPage } from '../features/passengers/pages/ActivityPage';
 import { PassengerProfilePage } from '../features/passengers/pages/ProfilePage';
+import { DriverProfilePage } from '../features/drivers/pages/ProfilePage';
 import { LandingPage } from '../pages/LandingPage';
 import { ProtectedRoute } from '../shared/routes/ProtectedRoute';
 
@@ -32,6 +33,15 @@ export const router = createBrowserRouter([
       { path: 'buscar', element: <PassengerSearchPage /> },
       { path: 'actividad', element: <PassengerActivityPage /> },
       { path: 'perfil', element: <PassengerProfilePage /> },
+    ],
+  },
+
+  // Rutas protegidas - Conductor
+  {
+    path: '/conductor',
+    element: <ProtectedRoute allowedRoles={['DRIVER']} />,
+    children: [
+      { path: 'perfil', element: <DriverProfilePage /> },
     ],
   },
 ]);
