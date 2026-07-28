@@ -1,10 +1,10 @@
 // Exportación de componentes
 export { ActionButtons } from './ActionButtons';
-export { PageHeader } from './PageHeader';
-export { StatCard } from './StatCard';
-export { StatusBadge } from './StatusBadge';
-export { Button } from './Button';
 export { Avatar } from './Avatar';
+export { Button } from './Button';
+export { PageHeader } from './PageHeader';
+export { StatusBadge } from './StatusBadge';
+export { StatCard } from './StatCard';
 export { Card } from './Card';
 export { DataTable } from './DataTable';
 export { Modal } from './Modal';
