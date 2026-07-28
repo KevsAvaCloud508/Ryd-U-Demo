@@ -2,10 +2,11 @@ import { createBrowserRouter } from 'react-router-dom';
 
 import { LoginPage } from '../features/auth/pages/LoginPage';
 import { SignupPage } from '../features/auth/pages/SignupPage';
-import { VerificationPage } from '../features/verification/pages/VerificationPage';
 import { LandingPage } from '../pages/LandingPage';
 import { DriverLayout } from '../features/driver/layout/DriverLayout';
 import { DriverVerificationPage } from '../features/driver/pages/VerificationPage';
+import { DriverProfilePage } from '../features/driver/pages/ProfilePage';
+import { ProtectedRoute } from '../shared/routes/ProtectedRoute';
 
 /**
  * Router raíz de la aplicación.
