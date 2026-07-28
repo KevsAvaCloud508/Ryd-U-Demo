@@ -1,7 +1,9 @@
-// Exportación de componentes para la vista de Validación
+// Exportación de componentes
 export { Button } from './Button';
 export { PageHeader } from './PageHeader';
+export { Segmented } from './Segmented';
 export { Avatar } from './Avatar';
+export { StatCard } from './StatCard';
 export { Card } from './Card';
 export { DataTable } from './DataTable';
 export { Modal } from './Modal';

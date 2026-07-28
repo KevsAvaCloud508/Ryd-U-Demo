@@ -7,10 +7,6 @@ interface PageHeaderProps {
   className?: string;
 }
 
-/**
- * Encabezado de página estándar: título grande + subtítulo + acción opcional.
- * Reemplaza el patrón repetido en las 6 páginas del driver.
- */
 export function PageHeader({ title, subtitle, action, className = '' }: PageHeaderProps) {
   return (
     <div className={`flex items-start justify-between pt-[38px] ${className}`}>

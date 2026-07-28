@@ -5,8 +5,10 @@ import { SignupPage } from '../features/auth/pages/SignupPage';
 import { LandingPage } from '../pages/LandingPage';
 import { DriverLayout } from '../features/driver/layout/DriverLayout';
 import { DriverVerificationPage } from '../features/driver/pages/VerificationPage';
+import { DriverEarningsPage } from '../features/driver/pages/EarningsPage';
 import { DriverProfilePage } from '../features/driver/pages/ProfilePage';
 import { ProtectedRoute } from '../shared/routes/ProtectedRoute';
+import { DriverProfilePage } from '../features/driver/pages/ProfilePage';
 
 /**
  * Router raíz de la aplicación.
@@ -30,6 +32,7 @@ export const router = createBrowserRouter([
     element: <DriverLayout />,
     children: [
       { path: 'validacion', element: <DriverVerificationPage /> },
+      { path: 'ganancias', element: <DriverEarningsPage /> },
     ],
   },
 ]);
