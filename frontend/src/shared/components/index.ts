@@ -1,5 +1,21 @@
 // Exportación de componentes
-export { Avatar } from './Avatar';
 export { Button } from './Button';
-export { MiniStat } from './MiniStat';
 export { PageHeader } from './PageHeader';
+export { Avatar } from './Avatar';
+export { Card } from './Card';
+export { DataTable } from './DataTable';
+export { Modal } from './Modal';
+export { Pill } from './Pill';
+export { Segmented } from './Segmented';
+export { ListRow, Divider } from './ListRow';
+export { Sidebar } from './Sidebar';
+export { StatCard } from './StatCard';
+export { StopRow } from './StopRow';
+export { SeatPicker } from './SeatPicker';
+export { Navbar } from './Navbar';
+export { MapPreview } from './MapPreview';
+export { MapRoute } from './MapRoute';
+export { RatingModal } from './RatingModal';
+export { NotificationDropdown } from './NotificationDropdown';
+export { MiniStat } from './MiniStat';
+export { FieldLabel } from './InputField';
