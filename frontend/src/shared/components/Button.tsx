@@ -21,7 +21,6 @@ const sizeClasses: Record<ButtonSize, string> = {
   sm: 'px-4 py-2 text-[13px]',
 };
 
-// Botón base
 export function Button({
   variant = 'white',
   size = 'md',

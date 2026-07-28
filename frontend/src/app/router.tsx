@@ -7,9 +7,10 @@ import { PassengerHomePage } from '../features/passengers/pages/HomePage';
 import { PassengerSearchPage } from '../features/passengers/pages/SearchPage';
 import { PassengerActivityPage } from '../features/passengers/pages/ActivityPage';
 import { PassengerProfilePage } from '../features/passengers/pages/ProfilePage';
-import { DriverProfilePage } from '../features/drivers/pages/ProfilePage';
 import { LandingPage } from '../pages/LandingPage';
 import { ProtectedRoute } from '../shared/routes/ProtectedRoute';
+import { DriverLayout } from '../features/driver/layout/DriverLayout';
+import { DriverProfilePage } from '../features/driver/pages/ProfilePage';
 
 /**
  * Router raíz de la aplicación.
@@ -36,10 +37,10 @@ export const router = createBrowserRouter([
     ],
   },
 
-  // Rutas protegidas - Conductor
+  // Vistas de conductor (con sidebar y navegación)
   {
     path: '/conductor',
-    element: <ProtectedRoute allowedRoles={['DRIVER']} />,
+    element: <DriverLayout />,
     children: [
       { path: 'perfil', element: <DriverProfilePage /> },
     ],
