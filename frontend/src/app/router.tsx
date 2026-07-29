@@ -7,7 +7,6 @@ import { DriverLayout } from '../features/driver/layout/DriverLayout';
 import { DriverEarningsPage } from '../features/driver/pages/EarningsPage';
 import { DriverProfilePage } from '../features/driver/pages/ProfilePage';
 import { ProtectedRoute } from '../shared/routes/ProtectedRoute';
-import { DriverProfilePage } from '../features/driver/pages/ProfilePage';
 
 /**
  * Router raíz de la aplicación.
