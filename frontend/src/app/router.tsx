@@ -6,10 +6,12 @@ import { LoginPage } from '../features/auth/pages/LoginPage';
 import { SignupPage } from '../features/auth/pages/SignupPage';
 import { LandingPage } from '../pages/LandingPage';
 import { DriverRequestsPage } from '../features/driver/pages/RequestsPage';
-import { DriverPublishRoutePage } from '../features/driver/pages/PublishRoutePage';
+import { DriverRoutesPage } from '../features/driver/pages/RoutesPage';
 import { DriverVerificationPage } from '../features/driver/pages/VerificationPage';
 import { DriverEarningsPage } from '../features/driver/pages/EarningsPage';
 import { DriverProfilePage } from '../features/driver/pages/ProfilePage';
+import { PassengerHomePage } from '../features/passenger/pages/PassengerHomePage';
+import { VerificationPage } from '../features/verification/pages/VerificationPage';
 import { ProtectedRoute } from '../shared/routes/ProtectedRoute';
 
 /**
@@ -26,18 +28,33 @@ export const router = createBrowserRouter([
     path: '/conductor',
     element: <ProtectedRoute allowedRoles={['DRIVER']} />,
     children: [
-      { path: 'perfil', element: <DriverProfilePage /> },
+      {
+        element: <DriverLayout />,
+        children: [
+          { path: 'solicitudes', element: <DriverRequestsPage /> },
+          { path: 'rutas', element: <DriverRoutesPage /> },
+          { path: 'panel', element: <DriverDashboardPage /> },
+          { path: 'validacion', element: <DriverVerificationPage /> },
+          { path: 'ganancias', element: <DriverEarningsPage /> },
+          { path: 'perfil', element: <DriverProfilePage /> },
+        ],
+      },
+    ],
+  },
+
+  // Rutas protegidas - Pasajero
+  {
+    path: '/pasajero/inicio',
+    element: <ProtectedRoute allowedRoles={['STUDENT']} />,
+    children: [
+      { index: true, element: <PassengerHomePage /> },
     ],
   },
   {
-    path: '/conductor',
-    element: <DriverLayout />,
+    path: '/pasajero/validacion',
+    element: <ProtectedRoute allowedRoles={['STUDENT']} />,
     children: [
-      { path: 'solicitudes', element: <DriverRequestsPage /> },
-      { path: 'publicar-ruta', element: <DriverPublishRoutePage /> },
-      { path: 'panel', element: <DriverDashboardPage /> },
-      { path: 'validacion', element: <DriverVerificationPage /> },
-      { path: 'ganancias', element: <DriverEarningsPage /> },
+      { index: true, element: <VerificationPage /> },
     ],
   },
 ]);

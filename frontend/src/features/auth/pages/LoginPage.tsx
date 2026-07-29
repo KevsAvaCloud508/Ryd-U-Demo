@@ -15,15 +15,34 @@ const roleOptions: { label: string; value: Role; icon: ReactNode }[] = [
 ];
 
 // Vista B · Acceso: inicio de sesión con selección de rol (pasajero/conductor)
+interface Credential {
+  label: string;
+  email: string;
+  password: string;
+  role: Role;
+  icon: string;
+}
+
+const CREDENTIALS: Credential[] = [
+  { label: 'Conductor', email: 'conductor@alumnos.upa.edu.mx', password: 'Conductor123', role: 'DRIVER', icon: 'bi-car-front' },
+  { label: 'Pasajero', email: 'pasajero@alumnos.upa.edu.mx', password: 'Pasajero123', role: 'STUDENT', icon: 'bi-person-walking' },
+];
+
+const DEMO_EMAILS = ['conductor@alumnos.upa.edu.mx', 'pasajero@alumnos.upa.edu.mx', 'admin@alumnos.upa.edu.mx'];
+
 export function LoginPage() {
-  const { login, isLoading } = useAuth();
+  const { login, demoLogin, isLoading } = useAuth();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(() => {
-    // Restaurar valor de "Recordarme" desde localStorage
     return localStorage.getItem('rydu_rememberMe') === 'true';
   });
   const [formError, setFormError] = useState<string | null>(null);
+  const [loginCreds, setLoginCreds] = useState<{
+    email: string;
+    password: string;
+    role: Role;
+  }>({ email: '', password: '', role: 'STUDENT' });
 
   const {
     control,
@@ -35,17 +54,45 @@ export function LoginPage() {
     defaultValues: { email: '', password: '', role: 'STUDENT' },
   });
 
-  const onSubmit = async (values: LoginFormValues) => {
+  const redirectAfterLogin = (role: Role) => {
+    navigate(roleHomePath[role], { replace: true });
+  };
+
+  const doLogin = async (values: LoginFormValues) => {
     setFormError(null);
-    // Guardar preferencia de "Recordarme"
     localStorage.setItem('rydu_rememberMe', String(rememberMe));
+
+    const email = values.email.toLowerCase().trim();
+
+    // ── Modo demo: si el email está en la lista de mock, login sin backend ──
+    if (DEMO_EMAILS.includes(email)) {
+      demoLogin({ email, role: values.role });
+      redirectAfterLogin(values.role);
+      return;
+    }
+
+    // ── Modo real: intentar contra la API ──
     try {
       const { user } = await login(values);
-      // Siempre ir a la pagina de inicio despues del login
-      navigate(roleHomePath[user.role], { replace: true });
+      redirectAfterLogin(user.role);
     } catch (error) {
-      setFormError(error instanceof Error ? error.message : 'No se pudo iniciar sesión.');
+      const msg =
+        error instanceof Error ? error.message :
+        typeof error === 'string' ? error :
+        'No se pudo iniciar sesión.';
+      setFormError(msg);
     }
+  };
+
+  const onSubmit = (values: LoginFormValues) => doLogin(values);
+
+  const loginWithCredential = async (cred: Credential) => {
+    setLoginCreds({ email: cred.email, password: cred.password, role: cred.role });
+    await doLogin({
+      email: cred.email,
+      password: cred.password,
+      role: cred.role,
+    });
   };
 
   return (
@@ -62,6 +109,34 @@ export function LoginPage() {
           <p className="mt-3 text-sm leading-relaxed text-muted">
             Inicia sesión con tu correo institucional para acceder a viajes verificados.
           </p>
+        </div>
+        {/* Demo credentials box */}
+        <div className="mb-6 rounded-xl border border-purple-500/25 bg-purple-500/10 p-4 backdrop-blur-sm">
+          <div className="mb-3 flex items-center gap-2 text-[13px] font-bold text-purple-300">
+            <span>🧪</span> Credenciales de prueba
+          </div>
+          <div className="space-y-2 text-[13px]">
+            {CREDENTIALS.map((cred) => (
+              <div
+                key={cred.role}
+                className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 transition-colors hover:bg-white/10 ${
+                  loginCreds.email === cred.email
+                    ? 'border-purple-500/40 bg-purple-500/15'
+                    : 'border-white/10 bg-white/5'
+                }`}
+                onClick={() => loginWithCredential(cred)}
+              >
+                <i className={`${cred.icon} text-purple-400`} />
+                <span className="font-medium text-white">{cred.label}:</span>
+                <span className="text-muted truncate">{cred.email}</span>
+                <span className="ml-auto shrink-0 text-[11px] text-purple-400">{cred.password}</span>
+              </div>
+            ))}
+          </div>
+          <div className="mt-2 border-t border-white/10 pt-2 text-[12px] text-muted">
+            <i className="bi bi-info-circle mr-1"></i>
+            Haz clic en una credencial para iniciar sesión automáticamente.
+          </div>
         </div>
         <div className="flex items-center gap-2.5 text-[13px] text-muted">
           <i className="bi bi-shield-lock" /> Datos protegidos &nbsp; <i className="bi bi-check2-circle" /> Solo

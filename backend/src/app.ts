@@ -9,6 +9,7 @@ import { tripsRouter } from './modules/trips/trips.routes.js';
 import { requestsRouter } from './modules/requests/requests.routes.js';
 import { ratingsRouter } from './modules/ratings/ratings.routes.js';
 import { notificationsRouter } from './modules/notifications/notifications.routes.js';
+import { metricasRouter } from './modules/metricas/metricas.routes.js';
 
 /**
  * Construye y configura la instancia de Express.
@@ -39,6 +40,7 @@ export function createApp(): Application {
   app.use('/api/requests', requestsRouter);
   app.use('/api/ratings', ratingsRouter);
   app.use('/api/notifications', notificationsRouter);
+  app.use('/api/metricas', metricasRouter);
 
   // Manejador de errores centralizado: cualquier excepción no controlada por un
   // módulo termina aquí en lugar de tirar el proceso.

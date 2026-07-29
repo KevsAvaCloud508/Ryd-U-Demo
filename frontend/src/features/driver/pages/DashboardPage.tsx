@@ -1,4 +1,10 @@
+import { useEffect, useState } from 'react';
+
 import { ActionButtons, Avatar, PageHeader, StatCard, StatusBadge } from '../../../shared/components';
+import type { RequestItem } from './RequestsPage';
+import { saveRequests } from './RequestsPage';
+
+const STORAGE_KEY = 'rydu_driver_requests';
 
 interface TripRowProps {
   date: string;
@@ -7,6 +13,42 @@ interface TripRowProps {
   passengers: number;
   status: string;
   income: string;
+}
+
+function loadCompletedRequests(): TripRowProps[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return [];
+    const requests: RequestItem[] = JSON.parse(raw);
+    return requests
+      .filter((r) => r.status === 'completadas')
+      .map((r) => {
+        const totalIncome = r.seatsNum * r.pricePerSeat;
+        return {
+          date: r.completedAt
+            ? new Date(r.completedAt).toLocaleDateString('es-MX', { day: '2-digit', month: 'short' })
+            : '—',
+          time: r.time,
+          route: r.route,
+          passengers: r.seatsNum,
+          status: 'Completado',
+          income: `+$${totalIncome}`,
+        };
+      });
+  } catch {
+    return [];
+  }
+}
+
+function loadPendingRequests(): RequestItem[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return [];
+    const requests: RequestItem[] = JSON.parse(raw);
+    return requests.filter((r) => r.status === 'pendientes');
+  } catch {
+    return [];
+  }
 }
 
 function TripRow({ date, time, route, passengers, status, income }: TripRowProps) {
@@ -27,50 +69,96 @@ function TripRow({ date, time, route, passengers, status, income }: TripRowProps
   );
 }
 
-interface RequestCardProps {
-  initial: string;
-  name: string;
-  rating: string;
-  seats: string;
+interface DashboardRequestCardProps {
+  request: RequestItem;
+  onAccept?: () => void;
+  onReject?: () => void;
 }
 
-function RequestCard({ initial, name, rating, seats }: RequestCardProps) {
+function DashboardRequestCard({ request, onAccept, onReject }: DashboardRequestCardProps) {
   return (
     <div className="rounded-[20px] border border-[#353535] bg-[#1F1F1F] p-4">
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#303030] text-lg font-bold text-white">
-            {initial}
+            {request.initial}
           </div>
           <div>
-            <p className="font-bold text-white">{name}</p>
+            <p className="font-bold text-white">{request.name}</p>
             <div className="flex items-center gap-1 text-sm text-[#8F8F8F]">
               <i className="bi bi-star-fill text-xs text-white/80" />
-              <span>{rating}</span>
+              <span>{request.rating}</span>
+              <span className="mx-1.5">·</span>
+              <i className="bi bi-geo-alt text-xs" />
+              <span className="truncate max-w-[100px]">{request.route.split('→')[0].trim()}</span>
             </div>
           </div>
         </div>
         <span className="rounded-full border border-[#353535] px-3 py-0.5 text-[13px] text-[#8F8F8F]">
-          {seats}
+          {request.seats}
         </span>
       </div>
-      <ActionButtons size="sm" className="mt-4" />
+      <ActionButtons size="sm" className="mt-4" onAccept={onAccept} onReject={onReject} />
     </div>
   );
 }
 
-const trips: TripRowProps[] = [
-  { date: '08 Jul', time: '9:50', route: 'Bosques del Prado → UPA', passengers: 3, status: 'Completado', income: '+$150' },
-  { date: '07 Jul', time: '16:30', route: 'UPA → Centro', passengers: 2, status: 'Completado', income: '+$120' },
-  { date: '05 Jul', time: '7:00', route: 'Bosques del Prado → UPA', passengers: 4, status: 'Completado', income: '+$200' },
-];
-
-const requests: RequestCardProps[] = [
-  { initial: 'E', name: 'Edward B.', rating: '4.9', seats: '1 asiento' },
-  { initial: 'A', name: 'Ana L.', rating: '5.0', seats: '1 asiento' },
+const defaultTrips: TripRowProps[] = [
+  // Solo viajes extra que NO están en las solicitudes completadas (evita duplicados)
+  { date: '25 Jul', time: '6:45', route: 'Colonia del Valle → UPA', passengers: 4, status: 'Completado', income: '+$180' },
+  { date: '22 Jul', time: '9:00', route: 'Las Lomas → UPA', passengers: 3, status: 'Completado', income: '+$105' },
+  { date: '20 Jul', time: '12:30', route: 'Haciendas del Valle → UPA', passengers: 2, status: 'Completado', income: '+$80' },
 ];
 
 export function DriverDashboardPage() {
+  const completedTrips = loadCompletedRequests();
+  const allTrips = [...completedTrips, ...defaultTrips];
+
+  const [pendingRequests, setPendingRequests] = useState<RequestItem[]>(loadPendingRequests);
+
+  const handleDashboardAccept = (id: string) => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const all: RequestItem[] = JSON.parse(raw);
+        const updated = all.map((r) =>
+          r.id === id ? { ...r, status: 'aceptadas' as const } : r,
+        );
+        saveRequests(updated);
+      }
+    } catch { /* ignore */ }
+
+    setPendingRequests((prev) => prev.filter((r) => r.id !== id));
+  };
+
+  const handleDashboardReject = (id: string) => {
+    // Eliminar completamente del localStorage y del dashboard
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const all: RequestItem[] = JSON.parse(raw);
+        const updated = all.filter((r) => r.id !== id);
+        saveRequests(updated);
+      }
+    } catch { /* ignore */ }
+
+    setPendingRequests((prev) => prev.filter((r) => r.id !== id));
+  };
+
+  // Sincronizar cuando cambien las solicitudes desde otra pestaña o al volver
+  useEffect(() => {
+    const syncFromStorage = () => setPendingRequests(loadPendingRequests());
+
+    window.addEventListener('storage', syncFromStorage);
+    // También sincronizar cuando el componente recupera el foco (ej. al volver de Solicitudes)
+    window.addEventListener('focus', syncFromStorage);
+
+    return () => {
+      window.removeEventListener('storage', syncFromStorage);
+      window.removeEventListener('focus', syncFromStorage);
+    };
+  }, []);
+
   return (
     <div className="px-10 pb-10">
       {/* Header */}
@@ -104,11 +192,16 @@ export function DriverDashboardPage() {
                 </tr>
               </thead>
               <tbody>
-                {trips.map((trip) => (
-                  <TripRow key={`${trip.date}-${trip.time}`} {...trip} />
+                {allTrips.map((trip, i) => (
+                  <TripRow key={`${trip.date}-${trip.time}-${i}`} {...trip} />
                 ))}
               </tbody>
             </table>
+            {allTrips.length === 0 && (
+              <div className="py-8 text-center text-sm text-[#6B6B6B]">
+                No hay viajes completados todavía.
+              </div>
+            )}
           </div>
         </div>
 
@@ -116,9 +209,21 @@ export function DriverDashboardPage() {
         <div className="flex-[35%]">
           <h2 className="mb-4 text-lg font-bold text-white">Solicitudes nuevas</h2>
           <div className="flex flex-col gap-[14px]">
-            {requests.map((req) => (
-              <RequestCard key={req.name} {...req} />
-            ))}
+            {pendingRequests.length === 0 ? (
+              <div className="flex flex-col items-center justify-center rounded-[18px] border border-dashed border-[#353535] py-10">
+                <i className="bi bi-inbox text-3xl text-[#4A4A4A]" />
+                <p className="mt-2 text-sm text-[#6B6B6B]">No hay solicitudes pendientes</p>
+              </div>
+            ) : (
+              pendingRequests.map((req) => (
+                <DashboardRequestCard
+                  key={req.id}
+                  request={req}
+                  onAccept={() => handleDashboardAccept(req.id)}
+                  onReject={() => handleDashboardReject(req.id)}
+                />
+              ))
+            )}
           </div>
         </div>
       </div>
