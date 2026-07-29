@@ -8,7 +8,6 @@ import { DriverVerificationPage } from '../features/driver/pages/VerificationPag
 import { DriverEarningsPage } from '../features/driver/pages/EarningsPage';
 import { DriverProfilePage } from '../features/driver/pages/ProfilePage';
 import { ProtectedRoute } from '../shared/routes/ProtectedRoute';
-import { DriverProfilePage } from '../features/driver/pages/ProfilePage';
 
 /**
  * Router raíz de la aplicación.
