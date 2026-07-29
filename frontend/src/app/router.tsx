@@ -33,7 +33,6 @@ export const router = createBrowserRouter([
     path: '/conductor',
     element: <DriverLayout />,
     children: [
-      { path: 'solicitudes', element: <DriverRequestsPage /> },
       { path: 'publicar-ruta', element: <DriverPublishRoutePage /> },
       { path: 'panel', element: <DriverDashboardPage /> },
       { path: 'validacion', element: <DriverVerificationPage /> },
