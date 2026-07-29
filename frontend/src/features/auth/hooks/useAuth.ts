@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import { useAppDispatch, useAppSelector } from '../../../shared/hooks/redux';
 import type { Role } from '../../../shared/types/auth';
-import { loginUser, logout, registerUser, updateProfile } from '../store/auth.slice';
+import { loginUser, logout, mockLogin as mockLoginAction, registerUser, updateProfile } from '../store/auth.slice';
 import type { LoginPayload, RegisterPayload, UpdateProfilePayload } from '../types/auth.types';
 
 // Punto único de acceso al estado y las acciones de autenticación desde cualquier componente.
@@ -27,6 +27,13 @@ export function useAuth() {
     [dispatch],
   );
 
+  const demoLogin = useCallback(
+    (payload: { email: string; role: Role }) => {
+      dispatch(mockLoginAction(payload));
+    },
+    [dispatch],
+  );
+
   return {
     user,
     role: user?.role as Role | undefined,
@@ -38,5 +45,6 @@ export function useAuth() {
     register,
     logout: signOut,
     editProfile,
+    demoLogin,
   };
 }

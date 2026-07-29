@@ -11,14 +11,14 @@ interface SidebarItem {
 const verificationNav: SidebarItem[] = [
   { label: 'Verificación', icon: 'bi bi-patch-check', path: '/conductor/validacion' },
   { label: 'Panel', icon: 'bi bi-speedometer2', path: '/conductor/panel' },
-  { label: 'Publicar ruta', icon: 'bi bi-plus-circle', path: '/conductor/publicar-ruta' },
+  { label: 'Rutas', icon: 'bi bi-plus-circle', path: '/conductor/rutas' },
   { label: 'Solicitudes', icon: 'bi bi-bell', path: '/conductor/solicitudes' },
   { label: 'Ganancias', icon: 'bi bi-cash-stack', path: '/conductor/ganancias' },
 ];
 
 const panelNav: SidebarItem[] = [
   { label: 'Panel', icon: 'bi bi-speedometer2', path: '/conductor/panel' },
-  { label: 'Publicar ruta', icon: 'bi bi-plus-circle', path: '/conductor/publicar-ruta' },
+  { label: 'Rutas', icon: 'bi bi-plus-circle', path: '/conductor/rutas' },
   { label: 'Solicitudes', icon: 'bi bi-bell', path: '/conductor/solicitudes' },
   { label: 'Ganancias', icon: 'bi bi-cash-stack', path: '/conductor/ganancias' },
   { label: 'Perfil', icon: 'bi bi-person', path: '/conductor/perfil' },

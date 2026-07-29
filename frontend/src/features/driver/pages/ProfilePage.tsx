@@ -47,7 +47,7 @@ export function DriverProfilePage() {
       {/* Two-column layout */}
       <div className="mt-8 flex gap-[30px]">
         {/* Left — Profile card (40%) */}
-        <div className="flex w-[40%] flex-col items-center rounded-[24px] border border-[#353535] bg-[#222222] px-9 py-9">
+        <div className="flex w-[40%] flex-col items-center rounded-[24px] border border-[#353535] bg-[#1F1F1F] px-9 py-9">
           <Avatar initial="J" size={104} />
 
           {/* Name */}
@@ -61,7 +61,7 @@ export function DriverProfilePage() {
           </p>
 
           {/* Verified badge */}
-          <div className="mt-3 flex items-center gap-1.5 rounded-full bg-[#F5F5F5] px-[18px] py-2 text-sm font-bold text-black">
+          <div className="mt-3 flex items-center gap-1.5 rounded-full bg-white px-[18px] py-2 text-sm font-bold text-black">
             <i className="bi bi-shield-check" />
             Conductor verificado
           </div>
@@ -80,7 +80,7 @@ export function DriverProfilePage() {
             Vehículo y cuenta
           </h2>
 
-          <div className="mt-5 rounded-[22px] border border-[#353535] bg-[#222222]">
+          <div className="mt-5 rounded-[22px] border border-[#353535] bg-[#1F1F1F]">
             {settingsRows.map((row) => (
               <SettingsRow key={row.label} icon={row.icon} label={row.label} />
             ))}

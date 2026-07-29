@@ -192,3 +192,43 @@ model VerificationDocument {
 
   @@map("documentoverificacion")
 }
+
+// ──────────────────────────────────────────────
+//  Modelos para el Dashboard de Métricas / Incidencias
+//  (almacenados en la misma base de datos PostgreSQL via Prisma)
+// ──────────────────────────────────────────────
+
+model Incidencia {
+  id          Int      @id @map("id_incidencia")
+  titulo      String   @map("titulo") @db.VarChar(200)
+  descripcion String   @map("descripcion")
+  categoria   String   @map("categoria") @db.VarChar(30)
+  prioridad   String   @map("prioridad") @db.VarChar(15)
+  estado      String   @map("estado") @db.VarChar(15)
+  creado      String   @map("creado") @db.VarChar(15)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  @@map("incidencia")
+}
+
+model Actividad {
+  id        Int      @id @default(autoincrement()) @map("id_actividad")
+  text      String   @map("texto")
+  time      String   @map("hora")
+  icon      String   @default("📝") @map("icono") @db.VarChar(10)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+
+  @@map("actividad")
+}
+
+model UsuarioDashboard {
+  id       Int    @id @map("id_usuario")
+  nombre   String @map("nombre") @db.VarChar(100)
+  email    String @map("correo") @db.VarChar(150)
+  rol      String @map("rol") @db.VarChar(20)
+  estado   String @map("estado") @db.VarChar(10)
+  registro String @map("registro") @db.VarChar(15)
+
+  @@map("usuariodashboard")
+}
