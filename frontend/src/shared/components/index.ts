@@ -1,13 +1,15 @@
 // Exportación de componentes
+export { ActionButtons } from './ActionButtons';
+export { Avatar } from './Avatar';
 export { Button } from './Button';
 export { PageHeader } from './PageHeader';
-export { Segmented } from './Segmented';
-export { Avatar } from './Avatar';
+export { StatusBadge } from './StatusBadge';
 export { StatCard } from './StatCard';
 export { Card } from './Card';
 export { DataTable } from './DataTable';
 export { Modal } from './Modal';
 export { Pill } from './Pill';
+export { Segmented } from './Segmented';
 export { ListRow, Divider } from './ListRow';
 export { Sidebar } from './Sidebar';
 export { StopRow } from './StopRow';
@@ -18,4 +20,5 @@ export { MapRoute } from './MapRoute';
 export { RatingModal } from './RatingModal';
 export { NotificationDropdown } from './NotificationDropdown';
 export { FieldLabel } from './InputField';
+export { IconInput } from './IconInput';
 export { MiniStat } from './MiniStat';
