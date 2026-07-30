@@ -19,7 +19,7 @@ export function Segmented({ size = 'md', options, activeIndex, onSelect, classNa
   const s = sizeClasses[size];
 
   return (
-    <div className={`flex gap-1 bg-[#1A1A1A] ${s.container} ${className}`}>
+    <div className={`inline-flex gap-1 bg-[#1A1A1A] ${s.container} ${className}`}>
       {options.map((option, index) => (
         <button
           key={option.label}
