@@ -16,6 +16,14 @@ export interface LoginPayload {
   role: Role;
 }
 
+export interface UpdateProfilePayload {
+  firstName?: string;
+  lastNamePaternal?: string;
+  lastNameMaternal?: string | null;
+  phone?: string;
+  photoUrl?: string;
+}
+
 export interface AuthResponse {
   user: AuthUser;
   token: string;
