@@ -1,99 +1,95 @@
 import { useState } from 'react';
 
 import { PageHeader, Segmented } from '../../../shared/components';
+import { AnnualMonthBlock, type AnnualMonthGroup } from '../components/AnnualMonthBlock';
+import { EarningsTableRow, type EarningsRow } from '../components/EarningsTableRow';
+import { useEarnings } from '../hooks/useEarnings';
 
 type Period = 'semana' | 'mes' | 'año';
 
-interface PaymentRow {
-  date: string;
-  time: string;
-  route: string;
-  passengers: number;
-  income: string;
-}
-
+// ---------------------------------------------------------------------------
+// Mock data
+// ---------------------------------------------------------------------------
 const periodData: Record<Period, {
-  amount: string;
-  variation: string;
   trendLabel: string;
   chartLabels: string[];
-  payments: PaymentRow[];
+  payments: EarningsRow[];
 }> = {
   semana: {
-    amount: '$1,240',
-    variation: '+18% vs. semana pasada',
     trendLabel: 'Tendencia semanal',
     chartLabels: ['L', 'M', 'M', 'J', 'V', 'S', 'D'],
     payments: [
-      { date: '08 Jul', time: '9:50', route: 'Bosques del Prado → UPA', passengers: 3, income: '+$150' },
-      { date: '07 Jul', time: '16:30', route: 'UPA → Centro', passengers: 2, income: '+$120' },
-      { date: '05 Jul', time: '7:00', route: 'Bosques del Prado → UPA', passengers: 4, income: '+$200' },
+      { date: '08 Jul', time: '9:50', passenger: 'María G.', route: 'Bosques del Prado → UPA', income: '+$150' },
+      { date: '05 Jul', time: '7:00', passenger: 'Carlos R.', route: 'Villa de las Flores → UPA', income: '+$200' },
     ],
   },
   mes: {
-    amount: '$4,860',
-    variation: '+12% vs. mes pasado',
     trendLabel: 'Tendencia mensual',
     chartLabels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'],
     payments: [
-      { date: '08 Jul', time: '9:50', route: 'Bosques del Prado → UPA', passengers: 3, income: '+$150' },
-      { date: '01 Jul', time: '7:00', route: 'Bosques del Prado → UPA', passengers: 4, income: '+$200' },
-      { date: '28 Jun', time: '16:30', route: 'UPA → Centro', passengers: 2, income: '+$120' },
-      { date: '25 Jun', time: '8:00', route: 'Bosques del Prado → UPA', passengers: 3, income: '+$150' },
+      { date: '08 Jul', time: '9:50', passenger: 'María G.', route: 'Bosques del Prado → UPA', income: '+$150' },
+      { date: '01 Jul', time: '7:00', passenger: 'Ana L.', route: 'San Miguel → UPA', income: '+$200' },
+      { date: '15 Jul', time: '14:20', passenger: 'Laura V.', route: 'Villa de las Flores → UPA', income: '+$180' },
     ],
   },
   año: {
-    amount: '$52,300',
-    variation: '+24% vs. año pasado',
     trendLabel: 'Tendencia anual',
     chartLabels: ['E', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'],
-    payments: [
-      { date: 'Jul', time: '', route: 'Bosques del Prado → UPA', passengers: 68, income: '+$4,860' },
-      { date: 'Jun', time: '', route: 'UPA → Centro', passengers: 52, income: '+$3,920' },
-      { date: 'May', time: '', route: 'Bosques del Prado → UPA', passengers: 74, income: '+$5,100' },
-    ],
+    payments: [],
   },
 };
 
-function PaymentRow({ date, time, route, passengers, income }: PaymentRow) {
-  return (
-    <tr className="border-b border-[#353535] last:border-0">
-      <td className="py-4 pr-4">
-        <span className="font-semibold text-white">{date}</span>
-        {time && (
-          <>
-            <br />
-            <span className="text-[15px] text-[#8F8F8F]">{time}</span>
-          </>
-        )}
-      </td>
-      <td className="py-4 pr-4 text-[18px] font-medium text-white">{route}</td>
-      <td className="py-4 pr-4 text-center text-[18px] font-medium text-white">{passengers}</td>
-      <td className="py-4 text-right text-[18px] font-semibold text-white">{income}</td>
-    </tr>
-  );
+const annualData: AnnualMonthGroup[] = [
+  {
+    month: 'Julio', total: '$10,680',
+    routes: [
+      { route: 'Bosques del Prado → UPA', count: 42, income: '$4,860' },
+      { route: 'Villa de las Flores → UPA', count: 28, income: '$3,200' },
+      { route: 'San Miguel → UPA', count: 18, income: '$2,620' },
+    ],
+  },
+  {
+    month: 'Junio', total: '$8,920',
+    routes: [
+      { route: 'Bosques del Prado → UPA', count: 35, income: '$4,120' },
+      { route: 'San Miguel → UPA', count: 22, income: '$3,100' },
+      { route: 'Villa de las Flores → UPA', count: 15, income: '$1,700' },
+    ],
+  },
+  {
+    month: 'Mayo', total: '$7,450',
+    routes: [
+      { route: 'Villa de las Flores → UPA', count: 30, income: '$3,500' },
+      { route: 'Bosques del Prado → UPA', count: 25, income: '$2,950' },
+      { route: 'San Miguel → UPA', count: 10, income: '$1,000' },
+    ],
+  },
+];
+
+function formatCurrency(amount: number): string {
+  return '$' + amount.toLocaleString('es-MX');
 }
+
+const periodOptions: { key: Period; label: string }[] = [
+  { key: 'semana', label: 'Semana' },
+  { key: 'mes', label: 'Mes' },
+  { key: 'año', label: 'Año' },
+];
 
 export function DriverEarningsPage() {
   const [period, setPeriod] = useState<Period>('semana');
+  const { totalEarnings, monthlyEarnings, withdraw } = useEarnings();
   const data = periodData[period];
-
-  const periodOptions: { key: Period; label: string }[] = [
-    { key: 'semana', label: 'Semana' },
-    { key: 'mes', label: 'Mes' },
-    { key: 'año', label: 'Año' },
-  ];
 
   return (
     <div className="px-10 pb-10">
-      {/* Header */}
       <PageHeader
         title="Ganancias"
         subtitle="Tus ingresos por viajes compartidos"
         action={
           <Segmented
             size="lg"
-            options={periodOptions.map((o) => ({ label: o.label }))}
+            options={periodOptions}
             activeIndex={periodOptions.findIndex((o) => o.key === period)}
             onSelect={(i) => setPeriod(periodOptions[i].key)}
           />
@@ -102,26 +98,41 @@ export function DriverEarningsPage() {
 
       {/* Top panels */}
       <div className="mt-8 flex gap-5">
-        {/* Income summary card — 42% */}
+        {/* Income summary card */}
         <div className="flex w-[42%] flex-col justify-between rounded-[24px] bg-[#F5F5F5] p-7">
           <div>
-            <p className="text-[16px] font-medium text-[#6B6B6B]">
-              Ingresos {period === 'semana' ? 'de la semana' : period === 'mes' ? 'del mes' : 'del año'}
-            </p>
+            <p className="text-[16px] font-medium text-[#6B6B6B]">Ingresos totales</p>
             <p className="mt-1 text-[64px] font-extrabold leading-none tracking-tight text-black">
-              {data.amount}
+              {formatCurrency(totalEarnings)}
             </p>
-            <div className="mt-2 flex items-center gap-1.5 text-[16px] text-[#6B6B6B]">
-              <i className="bi bi-graph-up-arrow text-lg" />
-              <span className="font-medium">{data.variation}</span>
+          </div>
+
+          <button
+            onClick={withdraw}
+            disabled={totalEarnings === 0}
+            className="mt-6 w-full rounded-full bg-black py-4 text-[18px] font-bold text-white transition-all hover:bg-black/80 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            {totalEarnings === 0 ? 'Sin fondos para retirar' : 'Retirar a mi cuenta'}
+          </button>
+
+          <div className="mt-4 flex items-center justify-between rounded-2xl border border-[#353535] bg-white/10 px-5 py-4">
+            <div>
+              <p className="text-[13px] font-medium text-[#6B6B6B]">Ganancias totales del mes</p>
+              <p className="mt-0.5 text-[22px] font-extrabold tracking-tight text-black">
+                {formatCurrency(monthlyEarnings)}
+              </p>
+              <div className="mt-1 flex items-center gap-1.5 text-[13px] text-green-700">
+                <i className="bi bi-graph-up-arrow text-sm text-green-600" />
+                <span className="font-medium">+12% vs. mes anterior</span>
+              </div>
+            </div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/10">
+              <i className="bi bi-calendar-month text-xl text-black" />
             </div>
           </div>
-          <button className="mt-6 w-full rounded-full bg-black py-4 text-[18px] font-bold text-white transition-colors hover:bg-black/80">
-            Retirar a mi cuenta
-          </button>
         </div>
 
-        {/* Trend chart panel — 58% */}
+        {/* Trend chart panel */}
         <div className="flex w-[58%] flex-col rounded-[24px] border border-[#353535] bg-[#222222] p-[26px]">
           <p className="text-lg font-bold text-white">{data.trendLabel}</p>
           <div className="mt-4 flex flex-1 items-end justify-between px-2 pb-1">
@@ -140,31 +151,39 @@ export function DriverEarningsPage() {
         </div>
       </div>
 
-      {/* Payment history */}
+      {/* Historial de pagos */}
       <div className="mt-6 rounded-[24px] border border-[#353535] bg-[#222222] p-6">
         <div className="flex items-center justify-between">
           <h2 className="text-[34px] font-bold text-white">Historial de pagos</h2>
           <span className="rounded-full bg-[#3A3A3A] px-[18px] py-2 text-sm font-semibold text-white">
-            Completados
+            {period === 'semana' ? 'Semana' : period === 'mes' ? 'Mes actual' : 'Anual'}
           </span>
         </div>
 
         <div className="mt-6">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-[#353535] text-left text-[16px] font-medium text-[#8F8F8F]">
-                <th className="pb-3 pr-4 font-medium">Fecha</th>
-                <th className="pb-3 pr-4 font-medium">Ruta</th>
-                <th className="pb-3 pr-4 text-center font-medium">Pasajeros</th>
-                <th className="pb-3 text-right font-medium">Ingreso</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.payments.map((payment, index) => (
-                <PaymentRow key={`${payment.date}-${payment.route}-${index}`} {...payment} />
+          {period === 'año' ? (
+            <div className="space-y-1">
+              {annualData.map((group) => (
+                <AnnualMonthBlock key={group.month} {...group} />
               ))}
-            </tbody>
-          </table>
+            </div>
+          ) : (
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-[#353535] text-left text-[16px] font-medium text-[#8F8F8F]">
+                  <th className="pb-3 pr-4 font-medium">Fecha</th>
+                  <th className="pb-3 pr-4 font-medium">Pasajero</th>
+                  <th className="pb-3 pr-4 font-medium">Ruta</th>
+                  <th className="pb-3 text-right font-medium">Ingreso</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.payments.map((payment, index) => (
+                  <EarningsTableRow key={`${payment.date}-${payment.passenger}-${index}`} {...payment} />
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
     </div>
