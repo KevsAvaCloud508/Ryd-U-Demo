@@ -1,16 +1,17 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { Avatar, MiniStat, PageHeader } from '../../../shared/components';
 
 interface SettingsRowProps {
   icon: string;
   label: string;
+  to: string;
 }
 
-function SettingsRow({ icon, label }: SettingsRowProps) {
+function SettingsRow({ icon, label, to }: SettingsRowProps) {
   return (
-    <button
-      type="button"
+    <Link
+      to={to}
       className="flex h-[63px] w-full cursor-pointer items-center justify-between border-b border-[#353535] px-6 last:border-0 transition-colors hover:bg-white/[0.04]"
     >
       <div className="flex items-center gap-4">
@@ -20,16 +21,16 @@ function SettingsRow({ icon, label }: SettingsRowProps) {
       <div className="flex h-10 w-10 items-center justify-center rounded-full">
         <i className="bi bi-chevron-right text-lg text-[#8F8F8F]" />
       </div>
-    </button>
+    </Link>
   );
 }
 
 const settingsRows: SettingsRowProps[] = [
-  { icon: 'bi bi-car-front', label: 'Mi vehículo · Ford Aveo Blanco' },
-  { icon: 'bi bi-file-text', label: 'Documentos · Aprobados' },
-  { icon: 'bi bi-bank', label: 'Cuenta para cobros' },
-  { icon: 'bi bi-bell', label: 'Notificaciones' },
-  { icon: 'bi bi-shield-check', label: 'Seguridad y privacidad' },
+  { icon: 'bi bi-car-front', label: 'Mi vehículo · Ford Aveo Blanco', to: '/conductor/perfil/vehiculo' },
+  { icon: 'bi bi-file-text', label: 'Documentos · Aprobados', to: '/conductor/perfil/documentos' },
+  { icon: 'bi bi-bank', label: 'Cuenta para cobros', to: '/conductor/perfil/cuenta' },
+  { icon: 'bi bi-bell', label: 'Notificaciones', to: '/conductor/perfil/notificaciones' },
+  { icon: 'bi bi-shield-check', label: 'Seguridad', to: '/conductor/perfil/seguridad' },
 ];
 
 export function DriverProfilePage() {
@@ -82,7 +83,7 @@ export function DriverProfilePage() {
 
           <div className="mt-5 rounded-[22px] border border-[#353535] bg-[#222222]">
             {settingsRows.map((row) => (
-              <SettingsRow key={row.label} icon={row.icon} label={row.label} />
+              <SettingsRow key={row.label} icon={row.icon} label={row.label} to={row.to} />
             ))}
           </div>
 

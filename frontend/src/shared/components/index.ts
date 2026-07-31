@@ -1,13 +1,20 @@
 // Exportación de componentes
 export { Button } from './Button';
+export { BackButton } from './BackButton';
+export { SubPageLayout } from './SubPageLayout';
+export { LoadingState } from './LoadingState';
+export { ErrorState } from './ErrorState';
+export { EmptyState } from './EmptyState';
 export { PageHeader } from './PageHeader';
 export { Avatar } from './Avatar';
 export { Card } from './Card';
+export { ConfirmModal } from './ConfirmModal';
 export { DataTable } from './DataTable';
 export { Modal } from './Modal';
 export { Pill } from './Pill';
 export { Segmented } from './Segmented';
 export { ListRow, Divider } from './ListRow';
+export { ToggleRow } from './ToggleRow';
 export { Sidebar } from './Sidebar';
 export { StatCard } from './StatCard';
 export { StopRow } from './StopRow';
