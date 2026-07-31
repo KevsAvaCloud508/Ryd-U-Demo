@@ -24,5 +24,5 @@ jobs:
             git pull origin main
             
             # 3. Reconstruimos y levantamos los contenedores
-            docker compose down
-            docker compose up -d --build
+            docker-compose down
+            docker-compose up -d --build
