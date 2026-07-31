@@ -1,6 +1,6 @@
-import { prisma } from '../../prisma/client';
+import { prisma } from '../../prisma/client.js';
 import type { Prisma } from '@prisma/client';
-import type { CreateRouteInput, UpdateRouteInput } from './routes.dto';
+import type { CreateRouteInput, UpdateRouteInput } from './routes.dto.js';
 
 export function findRoutesByQuery(origin?: string, destination?: string, query?: string) {
   const where: Prisma.RouteWhereInput = {};

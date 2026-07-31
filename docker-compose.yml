@@ -14,6 +14,14 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+      # Crea el esquema de la base de datos la primera vez que se levanta el volumen.
+      - ./backend/prisma/sql/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin_rydu -d rydu_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
 
   # 2. Tu Backend (Express + Prisma)
   backend:
@@ -27,17 +35,27 @@ services:
       # Conexión automática a la base de datos de arriba usando las mismas credenciales
       - DATABASE_URL=postgresql://admin_rydu:password_seguro_123@db:5432/rydu_db
       - PORT=3000
+      - NODE_ENV=production
+      # Secretos y configuracion de auth
+      - JWT_SECRET=UdXwmhGvmXGJzjpgYqOldh0nftk97ungPHMVHSK/XXo=
+      - JWT_EXPIRES_IN=7d
+      - CORS_ORIGIN=http://localhost
+      - PUBLIC_BASE_URL=http://localhost:3000
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   # 3. Tu Frontend (React + Vite)
   frontend:
     build:
       context: ./frontend
+      args:
+        # Ruta relativa: nginx hace proxy same-origin de /api hacia backend:3000.
+        - VITE_API_URL=/api
     container_name: qa_frontend
     restart: always
     ports:
-      - "80:80" 
+      - "80:80"
     depends_on:
       - backend
 

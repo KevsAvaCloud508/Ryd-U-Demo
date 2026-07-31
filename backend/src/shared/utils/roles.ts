@@ -1,4 +1,4 @@
-import type { AppRole } from '../../modules/auth/auth.dto';
+import type { AppRole } from '../../modules/auth/auth.dto.js';
 
 // Traduce entre el rol de negocio usado en la API (STUDENT/DRIVER) y el nombre
 // real de la fila en la tabla `rol` de la base de datos (Pasajero/Conductor).

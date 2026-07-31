@@ -1,13 +1,13 @@
 import { Router } from 'express';
 
-import { requireAuth, requireRole } from '../../shared/middlewares/auth.middleware';
-import { asyncHandler } from '../../shared/utils/async-handler';
+import { requireAuth, requireRole } from '../../shared/middlewares/auth.middleware.js';
+import { asyncHandler } from '../../shared/utils/async-handler.js';
 import {
   createVehicleHandler,
   deleteVehicleHandler,
   listVehiclesHandler,
   updateVehicleHandler,
-} from './vehicle.controller';
+} from './vehicle.controller.js';
 
 export const vehicleRouter = Router();
 

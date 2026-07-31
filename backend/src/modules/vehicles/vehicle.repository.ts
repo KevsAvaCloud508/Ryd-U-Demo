@@ -1,5 +1,5 @@
-import { prisma } from '../../prisma/client';
-import type { CreateVehicleInput, UpdateVehicleInput } from './vehicle.dto';
+import { prisma } from '../../prisma/client.js';
+import type { CreateVehicleInput, UpdateVehicleInput } from './vehicle.dto.js';
 
 export function findVehiclesByUser(userId: string) {
   return prisma.vehicle.findMany({ where: { userId }, orderBy: { brand: 'asc' } });

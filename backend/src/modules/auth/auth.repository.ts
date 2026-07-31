@@ -1,4 +1,4 @@
-import { prisma } from '../../prisma/client';
+import { prisma } from '../../prisma/client.js';
 
 const userWithRoles = {
   include: { roles: { include: { role: true } } },
@@ -24,6 +24,21 @@ export interface CreateUserData {
   phone?: string;
   passwordHash: string;
   roleId: number;
+}
+
+export function createUser(data: CreateUserData) {
+  return prisma.user.create({
+    data: {
+      firstName: data.firstName,
+      lastNamePaternal: data.lastNamePaternal,
+      lastNameMaternal: data.lastNameMaternal,
+      email: data.email,
+      phone: data.phone,
+      passwordHash: data.passwordHash,
+      roles: { create: { roleId: data.roleId } },
+    },
+    ...userWithRoles,
+  });
 }
 
 export interface UpdateProfileData {
@@ -52,21 +67,6 @@ export function updateUserPassword(id: string, passwordHash: string) {
   return prisma.user.update({
     where: { id },
     data: { passwordHash },
-    ...userWithRoles,
-  });
-}
-
-export function createUser(data: CreateUserData) {
-  return prisma.user.create({
-    data: {
-      firstName: data.firstName,
-      lastNamePaternal: data.lastNamePaternal,
-      lastNameMaternal: data.lastNameMaternal,
-      email: data.email,
-      phone: data.phone,
-      passwordHash: data.passwordHash,
-      roles: { create: { roleId: data.roleId } },
-    },
     ...userWithRoles,
   });
 }

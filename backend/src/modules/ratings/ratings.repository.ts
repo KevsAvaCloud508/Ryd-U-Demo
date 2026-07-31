@@ -1,4 +1,4 @@
-import { prisma } from '../../prisma/client';
+import { prisma } from '../../prisma/client.js';
 
 export function createRating(raterId: string, tripId: string, rateeId: string, score: number) {
   return prisma.rating.create({

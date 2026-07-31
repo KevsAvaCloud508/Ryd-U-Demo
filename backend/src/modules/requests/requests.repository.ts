@@ -1,4 +1,4 @@
-import { prisma } from '../../prisma/client';
+import { prisma } from '../../prisma/client.js';
 import type { EstadoSolicitud } from '@prisma/client';
 
 export function findRequestById(id: string) {

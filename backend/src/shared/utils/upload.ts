@@ -5,7 +5,7 @@ import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import multer from 'multer';
 
-import { env } from '../../config/env';
+import { env } from '../../config/env.js';
 
 // Cloudinary es opcional: solo se usa si las tres credenciales están en .env.
 // Sin credenciales, los archivos se guardan en disco (env.uploadsDir) y se

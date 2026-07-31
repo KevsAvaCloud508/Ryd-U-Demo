@@ -1,9 +1,9 @@
 import type { Request, Response } from 'express';
 
-import type { AuthenticatedRequest } from '../../shared/middlewares/auth.middleware';
-import { publicFileUrl } from '../../shared/utils/upload';
-import { loginSchema, registerSchema, forgotPasswordSchema, resetPasswordSchema, updateProfileSchema } from './auth.dto';
-import { AuthError, forgotPassword, getCurrentUser, login, register, resetPassword, updateProfile } from './auth.service';
+import type { AuthenticatedRequest } from '../../shared/middlewares/auth.middleware.js';
+import { publicFileUrl } from '../../shared/utils/upload.js';
+import { forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema, updateProfileSchema } from './auth.dto.js';
+import { AuthError, forgotPassword, getCurrentUser, login, register, resetPassword, updateProfile } from './auth.service.js';
 
 export async function registerHandler(req: Request, res: Response): Promise<void> {
   const parsed = registerSchema.safeParse(req.body);

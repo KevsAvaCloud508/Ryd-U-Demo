@@ -1,0 +1,11 @@
+# Los scripts de shell deben quedarse con LF aunque el repo se trabaje en Windows.
+*.sh text eol=lf
+
+# Archivos generados por Docker/build no necesitan normalizacion especial.
+*.yml text eol=crlf
+*.yaml text eol=crlf
+*.ts text eol=crlf
+*.tsx text eol=crlf
+*.prisma text eol=crlf
+*.json text eol=crlf
+Dockerfile text eol=crlf

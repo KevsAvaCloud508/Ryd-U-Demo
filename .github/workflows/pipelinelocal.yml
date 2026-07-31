@@ -22,6 +22,10 @@ jobs:
         working-directory: ./backend
         run: npx prisma generate
         
+      - name: Compilar Backend (TypeScript)
+        working-directory: ./backend
+        run: npm run build
+        
       - name: Instalar dependencias del Frontend
         working-directory: ./frontend
         run: npm install
