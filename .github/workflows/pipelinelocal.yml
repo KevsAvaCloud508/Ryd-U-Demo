@@ -42,6 +42,9 @@ jobs:
       - name: Descargar el código aprobado
         uses: actions/checkout@v4
 
+      - name: Configurar variables de entorno (JWT_SECRET)
+        run: echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" > .env
+
       - name: Detener contenedores anteriores
         run: docker compose down
         

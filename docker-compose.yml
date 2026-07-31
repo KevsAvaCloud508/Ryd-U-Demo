@@ -37,7 +37,7 @@ services:
       - PORT=3000
       - NODE_ENV=production
       # Secretos y configuracion de auth
-      - JWT_SECRET=UdXwmhGvmXGJzjpgYqOldh0nftk97ungPHMVHSK/XXo=
+      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET requerida (definir en .env o GitHub Secret)}
       - JWT_EXPIRES_IN=7d
       - CORS_ORIGIN=http://localhost
       - PUBLIC_BASE_URL=http://localhost:3000
