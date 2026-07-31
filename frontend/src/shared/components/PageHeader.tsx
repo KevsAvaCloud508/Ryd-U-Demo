@@ -5,11 +5,12 @@ interface PageHeaderProps {
   subtitle?: string;
   action?: ReactNode;
   className?: string;
+  compact?: boolean;
 }
 
-export function PageHeader({ title, subtitle, action, className = '' }: PageHeaderProps) {
+export function PageHeader({ title, subtitle, action, className = '', compact = false }: PageHeaderProps) {
   return (
-    <div className={`flex items-start justify-between pt-[38px] ${className}`}>
+    <div className={`flex items-start justify-between ${compact ? 'pt-[16px]' : 'pt-[38px]'} ${className}`}>
       <div>
         <h1 className="text-[42px] font-extrabold leading-tight tracking-tight text-white">
           {title}
