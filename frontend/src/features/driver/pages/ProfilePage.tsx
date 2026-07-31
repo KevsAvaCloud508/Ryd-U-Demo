@@ -1,39 +1,58 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { Avatar, MiniStat, PageHeader } from '../../../shared/components';
+import { DEFAULT_VEHICLE } from '../../vehicles/demo-data';
+import { useVehicles } from '../../vehicles/hooks/useVehicles';
 
 interface SettingsRowProps {
   icon: string;
   label: string;
+  description?: string;
+  to: string;
 }
 
-function SettingsRow({ icon, label }: SettingsRowProps) {
+function SettingsRow({ icon, label, description, to }: SettingsRowProps) {
   return (
-    <button
-      type="button"
-      className="flex h-[63px] w-full cursor-pointer items-center justify-between border-b border-[#353535] px-6 last:border-0 transition-colors hover:bg-white/[0.04]"
+    <Link
+      to={to}
+      className="flex min-h-[84px] flex-1 items-center gap-5 border-b border-[#353535] px-7 py-5 transition-colors last:border-0 hover:bg-white/[0.04]"
     >
-      <div className="flex items-center gap-4">
-        <i className={`${icon} text-xl text-[#8F8F8F]`} />
-        <span className="text-[18px] font-medium text-white">{label}</span>
+      <div className="grid h-12 w-12 flex-none place-items-center rounded-[14px] bg-surface2">
+        <i className={`${icon} text-[26px] text-[#B5B5BA]`} />
       </div>
-      <div className="flex h-10 w-10 items-center justify-center rounded-full">
-        <i className="bi bi-chevron-right text-lg text-[#8F8F8F]" />
+      <div className="min-w-0 flex-1">
+        <div className="text-[21px] font-semibold text-white">{label}</div>
+        {description && (
+          <div className="mt-1.5 text-[15px] leading-snug text-[#8F8F8F]">{description}</div>
+        )}
       </div>
-    </button>
+      <div className="flex h-11 w-11 flex-none items-center justify-center rounded-full bg-white/[0.04]">
+        <i className="bi bi-chevron-right text-xl text-[#8F8F8F]" />
+      </div>
+    </Link>
   );
 }
 
-const settingsRows: SettingsRowProps[] = [
-  { icon: 'bi bi-car-front', label: 'Mi vehículo · Ford Aveo Blanco' },
-  { icon: 'bi bi-file-text', label: 'Documentos · Aprobados' },
-  { icon: 'bi bi-bank', label: 'Cuenta para cobros' },
-  { icon: 'bi bi-bell', label: 'Notificaciones' },
-  { icon: 'bi bi-shield-check', label: 'Seguridad y privacidad' },
-];
-
 export function DriverProfilePage() {
   const navigate = useNavigate();
+  const { vehicles, isLoading, error } = useVehicles();
+
+  // Muestra el vehículo registrado del conductor. Si la API aún no existe
+  // (modo demo), se conserva el vehículo de demostración para no romper la vista.
+  const vehicle = vehicles[0] ?? (error ? DEFAULT_VEHICLE : null);
+  const vehicleDescription = isLoading
+    ? 'Cargando…'
+    : vehicle
+      ? `${vehicle.brand} ${vehicle.model} ${vehicle.color}`
+      : 'Sin vehículo registrado';
+
+  const settingsRows: SettingsRowProps[] = [
+    { icon: 'bi bi-car-front', label: 'Mi vehículo', description: vehicleDescription, to: '/conductor/perfil/vehiculo' },
+    { icon: 'bi bi-file-text', label: 'Documentos', description: 'Verificación y comprobantes', to: '/conductor/perfil/documentos' },
+    { icon: 'bi bi-bank', label: 'Cuenta para cobros', description: 'Banco y CLABE para recibir pagos', to: '/conductor/perfil/cuenta' },
+    { icon: 'bi bi-bell', label: 'Notificaciones', description: 'Avisos y preferencias de contacto', to: '/conductor/perfil/notificaciones' },
+    { icon: 'bi bi-shield-check', label: 'Seguridad', description: 'Contraseña, sesiones y privacidad', to: '/conductor/perfil/seguridad' },
+  ];
 
   const handleLogout = () => {
     navigate('/acceso');
@@ -44,11 +63,11 @@ export function DriverProfilePage() {
       {/* Header */}
       <PageHeader title="Perfil" subtitle="Tu información personal y configuración" />
 
-      {/* Two-column layout */}
+      {/* Two-column layout: ambas columnas se estiran a la misma altura */}
       <div className="mt-8 flex gap-[30px]">
         {/* Left — Profile card (40%) */}
-        <div className="flex w-[40%] flex-col items-center rounded-[24px] border border-[#353535] bg-[#1F1F1F] px-9 py-9">
-          <Avatar initial="J" size={104} />
+        <div className="flex w-[40%] flex-col items-center rounded-[24px] border border-[#353535] bg-[#222222] px-9 py-9">
+          <Avatar initial="J" size={104} variant="solid" />
 
           {/* Name */}
           <h2 className="mt-4 text-center text-[40px] font-extrabold leading-tight text-white">
@@ -61,7 +80,7 @@ export function DriverProfilePage() {
           </p>
 
           {/* Verified badge */}
-          <div className="mt-3 flex items-center gap-1.5 rounded-full bg-white px-[18px] py-2 text-sm font-bold text-black">
+          <div className="mt-3 flex items-center gap-1.5 rounded-full bg-[#F5F5F5] px-[18px] py-2 text-sm font-bold text-black">
             <i className="bi bi-shield-check" />
             Conductor verificado
           </div>
@@ -76,13 +95,10 @@ export function DriverProfilePage() {
 
         {/* Right — Settings panel (60%) */}
         <div className="flex w-[60%] flex-col">
-          <h2 className="text-[40px] font-extrabold leading-tight text-white">
-            Vehículo y cuenta
-          </h2>
-
-          <div className="mt-5 rounded-[22px] border border-[#353535] bg-[#1F1F1F]">
+          {/* El panel crece hasta igualar la altura de la tarjeta de perfil */}
+          <div className="flex flex-1 flex-col overflow-hidden rounded-[22px] border border-[#353535] bg-[#222222]">
             {settingsRows.map((row) => (
-              <SettingsRow key={row.label} icon={row.icon} label={row.label} />
+              <SettingsRow key={row.label} {...row} />
             ))}
           </div>
 
