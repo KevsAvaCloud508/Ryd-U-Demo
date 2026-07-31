@@ -81,15 +81,15 @@ export function DProfileAccountPage() {
               </button>
             </div>
             <div className="mt-4 flex flex-col gap-3">
-              <div className="flex items-center justify-between rounded-xl bg-surface2 px-4 py-3 text-sm">
+              <div className="flex items-center justify-between rounded-xl bg-surface2 px-4 py-3 text-[15px]">
                 <span className="text-muted">Titular</span>
                 <b className="text-white">{savedAccount.accountHolder}</b>
               </div>
-              <div className="flex items-center justify-between rounded-xl bg-surface2 px-4 py-3 text-sm">
+              <div className="flex items-center justify-between rounded-xl bg-surface2 px-4 py-3 text-[15px]">
                 <span className="text-muted">Banco</span>
                 <b className="text-white">{savedAccount.bank}</b>
               </div>
-              <div className="flex items-center justify-between rounded-xl bg-surface2 px-4 py-3 text-sm">
+              <div className="flex items-center justify-between rounded-xl bg-surface2 px-4 py-3 text-[15px]">
                 <span className="text-muted">CLABE</span>
                 <b className="font-mono tracking-wider text-white">{savedAccount.clabe}</b>
               </div>
@@ -107,7 +107,7 @@ export function DProfileAccountPage() {
           </p>
           <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-5 flex flex-col gap-4">
             <div>
-              <FieldLabel>Nombre del titular</FieldLabel>
+              <FieldLabel size="md">Nombre del titular</FieldLabel>
               <input
                 type="text"
                 placeholder="Nombre completo"
@@ -119,12 +119,12 @@ export function DProfileAccountPage() {
               )}
             </div>
             <div>
-              <FieldLabel>Banco</FieldLabel>
+              <FieldLabel size="md">Banco</FieldLabel>
               <input type="text" placeholder="Ej. BBVA, Santander…" className={inputClass} {...register('bank')} />
               {errors.bank && <p className="mt-1 text-xs text-red-400">{errors.bank.message}</p>}
             </div>
             <div>
-              <FieldLabel>CLABE interbancaria</FieldLabel>
+              <FieldLabel size="md">CLABE interbancaria</FieldLabel>
               <input
                 type="text"
                 inputMode="numeric"

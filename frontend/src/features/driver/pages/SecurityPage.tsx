@@ -118,7 +118,7 @@ export function DProfileSecurityPage() {
           </p>
           <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-5 flex flex-col gap-4">
             <div>
-              <FieldLabel>Contraseña actual</FieldLabel>
+              <FieldLabel size="md">Contraseña actual</FieldLabel>
               <input
                 type="password"
                 placeholder="••••••••"
@@ -130,7 +130,7 @@ export function DProfileSecurityPage() {
               )}
             </div>
             <div>
-              <FieldLabel>Nueva contraseña</FieldLabel>
+              <FieldLabel size="md">Nueva contraseña</FieldLabel>
               <input
                 type="password"
                 placeholder="Mínimo 8 caracteres"
@@ -140,7 +140,7 @@ export function DProfileSecurityPage() {
               {errors.newPassword && <p className="mt-1 text-xs text-red-400">{errors.newPassword.message}</p>}
             </div>
             <div>
-              <FieldLabel>Confirmar nueva contraseña</FieldLabel>
+              <FieldLabel size="md">Confirmar nueva contraseña</FieldLabel>
               <input
                 type="password"
                 placeholder="Repite la contraseña"

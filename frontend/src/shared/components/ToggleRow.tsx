@@ -10,8 +10,8 @@ export function ToggleRow({ label, description, checked, onChange }: ToggleRowPr
   return (
     <div className="flex items-center gap-4 px-6 py-4">
       <div className="min-w-0 flex-1">
-        <b className="text-[15px] text-white">{label}</b>
-        <div className="text-xs text-muted">{description}</div>
+        <b className="text-[17px] text-white">{label}</b>
+        <div className="text-sm leading-snug text-muted">{description}</div>
       </div>
       <button
         type="button"

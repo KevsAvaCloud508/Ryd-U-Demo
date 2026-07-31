@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type DragEvent } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Avatar, Button, Card, Pill } from '../../../shared/components';
@@ -26,7 +26,7 @@ export function VerificationPage() {
     );
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
+  const handleDragOver = (e: DragEvent) => {
     e.preventDefault();
     setIsDragging(true);
   };
@@ -35,7 +35,7 @@ export function VerificationPage() {
     setIsDragging(false);
   };
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = (e: DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
     // Lógica futura: procesar archivos

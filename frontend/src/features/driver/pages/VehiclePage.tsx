@@ -14,23 +14,9 @@ import { useToast } from '../../../shared/toast/ToastProvider';
 import { readStoredJSON, removeStoredJSON, writeStoredJSON } from '../../../shared/utils/local-storage';
 import { VehicleChangeModal } from '../../vehicles/components/VehicleChangeModal';
 import { VehicleFormModal } from '../../vehicles/components/VehicleFormModal';
+import { DEFAULT_VEHICLE } from '../../vehicles/demo-data';
 import { useVehicles } from '../../vehicles/hooks/useVehicles';
 import { vehicleSchema, type VehicleFormValues } from '../../vehicles/schemas/vehicle.schemas';
-import type { Vehicle } from '../../vehicles/types/vehicle.types';
-
-// Vehículo por defecto mientras no exista backend (demo local).
-// Los datos son inventados pero cumplen el esquema del formulario de solicitud de cambio.
-const DEFAULT_VEHICLE: Vehicle = {
-  id: 'local-demo',
-  userId: 'local-demo',
-  brand: 'Ford',
-  model: 'Aveo',
-  color: 'Blanco',
-  plates: 'HMR-452-A',
-  capacity: 5,
-  year: 2018,
-  isVerified: true,
-};
 
 interface DetailItemProps {
   label: string;
