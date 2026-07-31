@@ -1,4 +1,6 @@
 // Exportación de componentes
+export { ActionButtons } from './ActionButtons';
+export { Avatar } from './Avatar';
 export { Button } from './Button';
 export { BackButton } from './BackButton';
 export { SubPageLayout } from './SubPageLayout';
@@ -6,7 +8,8 @@ export { LoadingState } from './LoadingState';
 export { ErrorState } from './ErrorState';
 export { EmptyState } from './EmptyState';
 export { PageHeader } from './PageHeader';
-export { Avatar } from './Avatar';
+export { StatusBadge } from './StatusBadge';
+export { StatCard } from './StatCard';
 export { Card } from './Card';
 export { ConfirmModal } from './ConfirmModal';
 export { Modal } from './Modal';
@@ -16,5 +19,6 @@ export { ListRow, Divider } from './ListRow';
 export { ToggleRow } from './ToggleRow';
 export { MapPreview } from './MapPreview';
 export { NotificationDropdown } from './NotificationDropdown';
-export { MiniStat } from './MiniStat';
 export { FieldLabel } from './InputField';
+export { IconInput } from './IconInput';
+export { MiniStat } from './MiniStat';
