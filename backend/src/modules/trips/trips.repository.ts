@@ -1,6 +1,6 @@
-import { prisma } from '../../prisma/client';
+import { prisma } from '../../prisma/client.js';
 import type { Prisma } from '@prisma/client';
-import type { CreateTripInput, SearchTripInput, UpdateTripInput } from './trips.dto';
+import type { CreateTripInput, SearchTripInput, UpdateTripInput } from './trips.dto.js';
 
 export function findTripsByQuery(input: SearchTripInput) {
   const where: Prisma.TripWhereInput = {};

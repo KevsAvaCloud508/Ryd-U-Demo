@@ -23,5 +23,5 @@ RUN npm run build
 # 8. Exponemos el puerto de Express
 EXPOSE 3000
 
-# 9. Comando para arrancar el servidor compilado
-CMD ["npm", "start"]
+# 9. Inicializa la BD (esquema + seed) y arranca el servidor compilado
+CMD ["sh", "start.sh"]

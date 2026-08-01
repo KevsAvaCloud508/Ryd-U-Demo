@@ -1,9 +1,9 @@
 import type { Response } from 'express';
 
-import type { AuthenticatedRequest } from '../../shared/middlewares/auth.middleware';
-import { HttpError } from '../../shared/utils/http-error';
-import { createVehicleSchema, updateVehicleSchema } from './vehicle.dto';
-import { createMyVehicle, deleteMyVehicle, listMyVehicles, updateMyVehicle } from './vehicle.service';
+import type { AuthenticatedRequest } from '../../shared/middlewares/auth.middleware.js';
+import { HttpError } from '../../shared/utils/http-error.js';
+import { createVehicleSchema, updateVehicleSchema } from './vehicle.dto.js';
+import { createMyVehicle, deleteMyVehicle, listMyVehicles, updateMyVehicle } from './vehicle.service.js';
 
 function handleError(error: unknown, res: Response): void {
   if (error instanceof HttpError) {

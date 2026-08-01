@@ -4,6 +4,7 @@ import { DriverLayout } from '../features/driver/layout/DriverLayout';
 import { DriverDashboardPage } from '../features/driver/pages/DashboardPage';
 import { LoginPage } from '../features/auth/pages/LoginPage';
 import { SignupPage } from '../features/auth/pages/SignupPage';
+import { ForgotPasswordPage } from '../features/auth/pages/ForgotPasswordPage';
 import { LandingPage } from '../pages/LandingPage';
 import { DriverRequestsPage } from '../features/driver/pages/RequestsPage';
 import { DriverRoutesPage } from '../features/driver/pages/RoutesPage';
@@ -27,6 +28,7 @@ export const router = createBrowserRouter([
   { path: '/', element: <LandingPage /> },
   { path: '/acceso', element: <LoginPage /> },
   { path: '/registro', element: <SignupPage /> },
+  { path: '/olvidar-contrasena', element: <ForgotPasswordPage /> },
 
   // Rutas protegidas - Conductor
   {

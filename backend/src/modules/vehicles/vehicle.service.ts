@@ -1,4 +1,4 @@
-import { HttpError } from '../../shared/utils/http-error';
+import { HttpError } from '../../shared/utils/http-error.js';
 import {
   createVehicle,
   deleteVehicle,
@@ -6,8 +6,8 @@ import {
   findVehicleById,
   findVehiclesByUser,
   updateVehicle,
-} from './vehicle.repository';
-import type { CreateVehicleInput, UpdateVehicleInput } from './vehicle.dto';
+} from './vehicle.repository.js';
+import type { CreateVehicleInput, UpdateVehicleInput } from './vehicle.dto.js';
 
 export function listMyVehicles(userId: string) {
   return findVehiclesByUser(userId);

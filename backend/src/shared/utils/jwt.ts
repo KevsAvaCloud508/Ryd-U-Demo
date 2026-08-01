@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 
-import { env } from '../../config/env';
-import type { AppRole } from '../../modules/auth/auth.dto';
+import { env } from '../../config/env.js';
+import type { AppRole } from '../../modules/auth/auth.dto.js';
 
 export interface AuthTokenPayload {
   sub: string;

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
-import { requireAuth, requireRole } from '../../shared/middlewares/auth.middleware';
-import { asyncHandler } from '../../shared/utils/async-handler';
+import { requireAuth, requireRole } from '../../shared/middlewares/auth.middleware.js';
+import { asyncHandler } from '../../shared/utils/async-handler.js';
 import {
   createTripHandler,
   deleteTripHandler,
@@ -9,7 +9,7 @@ import {
   listMyTripsHandler,
   listTripsHandler,
   updateTripHandler,
-} from './trips.controller';
+} from './trips.controller.js';
 
 export const tripsRouter = Router();
 

@@ -1,6 +1,6 @@
 import multer from 'multer';
 
-import { makeStorage } from './upload';
+import { makeStorage } from './upload.js';
 
 // Filtro de archivos: solo permite imagenes (sin PDFs para fotos de perfil).
 const imageFilter: multer.Options['fileFilter'] = (_req, file, cb) => {
