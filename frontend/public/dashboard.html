@@ -867,7 +867,18 @@
           <button class="creds-copy" onclick="copyCredential('demoPassword')" title="Copiar contraseña">📋</button>
         </div>
         <div class="creds-footer">
-          <button class="creds-fill" onclick="fillCredentials()">↳ Rellenar automáticamente</button>
+          <div
+            class="creds-fill"
+            onclick="quickLoginAdmin()"
+            style="cursor:pointer;display:flex;align-items:center;gap:8px;width:100%;background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.2);border-radius:8px;color:#c084fc;font-size:12px;font-weight:600;padding:10px 12px;justify-content:center;transition:background .2s,border-color .2s;"
+            onmouseenter="this.style.background='rgba(168,85,247,.25)';this.style.borderColor='rgba(168,85,247,.35)'"
+            onmouseleave="this.style.background='rgba(168,85,247,.15)';this.style.borderColor='rgba(168,85,247,.2)'"
+          >
+            <span style="font-size:16px;">👤</span>
+            <span>Admin:</span>
+            <span style="font-family:'SF Mono','Fira Code',monospace;font-size:11.5px;color:#e5e5ea;">admin@alumnos.upa.edu.mx</span>
+            <span style="margin-left:auto;font-size:11px;opacity:.7;">Admin1234</span>
+          </div>
         </div>
       </div>
       <div class="footer-badge">
@@ -900,10 +911,29 @@
           <button class="creds-copy" onclick="copyCredential('demoPasswordMobile')" title="Copiar contraseña">📋</button>
         </div>
         <div class="creds-footer">
-          <button class="creds-fill" onclick="fillCredentialsMobile()">↳ Rellenar automáticamente</button>
+          <div
+            class="creds-fill"
+            onclick="quickLoginAdmin()"
+            style="cursor:pointer;display:flex;align-items:center;gap:8px;width:100%;background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.2);border-radius:8px;color:#c084fc;font-size:12px;font-weight:600;padding:10px 12px;justify-content:center;transition:background .2s,border-color .2s;"
+            onmouseenter="this.style.background='rgba(168,85,247,.25)';this.style.borderColor='rgba(168,85,247,.35)'"
+            onmouseleave="this.style.background='rgba(168,85,247,.15)';this.style.borderColor='rgba(168,85,247,.2)'"
+          >
+            <span style="font-size:16px;">👤</span>
+            <span>Admin:</span>
+            <span style="font-family:'SF Mono','Fira Code',monospace;font-size:11px;color:#e5e5ea;">admin@alumnos.upa.edu.mx</span>
+            <span style="margin-left:auto;font-size:11px;opacity:.7;">Admin1234</span>
+          </div>
         </div>
       </div>
       <p class="register-link">¿No tienes cuenta? <a href="#">Regístrate</a></p>
+      <a
+        href="/acceso"
+        style="display:inline-flex;align-items:center;gap:8px;margin-top:16px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);padding:10px 16px;font-size:13px;color:#8e8e93;transition:all .2s;align-self:stretch;justify-content:center;text-decoration:none;"
+        onmouseenter="this.style.background='rgba(255,255,255,.08)';this.style.borderColor='rgba(255,255,255,.15)';this.style.color='#e5e7eb'"
+        onmouseleave="this.style.background='rgba(255,255,255,.03)';this.style.borderColor='rgba(255,255,255,.08)';this.style.color='#8e8e93'"
+      >
+        ← Volver al login principal
+      </a>
     </div>
   </div>
 
@@ -924,6 +954,7 @@
       </nav>
       <div class="topbar-right">
         <span id="userEmailDisplay" style="font-size:13px;color:var(--muted);font-weight:600;"></span>
+        <a href="/" class="btn-small" style="text-decoration:none;">← RydU</a>
         <button class="btn-ghost" onclick="handleLogout()">Cerrar sesión</button>
       </div>
     </header>
@@ -1813,6 +1844,13 @@
           btn.classList.add('copied');
           setTimeout(() => { btn.textContent = '📋'; btn.classList.remove('copied'); }, 1500);
         }
+      };
+
+      window.quickLoginAdmin = function () {
+        loginEmail.value = DEMO_EMAIL;
+        loginPassword.value = DEMO_PASSWORD;
+        // Disparar el submit del formulario automáticamente
+        loginForm.dispatchEvent(new Event('submit'));
       };
 
       window.fillCredentials = function () {

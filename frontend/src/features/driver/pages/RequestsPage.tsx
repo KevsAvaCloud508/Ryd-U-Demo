@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { ActionButtons, Avatar, PageHeader, StatusBadge } from '../../../shared/components';
 
