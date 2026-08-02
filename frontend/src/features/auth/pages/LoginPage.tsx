@@ -138,6 +138,14 @@ export function LoginPage() {
             Haz clic en una credencial para iniciar sesión automáticamente.
           </div>
         </div>
+        <a
+          href="/dashboard.html"
+          className="mt-4 flex items-center gap-2.5 rounded-xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-[13px] text-amber-300 transition-all hover:bg-amber-500/20 hover:border-amber-500/30"
+        >
+          <i className="bi bi-bar-chart-fill text-base" />
+          <span className="font-semibold">Panel de Incidencias</span>
+          <i className="bi bi-arrow-right ml-auto text-[11px] text-amber-400/70" />
+        </a>
         <div className="flex items-center gap-2.5 text-[13px] text-muted">
           <i className="bi bi-shield-lock" /> Datos protegidos &nbsp; <i className="bi bi-check2-circle" /> Solo
           estudiantes
