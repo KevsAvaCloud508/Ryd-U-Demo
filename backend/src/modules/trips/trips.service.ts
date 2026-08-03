@@ -1,4 +1,4 @@
-import { HttpError } from '../../shared/utils/http-error';
+import { HttpError } from '../../shared/utils/http-error.js';
 import {
   createTrip,
   deleteTrip,
@@ -6,8 +6,8 @@ import {
   findTripsByDriver,
   findTripsByQuery,
   updateTrip,
-} from './trips.repository';
-import type { CreateTripInput, SearchTripInput, UpdateTripInput } from './trips.dto';
+} from './trips.repository.js';
+import type { CreateTripInput, SearchTripInput, UpdateTripInput } from './trips.dto.js';
 
 export function listAvailableTrips(input: SearchTripInput) {
   return findTripsByQuery(input);

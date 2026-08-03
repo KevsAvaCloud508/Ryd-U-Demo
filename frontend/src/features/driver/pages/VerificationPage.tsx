@@ -49,14 +49,14 @@ export function DriverVerificationPage() {
   };
 
   return (
-    <div className="px-10 pb-10">
+    <div className="px-4 pb-10 sm:px-6 lg:px-10">
       <PageHeader
         title="Verifica tu identidad y vehículo"
         subtitle="Sube fotos legibles, sin reflejos y con las esquinas visibles. Tu cuenta se activa tras la revisión."
         className="[&_p]:mt-2 [&_p]:leading-relaxed"
       />
 
-      <div className="mt-10 grid grid-cols-2 gap-x-[18px] gap-y-5">
+      <div className="mt-10 grid grid-cols-1 gap-x-[18px] gap-y-5 sm:grid-cols-2">
         {initialDocuments.map((doc, index) => (
           <DocumentCard
             key={doc.title}
@@ -73,7 +73,7 @@ export function DriverVerificationPage() {
       <div className="mt-10">
         <Button
           variant="ghost"
-          className={`rounded-full px-12 py-4 text-xl font-bold ${
+          className={`rounded-full px-8 py-4 text-lg font-bold sm:px-12 sm:text-xl ${
             isSubmitted
               ? 'bg-transparent text-[#8d8d8d] border border-[#4a4a4a] hover:border-white/50 hover:text-white'
               : allUploaded

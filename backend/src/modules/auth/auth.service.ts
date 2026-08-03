@@ -1,12 +1,12 @@
 import bcrypt from 'bcrypt';
 
-import { appRoleByRoleName, roleNameByAppRole } from '../../shared/utils/roles';
-import { signAuthToken } from '../../shared/utils/jwt';
-import { HttpError } from '../../shared/utils/http-error';
+import { appRoleByRoleName, roleNameByAppRole } from '../../shared/utils/roles.js';
+import { signAuthToken } from '../../shared/utils/jwt.js';
+import { HttpError } from '../../shared/utils/http-error.js';
 import crypto from 'crypto';
-import { createUser, findRoleByName, findUserByEmail, findUserById, updateUserPassword, updateUserProfile } from './auth.repository';
-import type { ForgotPasswordInput, LoginInput, RegisterInput, ResetPasswordInput, UpdateProfileInput } from './auth.dto';
-import type { AuthResult, AuthUser } from './auth.types';
+import { createUser, findRoleByName, findUserByEmail, findUserById, updateUserPassword, updateUserProfile } from './auth.repository.js';
+import type { ForgotPasswordInput, LoginInput, RegisterInput, ResetPasswordInput, UpdateProfileInput } from './auth.dto.js';
+import type { AuthResult, AuthUser } from './auth.types.js';
 
 const SALT_ROUNDS = 10;
 

@@ -1,11 +1,11 @@
-import { HttpError } from '../../shared/utils/http-error';
+import { HttpError } from '../../shared/utils/http-error.js';
 import {
   createRating,
   findRatingByTripAndRater,
   findRatingsByUser,
   getAverageRating,
-} from './ratings.repository';
-import type { CreateRatingInput } from './ratings.dto';
+} from './ratings.repository.js';
+import type { CreateRatingInput } from './ratings.dto.js';
 
 export async function submitRating(raterId: string, input: CreateRatingInput) {
   if (raterId === input.rateeId) {

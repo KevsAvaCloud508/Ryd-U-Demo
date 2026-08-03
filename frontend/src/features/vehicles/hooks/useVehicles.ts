@@ -1,6 +1,7 @@
 import { useCallback, useEffect } from 'react';
 
 import { useAppDispatch, useAppSelector } from '../../../shared/hooks/redux';
+import { isDemoSession } from '../../../shared/utils/session';
 import { addVehicle, editVehicle, fetchVehicles, removeVehicle } from '../store/vehicle.slice';
 import type { VehicleInput } from '../types/vehicle.types';
 
@@ -10,6 +11,8 @@ export function useVehicles() {
   const { items, status, error } = useAppSelector((state) => state.vehicles);
 
   useEffect(() => {
+    // En modo demo no hay API: no disparar llamadas con token mock.
+    if (isDemoSession()) return;
     dispatch(fetchVehicles());
   }, [dispatch]);
 

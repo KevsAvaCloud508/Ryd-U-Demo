@@ -96,12 +96,12 @@ export function LoginPage() {
   };
 
   return (
-    <div className="grid min-h-screen grid-cols-2 bg-black text-[#e5e7eb]">
-      <div className="flex flex-col border-r border-line bg-gradient-to-br from-surface to-black p-11">
+    <div className="grid min-h-screen grid-cols-1 bg-black text-[#e5e7eb] lg:grid-cols-2">
+      <div className="flex flex-col border-b border-line bg-gradient-to-br from-surface to-black p-6 sm:p-8 lg:border-b-0 lg:border-r lg:p-11">
         <Link to="/">
           <img className="h-6 w-auto" src="/logo.svg" alt="RydU" />
         </Link>
-        <div className="my-auto">
+        <div className="mt-4 mb-6 lg:my-auto">
           <h2 className="text-[30px] leading-tight text-white">
             Tu universidad,
             <br />a un viaje de distancia.
@@ -111,9 +111,9 @@ export function LoginPage() {
           </p>
         </div>
         {/* Demo credentials box */}
-        <div className="mb-6 rounded-xl border border-purple-500/25 bg-purple-500/10 p-4 backdrop-blur-sm">
+        <div className="mb-6 rounded-xl border border-purple-500/25 bg-purple-500/10 p-3.5 backdrop-blur-sm sm:p-4">
           <div className="mb-3 flex items-center gap-2 text-[13px] font-bold text-purple-300">
-            <i className="bi bi-flask" /> Credenciales de prueba
+            <span></span> Credenciales de prueba
           </div>
           <div className="space-y-2 text-[13px]">
             {CREDENTIALS.map((cred) => (
@@ -151,7 +151,7 @@ export function LoginPage() {
           estudiantes
         </div>
       </div>
-      <div className="flex flex-col justify-center px-[52px] py-11">
+      <div className="flex flex-col justify-center px-5 py-10 sm:px-10 lg:px-[52px]">
         <h2 className="text-2xl font-extrabold tracking-tight text-white">Iniciar sesión</h2>
         <p className="mt-1 text-sm text-muted">Bienvenido de nuevo</p>
 

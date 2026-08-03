@@ -1,4 +1,4 @@
-import { prisma } from '../../prisma/client';
+import { prisma } from '../../prisma/client.js';
 
 export function findNotificationsByUser(userId: string) {
   return prisma.notification.findMany({

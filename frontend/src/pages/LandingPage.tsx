@@ -6,17 +6,17 @@ export function LandingPage() {
   return (
     <div className="min-h-screen bg-black text-[#e5e7eb]">
       {/* Barra superior */}
-      <div className="flex h-16 items-center gap-6 border-b border-line px-7">
+      <div className="flex h-16 items-center gap-3 border-b border-line px-4 sm:gap-6 sm:px-7">
         <Link to="/">
           <img className="h-6 w-auto" src="/logo.svg" alt="RydU" />
         </Link>
-        <div className="flex gap-[22px] text-sm font-semibold text-muted">
+        <div className="hidden items-center gap-[22px] text-sm font-semibold text-muted md:flex">
           <a href="#inicio" className="text-white">Inicio</a>
           <a href="#como-funciona">Como funciona</a>
           <a href="#seguridad">Seguridad</a>
           <a href="#contacto">Contacto</a>
         </div>
-        <div className="ml-auto flex items-center gap-4">
+        <div className="ml-auto flex items-center gap-2 sm:gap-4">
           <Link to="/acceso">
             <Button variant="ghost" size="sm">
               Iniciar sesion
@@ -29,12 +29,12 @@ export function LandingPage() {
       </div>
 
       {/* Hero */}
-      <section id="inicio" className="grid items-center gap-[30px] px-12 py-14" style={{ gridTemplateColumns: '1.05fr .95fr' }}>
+      <section id="inicio" className="grid grid-cols-1 items-center gap-8 px-5 py-12 sm:px-8 lg:grid-cols-2 lg:gap-[30px] lg:px-12 lg:py-14">
         <div>
           <Pill variant="dark">
             <i className="bi bi-mortarboard-fill" /> Exclusivo para universitarios verificados
           </Pill>
-          <h1 className="my-4 text-[44px] leading-[1.1] tracking-tight text-white">
+          <h1 className="my-4 text-3xl leading-[1.15] tracking-tight text-white sm:text-4xl lg:text-[44px] lg:leading-[1.1]">
             Comparte el camino a la universidad, <span className="text-muted">seguro y economico</span>
           </h1>
           <p className="text-base leading-relaxed text-muted">
@@ -58,7 +58,7 @@ export function LandingPage() {
               </Button>
             </Link>
           </div>
-          <div className="mt-[26px] flex gap-[30px]">
+          <div className="mt-[26px] flex flex-wrap gap-6 sm:gap-[30px]">
             <div>
               <b className="text-[22px] text-white">-60%</b>
               <div className="text-xs text-muted">vs. taxi</div>
@@ -75,7 +75,7 @@ export function LandingPage() {
             </div>
           </div>
         </div>
-        <MapPreview className="h-80 rounded-[18px]">
+        <MapPreview className="h-64 rounded-[18px] sm:h-80">
           <Card className="absolute inset-x-4 bottom-4 p-3">
             <div className="flex items-center gap-3">
               <Avatar initial="J" />
@@ -94,14 +94,14 @@ export function LandingPage() {
       </section>
 
       {/* Como funciona */}
-      <section id="como-funciona" className="px-12 py-14 border-t border-line">
+      <section id="como-funciona" className="border-t border-line px-5 py-12 sm:px-8 sm:py-14 lg:px-12">
         <Pill variant="dark" className="mb-4">
           <i className="bi bi-gear" /> Pasos simples
         </Pill>
-        <h2 className="text-[28px] font-extrabold tracking-tight text-white mb-8">
+        <h2 className="mb-8 text-2xl font-extrabold tracking-tight text-white sm:text-[28px]">
           Como funciona RydU
         </h2>
-        <div className="grid grid-cols-4 gap-[18px]">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-[18px]">
           <Card className="p-[22px] text-center">
             <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-lg text-white">
               1
@@ -138,14 +138,14 @@ export function LandingPage() {
       </section>
 
       {/* Beneficios */}
-      <section id="seguridad" className="px-12 py-14 border-t border-line">
+      <section id="seguridad" className="border-t border-line px-5 py-12 sm:px-8 sm:py-14 lg:px-12">
         <Pill variant="dark" className="mb-4">
           <i className="bi bi-shield-lock" /> Seguridad primero
         </Pill>
-        <h2 className="text-[28px] font-extrabold tracking-tight text-white mb-8">
+        <h2 className="mb-8 text-2xl font-extrabold tracking-tight text-white sm:text-[28px]">
           Tu seguridad es nuestra prioridad
         </h2>
-        <div className="grid grid-cols-3 gap-[18px]">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-[18px]">
           <Card className="p-[22px]">
             <i className="bi bi-shield-check text-[26px]" />
             <h3 className="mb-1 mt-2 text-white">Comunidad verificada</h3>
@@ -162,7 +162,7 @@ export function LandingPage() {
             <p className="text-[13px] text-muted">Reporta cualquier problema y nuestro equipo lo revisara en menos de 24 horas.</p>
           </Card>
         </div>
-        <div className="mt-8 grid grid-cols-3 gap-[18px]">
+        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-[18px]">
           <Card className="p-[22px]">
             <i className="bi bi-piggy-bank text-[26px]" />
             <h3 className="mb-1 mt-2 text-white">Ahorra en cada viaje</h3>
@@ -182,14 +182,14 @@ export function LandingPage() {
       </section>
 
       {/* CTA */}
-      <section className="px-12 py-14 border-t border-line text-center">
-        <h2 className="text-[28px] font-extrabold tracking-tight text-white">
+      <section className="border-t border-line px-5 py-12 text-center sm:px-8 sm:py-14 lg:px-12">
+        <h2 className="text-2xl font-extrabold tracking-tight text-white sm:text-[28px]">
           Listo para compartir el camino?
         </h2>
         <p className="mt-2 text-sm text-muted">
           Unete a miles de universitarios que ya estan ahorrando y viajando seguro.
         </p>
-        <div className="mt-6 flex items-center justify-center gap-3">
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
           <Link to="/registro?role=STUDENT">
             <Button>
               <i className="bi bi-person-walking" /> Soy Pasajero
@@ -204,8 +204,8 @@ export function LandingPage() {
       </section>
 
       {/* Contacto + Footer */}
-      <footer id="contacto" className="border-t border-line px-12 py-10">
-        <div className="grid grid-cols-3 gap-[18px]">
+      <footer id="contacto" className="border-t border-line px-5 py-10 sm:px-8 lg:px-12">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-3 sm:gap-[18px]">
           <div>
             <Link to="/">
             <img className="h-6 w-auto mb-3" src="/logo.svg" alt="RydU" />
@@ -232,7 +232,7 @@ export function LandingPage() {
             </div>
           </div>
         </div>
-        <div className="mt-8 pt-6 border-t border-line flex items-center justify-between text-[12px] text-muted">
+        <div className="mt-8 flex flex-col items-center justify-between gap-3 border-t border-line pt-6 text-[12px] text-muted sm:flex-row">
           <span>2026 RydU. Todos los derechos reservados.</span>
           <div className="flex gap-4">
             <span>Terminos de uso</span>

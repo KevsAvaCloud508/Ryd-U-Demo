@@ -10,3 +10,13 @@ export const vehicleSchema = z.object({
 });
 
 export type VehicleFormValues = z.infer<typeof vehicleSchema>;
+
+// Valores por defecto del formulario, compartidos por los modales de registro y de cambio.
+export const emptyVehicleFormValues: VehicleFormValues = {
+  brand: '',
+  model: '',
+  color: '',
+  plates: '',
+  capacity: 4,
+  year: undefined,
+};

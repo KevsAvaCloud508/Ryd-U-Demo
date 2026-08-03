@@ -1,177 +1,211 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useRef, type ChangeEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Avatar, Button, Card, Navbar, Pill } from '../../../shared/components';
+import { NotificationBell } from '../../notifications/components/NotificationBell';
+import { useDocuments } from '../../documents/hooks/useDocuments';
+import { useToast } from '../../../shared/toast/ToastProvider';
+import { roleHomePath } from '../../../shared/routes/role-paths';
+import type { DocumentType } from '../../documents/types/documents.types';
 
-import { Avatar, Button, Card, Pill } from '../../../shared/components';
+const REQUIRED_DOCS: { type: DocumentType; label: string; icon: string; description: string }[] = [
+  { type: 'INE', label: 'Identificacion oficial (INE)', icon: 'bi-person-vcard', description: 'Frente y reverso' },
+  { type: 'CredencialEstudiante', label: 'Credencial de estudiante', icon: 'bi-mortarboard', description: 'Vigente' },
+];
 
-// Estado de cada documento requerido
-interface DocumentStatus {
-  id: string;
-  icon: string;
-  label: string;
-  hint: string;
-  uploaded: boolean;
-}
-
-// Vista P1 · Validación de documentos — verificación de identidad del pasajero
+// Vista P1 - Validacion de documentos del pasajero
 export function VerificationPage() {
-  const [documents, setDocuments] = useState<DocumentStatus[]>([
-    { id: 'ine', icon: 'bi-person-vcard', label: 'Identificación oficial (INE)', hint: 'Frente y reverso', uploaded: true },
-    { id: 'student-id', icon: 'bi-mortarboard', label: 'Credencial de estudiante', hint: 'Vigente', uploaded: false },
-  ]);
-  const [isDragging, setIsDragging] = useState(false);
+  const { documents, load, upload, approveAll } = useDocuments();
+  const { showToast } = useToast();
+  const navigate = useNavigate();
+  const fileInputRefs = useRef<Record<DocumentType, HTMLInputElement | null>>({
+    INE: null,
+    LicenciaConduccion: null,
+    CredencialEstudiante: null,
+    PolizaVigente: null,
+  });
 
-  const toggleDocument = (id: string) => {
-    setDocuments((prev) =>
-      prev.map((doc) => (doc.id === id ? { ...doc, uploaded: !doc.uploaded } : doc)),
-    );
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const isDocUploaded = (type: DocumentType): boolean => {
+    const doc = documents.find((d) => d.type === type);
+    return doc?.status === 'Pendiente' || doc?.status === 'Aceptado';
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
+  const getDocStatus = (type: DocumentType) => {
+    const doc = documents.find((d) => d.type === type);
+    return doc?.status ?? null;
   };
 
-  const handleDragLeave = () => {
-    setIsDragging(false);
+  const triggerFileInput = (type: DocumentType) => {
+    if (isDocUploaded(type)) return;
+    fileInputRefs.current[type]?.click();
   };
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    // Lógica futura: procesar archivos
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>, type: DocumentType) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('El archivo no puede superar 5MB.', 'error');
+      return;
+    }
+
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'application/pdf'];
+    if (!allowedTypes.includes(file.type)) {
+      showToast('Solo se permiten archivos JPG, PNG, WebP o PDF.', 'error');
+      return;
+    }
+
+    try {
+      await upload(type, file);
+      showToast('Documento subido correctamente.', 'success');
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Error al subir el documento.', 'error');
+    } finally {
+      e.target.value = '';
+    }
   };
 
-  const handleFileSelect = () => {
-    // Lógica futura: abrir selector de archivos
+  const handleSendForReview = async () => {
+    // En modo demo se marcan como Aceptados (acceso completo); en real es no-op.
+    try {
+      await approveAll();
+    } catch {
+      // Si la aprobación demo falla, el acceso aún se evalúa por los documentos subidos.
+    }
+    showToast('¡Verificación aprobada! Tus documentos fueron revisados y aprobados.', 'success');
+    navigate(roleHomePath.STUDENT);
   };
+
+  const handlePostpone = () => {
+    showToast('Verificacion pospuesta. Solo podras ver tu perfil hasta completar la verificacion.', 'info');
+    navigate('/pasajero/perfil');
+  };
+
+  const allDocsUploaded = REQUIRED_DOCS.every((doc) => isDocUploaded(doc.type));
+  const allDocsAccepted = REQUIRED_DOCS.every((doc) => getDocStatus(doc.type) === 'Aceptado');
+  const hasRejected = REQUIRED_DOCS.some((doc) => getDocStatus(doc.type) === 'Rechazado');
+  const uploadedCount = REQUIRED_DOCS.filter((doc) => isDocUploaded(doc.type)).length;
 
   return (
     <div className="min-h-screen bg-black text-[#e5e7eb]">
-      {/* Barra superior — responsiva */}
-      <div className="flex h-14 items-center gap-2 border-b border-line px-4 sm:h-16 sm:gap-4 sm:px-5 lg:gap-6 lg:px-7">
-        <Link to="/">
-          <img className="h-5 w-auto sm:h-6" src="/logo.svg" alt="RydU" />
-        </Link>
-        <div className="flex gap-3 text-sm font-semibold text-muted sm:gap-[22px]">
-          <a className="text-white">Verificación</a>
-        </div>
-        <div className="ml-auto flex items-center gap-2 sm:gap-4">
-          <Pill variant="dark" className="hidden sm:inline-flex">
-            <i className="bi bi-person-walking" /> Pasajero
-          </Pill>
-          {/* En mobile y tablet solo el icono del rol */}
-          <span className="inline-flex sm:hidden items-center gap-1 rounded-full bg-surface3 px-2.5 py-1 text-[11px] font-extrabold text-[#e5e5ea]">
-            <i className="bi bi-person-walking" />
-          </span>
-          <Avatar initial="E" size={32} className="sm:w-[38px] sm:h-[38px]" />
-        </div>
-      </div>
-
-      {/* Contenido principal — responsivo */}
-      <div className="mx-auto grid max-w-[1100px] grid-cols-1 items-start gap-6 px-5 py-8 sm:gap-8 sm:px-8 sm:py-10 lg:grid-cols-2 lg:items-center lg:gap-[30px] lg:px-12 lg:py-11">
-        {/* Columna izquierda — información */}
-        <div className="order-1 lg:order-none">
+      <Navbar
+        links={[{ label: 'Verificacion', href: '/pasajero/validacion', active: true }]}
+        right={
+          <>
+            <Pill variant="dark">
+              <i className="bi bi-person-walking" /> Pasajero
+            </Pill>
+            <NotificationBell />
+            <Avatar initial="E" />
+          </>
+        }
+      />
+      <div className="mx-auto grid max-w-[1100px] grid-cols-1 items-center gap-[30px] px-4 py-11 sm:px-8 lg:grid-cols-2 lg:px-12">
+        {/* Columna izquierda - Info */}
+        <div>
           <Pill variant="outline">
-            <i className="bi bi-hourglass-split" /> Cuenta en revisión
+            <i className="bi bi-hourglass-split" /> Cuenta en revision
           </Pill>
-          <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-white sm:mt-3.5 sm:text-[26px] lg:text-[28px]">
-            Verifica tu identidad
-          </h2>
-          <p className="mt-2 text-sm leading-relaxed text-muted sm:text-base">
-            Para proteger la comunidad, sube una fotografía legible de los siguientes
-            documentos. El pasajero <strong className="text-white">no</strong> requiere
-            documentos vehiculares.
+          <h2 className="my-3.5 text-2xl tracking-tight text-white sm:text-[28px]">Verifica tu identidad</h2>
+          <p className="text-[15px] leading-relaxed text-muted">
+            Para proteger la comunidad, sube una fotografia legible de los siguientes documentos. El pasajero{' '}
+            <b className="text-white">no</b> requiere documentos vehiculares.
           </p>
-          <div className="mt-4 flex flex-wrap gap-2 sm:mt-5 sm:gap-2.5">
-            <Pill variant="dark">
-              <i className="bi bi-shield-lock" /> Cifrado
-            </Pill>
-            <Pill variant="dark">
-              <i className="bi bi-eye-slash" /> Uso interno
-            </Pill>
-            <Pill variant="dark">
-              <i className="bi bi-clock" /> Revisión ~24h
-            </Pill>
+          <div className="mt-5 flex flex-wrap gap-2.5">
+            <Pill variant="dark"><i className="bi bi-shield-lock" /> Cifrado</Pill>
+            <Pill variant="dark"><i className="bi bi-eye-slash" /> Uso interno</Pill>
+            <Pill variant="dark"><i className="bi bi-clock" /> Revision ~24h</Pill>
           </div>
         </div>
 
-        {/* Columna derecha — documentos + upload */}
-        <div className="order-2 lg:order-none">
-          {/* Lista de documentos requeridos */}
-          {documents.map((doc) => (
-            <div
-              key={doc.id}
-              className="mb-2.5 flex items-center gap-3 rounded-[14px] border border-line bg-surface px-3.5 py-3 sm:gap-3 sm:px-4 sm:py-3.5 lg:mb-3"
-            >
-              <span className="grid h-9 w-9 flex-none place-items-center rounded-[10px] bg-surface2 text-base sm:h-[38px] sm:w-[38px] sm:text-[17px]">
-                <i className={`bi ${doc.icon}`} />
-              </span>
-              <div className="min-w-0 flex-1">
-                <b className="text-sm text-white">{doc.label}</b>
-                <div className="truncate text-xs text-muted">{doc.hint}</div>
-              </div>
-              {doc.uploaded ? (
-                <button
-                  type="button"
-                  onClick={() => toggleDocument(doc.id)}
-                  className="inline-flex shrink-0 items-center gap-1 rounded-full bg-white px-2.5 py-1 text-[11px] font-extrabold text-black transition-opacity hover:opacity-80 sm:px-3"
-                >
-                  <i className="bi bi-check2" /> <span className="hidden sm:inline">Subido</span>
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => toggleDocument(doc.id)}
-                  className="shrink-0 text-[20px] text-muted transition-colors hover:text-white"
-                >
-                  <i className="bi bi-plus-circle" />
-                </button>
-              )}
-            </div>
-          ))}
+        {/* Columna derecha - Documentos y acciones */}
+        <div>
+          {/* Documentos requeridos */}
+          {REQUIRED_DOCS.map(({ type, label, icon, description }) => {
+            const uploaded = isDocUploaded(type);
+            const status = getDocStatus(type);
 
-          {/* Zona de arrastrar y soltar */}
-          <Card
-            dashed
-            role="button"
-            tabIndex={0}
-            className={`cursor-pointer border-2 p-5 text-center transition-all duration-200 sm:p-[22px] lg:p-[26px] ${
-              isDragging
-                ? 'border-white bg-surface2'
-                : 'border-line bg-transparent hover:border-white/30'
-            }`}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            onClick={handleFileSelect}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                handleFileSelect();
-              }
-            }}
-          >
-            <i className="bi bi-cloud-arrow-up text-2xl text-white sm:text-[26px] lg:text-[28px]" />
+            return (
+              <div key={type} className={`mb-3 cursor-pointer ${uploaded ? '' : 'hover:opacity-90'}`} onClick={() => triggerFileInput(type)}>
+                <Card className={`p-4 ${uploaded ? 'border-green-400/30' : ''}`}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${uploaded ? 'bg-green-400/10' : 'bg-surface'}`}>
+                        <i className={`bi ${icon} ${uploaded ? 'text-green-400' : 'text-muted'}`} />
+                      </div>
+                      <div>
+                        <b className="text-[13px] text-white">{label}</b>
+                        <div className="text-[11px] text-muted">{description}</div>
+                      </div>
+                    </div>
+                    {uploaded ? (
+                      <span className="flex items-center gap-1.5 text-xs text-green-400">
+                        <i className="bi bi-check-circle-fill" />
+                        {status === 'Aceptado' ? 'Aceptado' : 'Enviado'}
+                      </span>
+                    ) : (
+                      <i className="bi bi-cloud-arrow-up text-muted" />
+                    )}
+                  </div>
+                </Card>
+                <input
+                  ref={(el) => { fileInputRefs.current[type] = el; }}
+                  type="file"
+                  accept="image/jpeg,image/jpg,image/png,image/webp,application/pdf"
+                  onChange={(e) => handleFileChange(e, type)}
+                  className="hidden"
+                />
+              </div>
+            );
+          })}
+
+          {/* Card informativa */}
+          <Card dashed className="mb-4 p-5 text-center">
+            <i className="bi bi-cloud-arrow-up text-[28px] text-white" />
             <div className="mt-2 text-[13px] text-muted">
-              Arrastra tus archivos aquí o{' '}
-              <span className="font-bold text-white">selecciona</span>
+              Haz clic en un documento para seleccionar el archivo
             </div>
+            <div className="mt-1 text-[11px] text-muted">Maximo 5MB - JPG, PNG, WebP, PDF</div>
           </Card>
 
-          {/* Botón de envío — oculto en mobile, visible en desktop */}
-          <Button fullWidth className="mt-3.5 hidden lg:flex sm:mt-4">
-            Enviar para revisión <i className="bi bi-arrow-right" />
-          </Button>
+          {/* Acciones */}
+          {allDocsAccepted ? (
+            <Card className="p-5 text-center">
+              <i className="bi bi-check-circle-fill text-[28px] text-green-400" />
+              <p className="mt-2 text-sm text-white font-semibold">Documentos verificados</p>
+              <p className="mt-1 text-xs text-muted">Ya puedes usar la plataforma completa.</p>
+              <Button className="mt-4" onClick={() => navigate('/pasajero/inicio')}>
+                <i className="bi bi-house mr-2" /> Ir al inicio
+              </Button>
+            </Card>
+          ) : hasRejected ? (
+            <Card className="p-5 text-center border-red-400/30">
+              <i className="bi bi-exclamation-triangle text-[28px] text-red-400" />
+              <p className="mt-2 text-sm text-white font-semibold">Documentos rechazados</p>
+              <p className="mt-1 text-xs text-muted">Sube los documentos nuevamente.</p>
+            </Card>
+          ) : (
+            <div className="space-y-3">
+              <Button fullWidth disabled={!allDocsUploaded} onClick={() => void handleSendForReview()}>
+                <i className="bi bi-send mr-2" />
+                {allDocsUploaded ? 'Enviar para revision' : `Sube ${REQUIRED_DOCS.length - uploadedCount} documento(s) mas`}
+              </Button>
+              <Button fullWidth variant="ghost" onClick={handlePostpone}>
+                <i className="bi bi-calendar-x mr-2" /> Posponer verificacion
+              </Button>
+              {!allDocsUploaded && (
+                <p className="text-center text-[11px] text-muted">
+                  La verificacion es necesaria para usar todos los servicios.
+                  Mientras tanto, solo podras ver tu perfil.
+                </p>
+              )}
+            </div>
+          )}
         </div>
       </div>
-
-      {/* Barra inferior fija en mobile con CTA rápida */}
-      <div className="fixed inset-x-0 bottom-0 border-t border-line bg-black/95 p-4 backdrop-blur-sm lg:hidden">
-        <Button fullWidth>
-          Enviar para revisión <i className="bi bi-arrow-right" />
-        </Button>
-      </div>
-      <div className="lg:hidden h-[76px]" />
     </div>
   );
 }

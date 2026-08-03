@@ -1,12 +1,12 @@
-import { HttpError } from '../../shared/utils/http-error';
+import { HttpError } from '../../shared/utils/http-error.js';
 import {
   createRoute,
   deleteRoute,
   findRouteById,
   findRoutesByQuery,
   updateRoute,
-} from './routes.repository';
-import type { CreateRouteInput, SearchRouteInput, UpdateRouteInput } from './routes.dto';
+} from './routes.repository.js';
+import type { CreateRouteInput, SearchRouteInput, UpdateRouteInput } from './routes.dto.js';
 
 export function listRoutes(input: SearchRouteInput) {
   return findRoutesByQuery(input.origin, input.destination, input.query);

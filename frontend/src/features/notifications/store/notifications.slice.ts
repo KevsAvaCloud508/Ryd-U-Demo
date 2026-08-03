@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import { extractErrorMessage } from '../../../shared/utils/error-message';
+import { isDemoMode } from '../../../shared/utils/token-storage';
 import { fetchNotifications, fetchUnreadNotifications, markAllAsRead, markAsRead } from '../services/notifications.service';
 import type { Notification } from '../types/notifications.types';
 
@@ -19,6 +20,8 @@ const initialState: NotificationsState = {
 };
 
 export const loadNotifications = createAsyncThunk('notifications/loadAll', async (_: void, { rejectWithValue }) => {
+  // En modo demo el backend rechaza el token mock; no hay notificaciones previas.
+  if (isDemoMode()) return [];
   try {
     return await fetchNotifications();
   } catch (error) {
@@ -27,6 +30,7 @@ export const loadNotifications = createAsyncThunk('notifications/loadAll', async
 });
 
 export const loadUnreadCount = createAsyncThunk('notifications/unreadCount', async (_: void, { rejectWithValue }) => {
+  if (isDemoMode()) return [];
   try {
     return await fetchUnreadNotifications();
   } catch (error) {
@@ -35,6 +39,18 @@ export const loadUnreadCount = createAsyncThunk('notifications/unreadCount', asy
 });
 
 export const readNotification = createAsyncThunk('notifications/read', async (id: string, { rejectWithValue }) => {
+  if (isDemoMode()) {
+    return {
+      id,
+      userId: 'demo-user',
+      isRead: true,
+      type: 'Documento',
+      title: '',
+      message: '',
+      createdAt: new Date().toISOString(),
+      requestedAt: new Date().toISOString(),
+    } as Notification;
+  }
   try {
     return await markAsRead(id);
   } catch (error) {
@@ -43,6 +59,7 @@ export const readNotification = createAsyncThunk('notifications/read', async (id
 });
 
 export const readAll = createAsyncThunk('notifications/readAll', async (_: void, { rejectWithValue }) => {
+  if (isDemoMode()) return;
   try {
     await markAllAsRead();
   } catch (error) {

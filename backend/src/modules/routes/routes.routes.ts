@@ -1,14 +1,14 @@
 import { Router } from 'express';
 
-import { requireAuth } from '../../shared/middlewares/auth.middleware';
-import { asyncHandler } from '../../shared/utils/async-handler';
+import { requireAuth } from '../../shared/middlewares/auth.middleware.js';
+import { asyncHandler } from '../../shared/utils/async-handler.js';
 import {
   createRouteHandler,
   deleteRouteHandler,
   getRouteHandler,
   listRoutesHandler,
   updateRouteHandler,
-} from './routes.controller';
+} from './routes.controller.js';
 
 export const routesRouter = Router();
 
