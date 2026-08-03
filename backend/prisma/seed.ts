@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 const SALT_ROUNDS = 10;
 
 async function main() {
-  console.log('🌱 Seeding database …');
+  console.log('Seeding database …');
 
   // ── 1. Crear roles ──────────────────────────────────────────
   const roles = [
@@ -22,7 +22,7 @@ async function main() {
       create: { id: role.id, name: role.name },
     });
   }
-  console.log('  ✅ Roles creados: Pasajero, Conductor, Administrador');
+  console.log('  Roles creados: Pasajero, Conductor, Administrador');
 
   // ── 2. Crear usuario admin ──────────────────────────────────
   const adminEmail = 'admin@alumnos.upa.edu.mx';
@@ -44,7 +44,7 @@ async function main() {
       isActive: true,
     },
   });
-  console.log(`  ✅ Admin creado: ${adminEmail} / ${adminPassword}`);
+  console.log(`  Admin creado: ${adminEmail} / ${adminPassword}`);
 
   // ── 3. Asignar rol Administrador al admin ───────────────────
   await prisma.userRole.upsert({
@@ -52,7 +52,7 @@ async function main() {
     update: {},
     create: { userId: admin.id, roleId: 3 },
   });
-  console.log('  ✅ Rol Administrador asignado al admin');
+  console.log('  Rol Administrador asignado al admin');
 
   // ── 4. Crear usuario de prueba — Conductor ──────────────
   const driverEmail = 'conductor@alumnos.upa.edu.mx';
@@ -74,7 +74,7 @@ async function main() {
       isActive: true,
     },
   });
-  console.log(`  ✅ Conductor creado: ${driverEmail} / ${driverPassword}`);
+  console.log(`  Conductor creado: ${driverEmail} / ${driverPassword}`);
 
   // ── 5. Asignar rol Conductor ─────────────────────────────
   await prisma.userRole.upsert({
@@ -82,7 +82,7 @@ async function main() {
     update: {},
     create: { userId: driver.id, roleId: 2 },
   });
-  console.log('  ✅ Rol Conductor asignado');
+  console.log('  Rol Conductor asignado');
 
   // ── 6. Crear usuario de prueba — Pasajero ────────────────
   const passengerEmail = 'pasajero@alumnos.upa.edu.mx';
@@ -104,7 +104,7 @@ async function main() {
       isActive: true,
     },
   });
-  console.log(`  ✅ Pasajero creado: ${passengerEmail} / ${passengerPassword}`);
+  console.log(`  Pasajero creado: ${passengerEmail} / ${passengerPassword}`);
 
   // ── 7. Asignar rol Pasajero ──────────────────────────────
   await prisma.userRole.upsert({
@@ -112,14 +112,14 @@ async function main() {
     update: {},
     create: { userId: passenger.id, roleId: 1 },
   });
-  console.log('  ✅ Rol Pasajero asignado');
+  console.log('  Rol Pasajero asignado');
 
-  console.log('🌱 Seed completado.');
+  console.log('Seed completado.');
 }
 
 main()
   .catch((e) => {
-    console.error('❌ Error en seed:', e);
+    console.error('Error en seed:', e);
     process.exit(1);
   })
   .finally(async () => {

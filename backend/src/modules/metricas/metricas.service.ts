@@ -47,12 +47,12 @@ const SEED_USUARIOS = [
 ];
 
 const SEED_ACTIVIDAD = [
-  { text: '<strong>Ana López</strong> creó la incidencia #5', time: 'Hace 15 min', icon: '📝' },
-  { text: '<strong>Carlos Vega</strong> cambió estado de #2 a "En proceso"', time: 'Hace 1 hora', icon: '🔄' },
-  { text: '<strong>María García</strong> resolvió la incidencia #8', time: 'Hace 2 horas', icon: '✅' },
-  { text: '<strong>Pedro Rojas</strong> actualizó la incidencia #7', time: 'Hace 3 horas', icon: '🔧' },
-  { text: '<strong>José Hernández</strong> registró nueva incidencia #11', time: 'Hace 5 horas', icon: '📌' },
-  { text: '<strong>Sofía Torres</strong> cerró la incidencia #4', time: 'Hace 6 horas', icon: '💻' },
+  { text: '<strong>Ana López</strong> creó la incidencia #5', time: 'Hace 15 min', icon: 'bi-pencil' },
+  { text: '<strong>Carlos Vega</strong> cambió estado de #2 a "En proceso"', time: 'Hace 1 hora', icon: 'bi-repeat' },
+  { text: '<strong>María García</strong> resolvió la incidencia #8', time: 'Hace 2 horas', icon: 'bi-check' },
+  { text: '<strong>Pedro Rojas</strong> actualizó la incidencia #7', time: 'Hace 3 horas', icon: 'bi-tools' },
+  { text: '<strong>José Hernández</strong> registró nueva incidencia #11', time: 'Hace 5 horas', icon: 'bi-pin' },
+  { text: '<strong>Sofía Torres</strong> cerró la incidencia #4', time: 'Hace 6 horas', icon: 'bi-laptop' },
 ];
 
 // ──────────────────────────────────────────────
@@ -177,7 +177,7 @@ export async function createIncidencia(data: {
     data: {
       text: `<strong>Sistema</strong> creó la incidencia #${newId}`,
       time: 'Ahora',
-      icon: '📝',
+      icon: 'bi-pencil',
     },
   });
 
@@ -200,7 +200,7 @@ export async function updateIncidencia(
     data: {
       text: `<strong>Sistema</strong> actualizó la incidencia #${id}`,
       time: 'Ahora',
-      icon: '🔧',
+      icon: 'bi-tools',
     },
   });
 
@@ -220,7 +220,7 @@ export async function avanzarEstado(id: number) {
     data: {
       text: `<strong>Sistema</strong> cambió estado de #${id} a "En proceso"`,
       time: 'Ahora',
-      icon: '🔄',
+      icon: 'bi-repeat',
     },
   });
 
@@ -240,7 +240,7 @@ export async function resolverIncidencia(id: number) {
     data: {
       text: `<strong>Sistema</strong> resolvió la incidencia #${id}`,
       time: 'Ahora',
-      icon: '✅',
+      icon: 'bi-check',
     },
   });
 
@@ -257,7 +257,7 @@ export async function deleteIncidencia(id: number) {
     data: {
       text: `<strong>Sistema</strong> eliminó la incidencia #${id}`,
       time: 'Ahora',
-      icon: '🗑️',
+      icon: 'bi-trash',
     },
   });
 
@@ -320,10 +320,10 @@ export async function getReportes() {
     tiempoPromedio: avgTime,
     satisfaccion: '94%',
     tendencias: {
-      total: '📈 +12% respecto al mes anterior',
-      resueltas: '📈 +8% respecto al mes anterior',
-      tiempo: '📉 -3h respecto al mes anterior',
-      satisfaccion: '📈 +2% respecto al mes anterior',
+      total: '<i class="bi bi-arrow-up-right"></i> +12% respecto al mes anterior',
+      resueltas: '<i class="bi bi-arrow-up-right"></i> +8% respecto al mes anterior',
+      tiempo: '<i class="bi bi-arrow-down-right"></i> -3h respecto al mes anterior',
+      satisfaccion: '<i class="bi bi-arrow-up-right"></i> +2% respecto al mes anterior',
     },
     items: all.filter(i => i.estado === 'Resuelta').slice(0, 10),
   };

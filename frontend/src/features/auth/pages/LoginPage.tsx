@@ -113,7 +113,7 @@ export function LoginPage() {
         {/* Demo credentials box */}
         <div className="mb-6 rounded-xl border border-purple-500/25 bg-purple-500/10 p-4 backdrop-blur-sm">
           <div className="mb-3 flex items-center gap-2 text-[13px] font-bold text-purple-300">
-            <span>🧪</span> Credenciales de prueba
+            <i className="bi bi-flask" /> Credenciales de prueba
           </div>
           <div className="space-y-2 text-[13px]">
             {CREDENTIALS.map((cred) => (
