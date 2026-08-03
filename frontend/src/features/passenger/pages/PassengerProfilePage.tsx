@@ -55,7 +55,7 @@ export function PassengerProfilePage() {
           </>
         }
       />
-      <div className="grid gap-6 px-12 py-8" style={{ gridTemplateColumns: '340px 1fr' }}>
+      <div className="grid grid-cols-1 gap-6 px-4 py-8 sm:px-8 lg:grid-cols-[340px_1fr] lg:px-12">
         <Card className="h-fit p-7 text-center">
           <Avatar initial={user?.firstName?.[0] ?? 'U'} size={84} photoUrl={user?.photoUrl} className="mx-auto text-3xl" onClick={() => setEditModalOpen(true)} />
           <b className="mt-3.5 block text-xl text-white">{user?.fullName ?? 'Usuario'}</b>
@@ -63,7 +63,7 @@ export function PassengerProfilePage() {
           <Pill variant="dark" className="mt-3">
             <i className="bi bi-patch-check-fill" /> Estudiante verificado
           </Pill>
-          <div className="mt-5 flex gap-2.5">
+          <div className="mt-5 grid grid-cols-3 gap-2.5">
             <Card className="flex-1 p-3">
               <b className="text-lg text-white">{rating}</b>
               <div className="text-[11px] text-muted">Rating</div>

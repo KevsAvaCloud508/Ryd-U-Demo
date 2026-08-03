@@ -8,7 +8,8 @@ interface DataTableProps {
 // Tabla simple usada en historiales (equivalente a table/th/td del mockup)
 export function DataTable({ columns, rows }: DataTableProps) {
   return (
-    <table className="w-full border-collapse text-sm">
+    <div className="overflow-x-auto">
+    <table className="w-full min-w-[640px] border-collapse text-sm">
       <thead>
         <tr>
           {columns.map((col) => (
@@ -40,5 +41,6 @@ export function DataTable({ columns, rows }: DataTableProps) {
         ))}
       </tbody>
     </table>
+    </div>
   );
 }
