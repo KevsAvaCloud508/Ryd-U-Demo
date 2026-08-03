@@ -4,8 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard — RydU</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🚗</text></svg>" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'><path d='M4 2h8l1.5 3H14a2 2 0 0 1 2 2v3.5a2.5 2.5 0 0 1-1 2V14a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H4v1a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-1.5a2.5 2.5 0 0 1-1-2V7a2 2 0 0 1 2-2h.5L4 2Zm10 5H2v2h12V7Zm-8.5 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm5 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z'/></svg>" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
   <style>
     /* =============================================================
        Design System · RydU Dark Theme
@@ -871,16 +872,16 @@
         <p>Inicia sesión con tu correo institucional para acceder al panel de métricas.</p>
       </div>
       <div class="creds-box">
-        <div class="creds-header"><span>🧪</span> Credenciales de prueba</div>
+        <div class="creds-header"><i class="bi bi-flask"></i> Credenciales de prueba</div>
         <div class="creds-row">
           <span class="creds-label">Correo:</span>
           <span class="creds-value" id="demoEmail">admin@alumnos.upa.edu.mx</span>
-          <button class="creds-copy" onclick="copyCredential('demoEmail')" title="Copiar correo">📋</button>
+          <button class="creds-copy" onclick="copyCredential('demoEmail')" title="Copiar correo"><i class="bi bi-clipboard"></i></button>
         </div>
         <div class="creds-row">
           <span class="creds-label">Contraseña:</span>
           <span class="creds-value" id="demoPassword">Admin1234</span>
-          <button class="creds-copy" onclick="copyCredential('demoPassword')" title="Copiar contraseña">📋</button>
+          <button class="creds-copy" onclick="copyCredential('demoPassword')" title="Copiar contraseña"><i class="bi bi-clipboard"></i></button>
         </div>
         <div class="creds-footer">
           <div
@@ -890,7 +891,7 @@
             onmouseenter="this.style.background='rgba(168,85,247,.25)';this.style.borderColor='rgba(168,85,247,.35)'"
             onmouseleave="this.style.background='rgba(168,85,247,.15)';this.style.borderColor='rgba(168,85,247,.2)'"
           >
-            <span style="font-size:16px;">👤</span>
+            <i class="bi bi-person" style="font-size:16px;"></i>
             <span>Admin:</span>
             <span style="font-family:'SF Mono','Fira Code',monospace;font-size:11.5px;color:#e5e5ea;">admin@alumnos.upa.edu.mx</span>
             <span style="margin-left:auto;font-size:11px;opacity:.7;">Admin1234</span>
@@ -898,7 +899,7 @@
         </div>
       </div>
       <div class="footer-badge">
-        <span>🔒</span> Datos protegidos &nbsp; <span>✓</span> Solo personal autorizado
+        <i class="bi bi-shield-lock"></i> Datos protegidos &nbsp; <i class="bi bi-check2-circle"></i> Solo personal autorizado
       </div>
     </div>
     <div class="login-form">
@@ -915,16 +916,16 @@
         <button type="submit" class="btn-primary" id="loginBtn">Entrar</button>
       </form>
       <div class="creds-box creds-box-mobile">
-        <div class="creds-header"><span>🧪</span> Credenciales de prueba</div>
+        <div class="creds-header"><i class="bi bi-flask"></i> Credenciales de prueba</div>
         <div class="creds-row">
           <span class="creds-label">Correo:</span>
           <span class="creds-value" id="demoEmailMobile">admin@alumnos.upa.edu.mx</span>
-          <button class="creds-copy" onclick="copyCredential('demoEmailMobile')" title="Copiar correo">📋</button>
+          <button class="creds-copy" onclick="copyCredential('demoEmailMobile')" title="Copiar correo"><i class="bi bi-clipboard"></i></button>
         </div>
         <div class="creds-row">
           <span class="creds-label">Contraseña:</span>
           <span class="creds-value" id="demoPasswordMobile">Admin1234</span>
-          <button class="creds-copy" onclick="copyCredential('demoPasswordMobile')" title="Copiar contraseña">📋</button>
+          <button class="creds-copy" onclick="copyCredential('demoPasswordMobile')" title="Copiar contraseña"><i class="bi bi-clipboard"></i></button>
         </div>
         <div class="creds-footer">
           <div
@@ -934,7 +935,7 @@
             onmouseenter="this.style.background='rgba(168,85,247,.25)';this.style.borderColor='rgba(168,85,247,.35)'"
             onmouseleave="this.style.background='rgba(168,85,247,.15)';this.style.borderColor='rgba(168,85,247,.2)'"
           >
-            <span style="font-size:16px;">👤</span>
+            <i class="bi bi-person" style="font-size:16px;"></i>
             <span>Admin:</span>
             <span style="font-family:'SF Mono','Fira Code',monospace;font-size:11px;color:#e5e5ea;">admin@alumnos.upa.edu.mx</span>
             <span style="margin-left:auto;font-size:11px;opacity:.7;">Admin1234</span>
@@ -958,9 +959,7 @@
        ============================================================ -->
   <div id="dashboardScreen" class="dashboard-wrapper hidden">
     <header class="topbar">
-      <svg class="logo" viewBox="0 0 100 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <text x="0" y="20" font-size="20" font-weight="800" fill="white" letter-spacing="1">RydU</text>
-      </svg>
+      <img class="logo" src="/logo.svg" alt="RydU" />
       <nav class="nav-links" id="navLinks">
         <a data-page="dashboard" class="active">Dashboard</a>
         <a data-page="incidencias">Incidencias</a>
@@ -988,12 +987,12 @@
           <span class="last-update" id="lastUpdateText">Cargando…</span>
         </div>
         <div class="stats-grid">
-          <div class="stat-card"><div class="stat-icon icon-total">📊</div><div class="stat-label">Total de incidencias</div><div class="stat-value" id="statTotal">—</div></div>
-          <div class="stat-card"><div class="stat-icon icon-pending">⏳</div><div class="stat-label">Pendientes</div><div class="stat-value" id="statPending">—</div></div>
-          <div class="stat-card"><div class="stat-icon icon-progress">🔄</div><div class="stat-label">En proceso</div><div class="stat-value" id="statInProgress">—</div></div>
-          <div class="stat-card"><div class="stat-icon icon-done">✅</div><div class="stat-label">Resueltas</div><div class="stat-value" id="statResolved">—</div></div>
-          <div class="stat-card"><div class="stat-icon icon-critical">🚨</div><div class="stat-label">Críticas</div><div class="stat-value" id="statCritical">—</div></div>
-          <div class="stat-card"><div class="stat-icon icon-clock">⏱️</div><div class="stat-label">Resolución promedio</div><div class="stat-value" id="statAvgResolution">—</div><div class="stat-sub">horas</div></div>
+          <div class="stat-card"><div class="stat-icon icon-total"><i class="bi bi-bar-chart-fill"></i></div><div class="stat-label">Total de incidencias</div><div class="stat-value" id="statTotal">—</div></div>
+          <div class="stat-card"><div class="stat-icon icon-pending"><i class="bi bi-hourglass-split"></i></div><div class="stat-label">Pendientes</div><div class="stat-value" id="statPending">—</div></div>
+          <div class="stat-card"><div class="stat-icon icon-progress"><i class="bi bi-arrow-repeat"></i></div><div class="stat-label">En proceso</div><div class="stat-value" id="statInProgress">—</div></div>
+          <div class="stat-card"><div class="stat-icon icon-done"><i class="bi bi-check-circle-fill"></i></div><div class="stat-label">Resueltas</div><div class="stat-value" id="statResolved">—</div></div>
+          <div class="stat-card"><div class="stat-icon icon-critical"><i class="bi bi-exclamation-octagon-fill"></i></div><div class="stat-label">Críticas</div><div class="stat-value" id="statCritical">—</div></div>
+          <div class="stat-card"><div class="stat-icon icon-clock"><i class="bi bi-stopwatch"></i></div><div class="stat-label">Resolución promedio</div><div class="stat-value" id="statAvgResolution">—</div><div class="stat-sub">horas</div></div>
         </div>
         <div class="charts-grid">
           <div class="chart-card doughnut"><div class="chart-title"><span class="dot" style="background:#a78bfa;"></span>Distribución por estado</div><div class="chart-container"><canvas id="chartEstado"></canvas></div></div>
@@ -1050,7 +1049,7 @@
             <tbody id="incTableBody"></tbody>
           </table>
           <div id="incEmpty" class="data-table-empty hidden">
-            <div class="empty-icon">🔍</div>
+            <div class="empty-icon"><i class="bi bi-search"></i></div>
             <p>No se encontraron incidencias</p>
           </div>
           <div class="table-pagination" id="incPagination">
@@ -1099,7 +1098,7 @@
             <tbody id="userTableBody"></tbody>
           </table>
           <div id="userEmpty" class="data-table-empty hidden">
-            <div class="empty-icon">👤</div>
+            <div class="empty-icon"><i class="bi bi-person"></i></div>
             <p>No se encontraron usuarios</p>
           </div>
         </div>
@@ -1208,9 +1207,9 @@
         </div>
 
         <div class="reports-actions">
-          <button class="btn-white-sm" onclick="exportCSV()">📥 Exportar CSV</button>
-          <button class="btn-ghost" onclick="window.print()">🖨️ Imprimir</button>
-          <button class="btn-ghost" onclick="refreshReports()">🔄 Actualizar</button>
+          <button class="btn-white-sm" onclick="exportCSV()"><i class="bi bi-download"></i> Exportar CSV</button>
+          <button class="btn-ghost" onclick="window.print()"><i class="bi bi-printer"></i> Imprimir</button>
+          <button class="btn-ghost" onclick="refreshReports()"><i class="bi bi-arrow-repeat"></i> Actualizar</button>
         </div>
 
         <div class="reports-grid" id="reportsGrid">
@@ -1251,13 +1250,13 @@
               <tbody id="reportTableBody"></tbody>
             </table>
             <div id="reportEmpty" class="data-table-empty hidden">
-              <div class="empty-icon">📊</div>
+              <div class="empty-icon"><i class="bi bi-bar-chart"></i></div>
               <p>No hay datos para mostrar</p>
             </div>
           </div>
 
           <div class="activity-log">
-            <div class="log-title">📋 Actividad reciente</div>
+            <div class="log-title"><i class="bi bi-list-check"></i> Actividad reciente</div>
             <div id="activityList"></div>
           </div>
         </div>
@@ -1271,7 +1270,7 @@
           <h1>Configuración</h1>
         </div>
         <div class="chart-card" style="padding:40px;text-align:center;">
-          <div style="font-size:48px;margin-bottom:16px;">⚙️</div>
+          <div style="font-size:48px;margin-bottom:16px;"><i class="bi bi-gear"></i></div>
           <p style="color:var(--muted);font-size:14px;">Página de configuración próximamente.</p>
         </div>
       </div>
@@ -1286,7 +1285,7 @@
     <div class="modal-box">
       <div class="modal-header">
         <h2 id="modalTitle">Nueva incidencia</h2>
-        <button class="modal-close" onclick="closeModal()">✕</button>
+        <button class="modal-close" onclick="closeModal()"><i class="bi bi-x-lg"></i></button>
       </div>
       <div class="modal-body">
         <div class="form-group">
@@ -1415,10 +1414,10 @@
           const stats = await apiFetch('/dashboard');
           if (stats.total === 0) {
             await apiFetch('/seed', { method: 'POST' });
-            console.log('🌱 Datos de métricas sembrados');
+            console.log('Datos de métricas sembrados');
           }
         } catch (e) {
-          console.warn('⚠️ No se pudo conectar con el servidor:', e);
+          console.warn('No se pudo conectar con el servidor:', e);
         }
       }
 
@@ -1534,7 +1533,7 @@
           const data = await apiFetch('/dashboard');
           renderDashboard(data);
         } catch (e) {
-          toast('⚠️ Error al cargar dashboard: ' + e.message, 'error');
+          toast('<i class="bi bi-exclamation-triangle"></i> Error al cargar dashboard: ' + e.message, 'error');
         }
       }
 
@@ -1659,10 +1658,10 @@
               '<td>' + estadoBadge(inc.estado) + '</td>' +
               '<td style="color:var(--muted2);font-size:12px;">' + formatDate(inc.creado) + '</td>' +
               '<td><div class="cell-actions">' +
-                (canAvance ? '<button class="btn-small warning" onclick="avanceEstado(' + inc.id + ')" title="Pasar a En proceso">▶</button>' : '') +
-                (canResolver ? '<button class="btn-small success" onclick="resolverIncidencia(' + inc.id + ')" title="Resolver">✓</button>' : '') +
-                '<button class="btn-small" onclick="editarIncidencia(' + inc.id + ')">✎</button>' +
-                '<button class="btn-small danger" onclick="eliminarIncidencia(' + inc.id + ')">✕</button>' +
+                (canAvance ? '<button class="btn-small warning" onclick="avanceEstado(' + inc.id + ')" title="Pasar a En proceso"><i class="bi bi-play-fill"></i></button>' : '') +
+                (canResolver ? '<button class="btn-small success" onclick="resolverIncidencia(' + inc.id + ')" title="Resolver"><i class="bi bi-check-lg"></i></button>' : '') +
+                '<button class="btn-small" onclick="editarIncidencia(' + inc.id + ')"><i class="bi bi-pencil"></i></button>' +
+                '<button class="btn-small danger" onclick="eliminarIncidencia(' + inc.id + ')"><i class="bi bi-x-lg"></i></button>' +
               '</div></td>' +
             '</tr>';
           }).join('');
@@ -1679,7 +1678,7 @@
           html += '<button class="page-btn" onclick="nextIncPage()"' + (incPage >= pages ? ' disabled' : '') + '>›</button>';
           btns.innerHTML = html;
         } catch (e) {
-          toast('⚠️ Error al cargar incidencias: ' + e.message, 'error');
+          toast('<i class="bi bi-exclamation-triangle"></i> Error al cargar incidencias: ' + e.message, 'error');
         }
       };
 
@@ -1694,20 +1693,20 @@
       window.avanceEstado = async function (id) {
         try {
           await apiFetch('/incidencias/' + id + '/avanzar', { method: 'PATCH' });
-          toast('✅ Incidencia #' + id + ' pasó a "En proceso"', 'success');
+          toast('<i class="bi bi-check-circle"></i> Incidencia #' + id + ' pasó a "En proceso"', 'success');
           renderIncidencias();
         } catch (e) {
-          toast('⚠️ Error: ' + e.message, 'error');
+          toast('<i class="bi bi-exclamation-triangle"></i> Error: ' + e.message, 'error');
         }
       };
 
       window.resolverIncidencia = async function (id) {
         try {
           await apiFetch('/incidencias/' + id + '/resolver', { method: 'PATCH' });
-          toast('✅ Incidencia #' + id + ' resuelta', 'success');
+          toast('<i class="bi bi-check-circle"></i> Incidencia #' + id + ' resuelta', 'success');
           renderIncidencias();
         } catch (e) {
-          toast('⚠️ Error: ' + e.message, 'error');
+          toast('<i class="bi bi-exclamation-triangle"></i> Error: ' + e.message, 'error');
         }
       };
 
@@ -1715,10 +1714,10 @@
         if (!confirm('¿Eliminar la incidencia #' + id + '?')) return;
         try {
           await apiFetch('/incidencias/' + id, { method: 'DELETE' });
-          toast('🗑️ Incidencia #' + id + ' eliminada', 'warning');
+          toast('<i class="bi bi-trash"></i> Incidencia #' + id + ' eliminada', 'warning');
           renderIncidencias();
         } catch (e) {
-          toast('⚠️ Error: ' + e.message, 'error');
+          toast('<i class="bi bi-exclamation-triangle"></i> Error: ' + e.message, 'error');
         }
       };
 
@@ -1734,7 +1733,7 @@
           document.getElementById('formEstado').value = inc.estado;
           document.getElementById('incModal').classList.remove('hidden');
         } catch (e) {
-          toast('⚠️ Error: ' + e.message, 'error');
+          toast('<i class="bi bi-exclamation-triangle"></i> Error: ' + e.message, 'error');
         }
       };
 
@@ -1761,8 +1760,8 @@
         const prioridad = document.getElementById('formPrioridad').value;
         const estado = document.getElementById('formEstado').value;
 
-        if (!titulo) { toast('⚠️ El título es obligatorio', 'warning'); return; }
-        if (!descripcion) { toast('⚠️ La descripción es obligatoria', 'warning'); return; }
+        if (!titulo) { toast('<i class="bi bi-exclamation-triangle"></i> El título es obligatorio', 'warning'); return; }
+        if (!descripcion) { toast('<i class="bi bi-exclamation-triangle"></i> La descripción es obligatoria', 'warning'); return; }
 
         try {
           if (editId) {
@@ -1770,20 +1769,20 @@
               method: 'PUT',
               body: { titulo, descripcion, categoria, prioridad, estado },
             });
-            toast('✅ Incidencia #' + editId + ' actualizada', 'success');
+            toast('<i class="bi bi-check-circle"></i> Incidencia #' + editId + ' actualizada', 'success');
           } else {
             const newInc = await apiFetch('/incidencias', {
               method: 'POST',
               body: { titulo, descripcion, categoria, prioridad, estado },
             });
-            toast('✅ Nueva incidencia #' + newInc.id + ' creada', 'success');
+            toast('<i class="bi bi-check-circle"></i> Nueva incidencia #' + newInc.id + ' creada', 'success');
           }
 
           incPage = 1;
           closeModal();
           renderIncidencias();
         } catch (e) {
-          toast('⚠️ Error: ' + e.message, 'error');
+          toast('<i class="bi bi-exclamation-triangle"></i> Error: ' + e.message, 'error');
         }
       };
 
@@ -1835,12 +1834,12 @@
               '<td><span class="status-dot ' + u.estado + '" style="display:inline-block;vertical-align:middle;margin-right:6px;"></span>' + capitalize(u.estado) + '</td>' +
               '<td style="color:var(--muted2);font-size:12px;">' + formatDate(u.registro) + '</td>' +
               '<td><div class="cell-actions">' +
-                '<button class="btn-small">✎</button>' +
+                '<button class="btn-small"><i class="bi bi-pencil"></i></button>' +
               '</div></td>' +
             '</tr>';
           }).join('');
         } catch (e) {
-          toast('⚠️ Error al cargar usuarios: ' + e.message, 'error');
+          toast('<i class="bi bi-exclamation-triangle"></i> Error al cargar usuarios: ' + e.message, 'error');
         }
       };
 
@@ -1980,21 +1979,22 @@
           const activityLog = actividadRes.items;
           const list = document.getElementById('activityList');
           list.innerHTML = activityLog.slice(0, 8).map(a => {
-            const icons = ['🔧','📝','✅','🔄','📌','💻','🔐','📊'];
+            const icons = ['bi-tools','bi-pencil','bi-check','bi-repeat','bi-pin','bi-laptop','bi-lock','bi-bar-chart'];
             const idx = Math.abs(a.text.length) % icons.length;
+            const iconClass = (a.icon && a.icon.indexOf('bi-') === 0) ? a.icon : icons[idx];
             return '<div class="activity-item">' +
-              '<div class="activity-icon" style="background:' + ['rgba(59,130,246,.15)','rgba(168,85,247,.15)','rgba(34,197,94,.15)','rgba(234,179,8,.15)','rgba(239,68,68,.15)','rgba(249,115,22,.15)','rgba(244,114,182,.15)','rgba(20,184,166,.15)'][idx] + ';">' + icons[idx] + '</div>' +
+              '<div class="activity-icon" style="background:' + ['rgba(59,130,246,.15)','rgba(168,85,247,.15)','rgba(34,197,94,.15)','rgba(234,179,8,.15)','rgba(239,68,68,.15)','rgba(249,115,22,.15)','rgba(244,114,182,.15)','rgba(20,184,166,.15)'][idx] + ';"><i class="bi ' + iconClass + '"></i></div>' +
               '<div><div class="activity-text">' + a.text + '</div><div class="activity-time">' + a.time + '</div></div>' +
             '</div>';
           }).join('');
         } catch (e) {
-          toast('⚠️ Error al cargar reportes: ' + e.message, 'error');
+          toast('<i class="bi bi-exclamation-triangle"></i> Error al cargar reportes: ' + e.message, 'error');
         }
       };
 
       window.refreshReports = function () {
         renderReportes();
-        toast('🔄 Reportes actualizados', 'success');
+        toast('<i class="bi bi-arrow-repeat"></i> Reportes actualizados', 'success');
       };
 
       window.exportCSV = async function () {
@@ -2013,9 +2013,9 @@
           const a = document.createElement('a');
           a.href = url; a.download = 'incidencias_rydu.csv'; a.click();
           URL.revokeObjectURL(url);
-          toast('📥 CSV exportado correctamente', 'success');
+          toast('<i class="bi bi-download"></i> CSV exportado correctamente', 'success');
         } catch (e) {
-          toast('⚠️ Error al exportar: ' + e.message, 'error');
+          toast('<i class="bi bi-exclamation-triangle"></i> Error al exportar: ' + e.message, 'error');
         }
       };
 
@@ -2058,9 +2058,9 @@
         });
         const btn = el.nextElementSibling;
         if (btn) {
-          btn.textContent = '✅';
+          btn.innerHTML = '<i class="bi bi-clipboard-check"></i>';
           btn.classList.add('copied');
-          setTimeout(() => { btn.textContent = '📋'; btn.classList.remove('copied'); }, 1500);
+          setTimeout(() => { btn.innerHTML = '<i class="bi bi-clipboard"></i>'; btn.classList.remove('copied'); }, 1500);
         }
       };
 
