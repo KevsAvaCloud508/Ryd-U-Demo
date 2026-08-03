@@ -3,6 +3,7 @@ import { Provider as ReduxProvider, useDispatch } from 'react-redux';
 import { RouterProvider } from 'react-router-dom';
 
 import { restoreSession } from '../features/auth/store/auth.slice';
+import { ErrorBoundary } from '../shared/components/ErrorBoundary';
 import { ToastProvider } from '../shared/toast/ToastProvider';
 import { router } from './router';
 import { store, type AppDispatch } from './store';
@@ -29,7 +30,9 @@ export function Providers() {
     <ReduxProvider store={store}>
       <ToastProvider>
         <SessionBootstrap>
-          <RouterProvider router={router} />
+          <ErrorBoundary>
+            <RouterProvider router={router} />
+          </ErrorBoundary>
         </SessionBootstrap>
       </ToastProvider>
     </ReduxProvider>

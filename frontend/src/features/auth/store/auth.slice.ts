@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
-import { tokenStorage } from '../../../shared/utils/token-storage';
+import { MOCK_TOKEN_PREFIX, tokenStorage } from '../../../shared/utils/token-storage';
 import { extractErrorMessage } from '../../../shared/utils/error-message';
 import type { AuthUser, Role } from '../../../shared/types/auth';
 import { fetchCurrentUser, loginRequest, registerRequest, updateProfileRequest } from '../services/auth.service';
@@ -43,8 +43,6 @@ function buildMockUser(email: string): AuthUser | null {
     role: mock.role,
   };
 }
-
-const MOCK_TOKEN_PREFIX = 'mock_token_';
 
 interface AuthState {
   user: AuthUser | null;

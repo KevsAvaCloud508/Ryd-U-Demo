@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
+import { isDemoMode } from '../../../shared/utils/token-storage';
 import { extractErrorMessage } from '../../../shared/utils/error-message';
+import { DEMO_TRIPS } from '../demo-data';
 import {
   createTripRequest,
   deleteTripRequest,
@@ -27,6 +29,15 @@ const initialState: TripsState = {
 
 export const searchTrips = createAsyncThunk('trips/search', async (params: TripSearchParams | undefined, { rejectWithValue }) => {
   try {
+    // En modo demo el backend rechaza el token mock; se filtran los viajes demo en el cliente.
+    if (isDemoMode()) {
+      let items = DEMO_TRIPS;
+      if (params?.origin) items = items.filter((t) => t.route.origin.toLowerCase().includes(params.origin!.toLowerCase()));
+      if (params?.destination)
+        items = items.filter((t) => t.route.destination.toLowerCase().includes(params.destination!.toLowerCase()));
+      if (params?.date) items = items.filter((t) => t.date.startsWith(params.date!));
+      return items;
+    }
     return await fetchTrips(params);
   } catch (error) {
     return rejectWithValue(extractErrorMessage(error, 'No se pudieron buscar viajes.'));

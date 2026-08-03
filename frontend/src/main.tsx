@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 
 import { Providers } from './app/providers';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import 'leaflet/dist/leaflet.css';
 import './styles/index.css';
 
 const rootElement = document.getElementById('root');

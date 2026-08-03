@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
 
 import { useAppDispatch, useAppSelector } from '../../../shared/hooks/redux';
-import { loadDocuments, uploadDoc, removeDoc } from '../store/documents.slice';
+import { loadDocuments, uploadDoc, removeDoc, approveDemoDocuments } from '../store/documents.slice';
 import type { DocumentType } from '../types/documents.types';
 
 /**
  * Hook para gestionar documentos de verificacion del usuario.
- * Expone acciones para cargar, subir y eliminar documentos.
+ * Expone acciones para cargar, subir, eliminar y aprobar documentos.
  */
 export function useDocuments() {
   const dispatch = useAppDispatch();
@@ -27,12 +27,17 @@ export function useDocuments() {
     [dispatch],
   );
 
+  /** Aprueba los documentos en modo demo (no-op en modo real). */
+  const approveAll = useCallback(() => dispatch(approveDemoDocuments()).unwrap(), [dispatch]);
+
   return {
     documents: items,
     isLoading: status === 'loading',
+    status,
     error,
     load,
     upload,
     remove,
+    approveAll,
   };
 }
