@@ -1,4 +1,4 @@
-import { HttpError } from '../../shared/utils/http-error';
+import { HttpError } from '../../shared/utils/http-error.js';
 import {
   createRequest,
   findRequestById,
@@ -6,9 +6,9 @@ import {
   findRequestsByPassenger,
   findRequestsByTrip,
   updateRequestStatus,
-} from './requests.repository';
-import { findTripById } from '../trips/trips.repository';
-import type { CreateRequestInput, UpdateRequestStatusInput } from './requests.dto';
+} from './requests.repository.js';
+import { findTripById } from '../trips/trips.repository.js';
+import type { CreateRequestInput, UpdateRequestStatusInput } from './requests.dto.js';
 
 export async function requestTrip(passengerId: string, input: CreateRequestInput) {
   const trip = await findTripById(input.tripId);

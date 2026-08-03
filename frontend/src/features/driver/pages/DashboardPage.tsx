@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react';
 
+import { useAuth } from '../../auth/hooks/useAuth';
+import { useRatings } from '../../ratings/hooks/useRatings';
+import { useRequests } from '../../requests/hooks/useRequests';
+import { useTrips } from '../../trips/hooks/useTrips';
 import { ActionButtons, Avatar, PageHeader, StatCard, StatusBadge } from '../../../shared/components';
+import { isDemoSession } from '../../../shared/utils/session';
 import type { RequestItem } from './RequestsPage';
 import { saveRequests } from './RequestsPage';
 
@@ -110,7 +115,29 @@ const defaultTrips: TripRowProps[] = [
   { date: '20 Jul', time: '12:30', route: 'Haciendas del Valle → UPA', passengers: 2, status: 'Completado', income: '+$80' },
 ];
 
+// Mapa de estado del viaje real → etiqueta/icono del StatusBadge.
+const tripStatusConfig: Record<string, { icon: string; label: string }> = {
+  Pendiente: { icon: 'bi bi-clock', label: 'Pendiente' },
+  EnProceso: { icon: 'bi bi-play-circle', label: 'En curso' },
+  Terminado: { icon: 'bi bi-check-circle', label: 'Completado' },
+};
+
 export function DriverDashboardPage() {
+  const { user } = useAuth();
+  const isDemo = isDemoSession();
+
+  // ── Datos reales (solo cuando hay API) ──
+  const { trips, loadMine } = useTrips();
+  const { average, loadAverage } = useRatings();
+  const { updateStatus } = useRequests();
+
+  useEffect(() => {
+    if (isDemo) return;
+    loadMine();
+    loadAverage();
+  }, [isDemo, loadMine, loadAverage]);
+
+  // ── Datos demo (localStorage) ──
   const completedTrips = loadCompletedRequests();
   const allTrips = [...completedTrips, ...defaultTrips];
 
@@ -159,29 +186,90 @@ export function DriverDashboardPage() {
     };
   }, []);
 
+  // ── Aceptar/rechazar solicitudes reales ──
+  const handleRealAccept = async (requestId: string) => {
+    try {
+      await updateStatus(requestId, { status: 'Aceptado' });
+      await loadMine();
+    } catch { /* la recarga mostrará el estado real */ }
+  };
+
+  const handleRealReject = async (requestId: string) => {
+    try {
+      await updateStatus(requestId, { status: 'Rechazado' });
+      await loadMine();
+    } catch { /* la recarga mostrará el estado real */ }
+  };
+
+  // ── Derivados de la API ──
+  const realCompletedTrips = trips.filter((t) => t.status === 'Terminado');
+  const realActiveTrips = trips.filter((t) => t.status === 'Pendiente' || t.status === 'EnProceso');
+  const totalEarnings = realCompletedTrips.reduce((sum, t) => sum + Number(t.cost ?? 0), 0);
+  const rating = average?.average?.toFixed(1) ?? '—';
+
+  const realTripRows: TripRowProps[] = trips.map((t) => ({
+    date: t.date ? new Date(t.date).toLocaleDateString('es-MX', { day: '2-digit', month: 'short' }) : '—',
+    time: t.departureTime?.slice(0, 5) ?? '—',
+    route: `${t.route?.origin ?? '—'} → ${t.route?.destination ?? '—'}`,
+    passengers: t.requests?.filter((r) => r.status === 'Aceptado').length ?? 0,
+    status: tripStatusConfig[t.status]?.label ?? t.status,
+    income: t.status === 'Terminado' ? `+$${t.cost ?? 0}` : '—',
+  }));
+
+  const realPendingRequests = trips.flatMap((trip) =>
+    (trip.requests ?? [])
+      .filter((r) => r.status === 'Pendiente')
+      .map((r) => ({
+        id: r.id,
+        name: `${r.passenger?.firstName ?? 'Pasajero'} ${r.passenger?.lastNamePaternal ?? ''}`.trim(),
+        initial: r.passenger?.firstName?.[0] ?? 'P',
+        rating: '—',
+        route: `${trip.route?.origin ?? '—'} → ${trip.route?.destination ?? '—'}`,
+        seats: '1 asiento',
+        seatsNum: 1,
+        pricePerSeat: Number(trip.cost ?? 0),
+        time: trip.departureTime?.slice(0, 5) ?? '—',
+        status: 'pendientes' as const,
+      })),
+  );
+
+  const firstName = user?.firstName ?? 'Conductor';
+  const initial = firstName[0] ?? 'C';
+
   return (
-    <div className="px-10 pb-10">
+    <div className="px-4 pb-10 sm:px-6 lg:px-10">
       {/* Header */}
-      <PageHeader title="Hola, Juan" subtitle="Resumen de tu actividad como conductor" action={<Avatar initial="J" size={56} variant="solid" />} />
+      <PageHeader title={`Hola, ${firstName}`} subtitle="Resumen de tu actividad como conductor" action={<Avatar initial={initial} size={56} variant="solid" />} />
 
       {/* Stat Cards */}
-      <div className="mt-8 grid grid-cols-4 gap-5">
-        <StatCard icon="bi bi-cash-stack" label="Ganado (semana)" value="$1,240" />
-        <StatCard icon="bi bi-star" label="Rating" value="4.8" />
-        <StatCard icon="bi bi-route" label="Viajes" value="86" />
-        <StatCard icon="bi bi-people" label="Rutas activas" value="2" />
+      <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-5">
+        {isDemo ? (
+          <>
+            <StatCard icon="bi bi-cash-stack" label="Ganado (semana)" value="$1,240" />
+            <StatCard icon="bi bi-star" label="Rating" value="4.8" />
+            <StatCard icon="bi bi-route" label="Viajes" value="86" />
+            <StatCard icon="bi bi-people" label="Rutas activas" value="2" />
+          </>
+        ) : (
+          <>
+            <StatCard icon="bi bi-cash-stack" label="Ganado (total)" value={`$${totalEarnings}`} />
+            <StatCard icon="bi bi-star" label="Rating" value={rating} />
+            <StatCard icon="bi bi-route" label="Viajes" value={String(realCompletedTrips.length)} />
+            <StatCard icon="bi bi-people" label="Rutas activas" value={String(realActiveTrips.length)} />
+          </>
+        )}
       </div>
 
       {/* Bottom section */}
-      <div className="mt-8 flex gap-5">
+      <div className="mt-8 flex flex-col gap-5 xl:flex-row">
         {/* Trip History */}
-        <div className="flex-[65%]">
+        <div className="flex-1 xl:flex-[65%]">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-lg font-bold text-white">Historial de viajes</h2>
             <StatusBadge icon="bi bi-person-fill">Conductor</StatusBadge>
           </div>
-          <div className="rounded-[18px] border border-[#353535] bg-[#222222] p-5">
-            <table className="w-full">
+          <div className="overflow-x-auto rounded-[18px] border border-[#353535] bg-[#222222] p-5">
+            <table className="w-full min-w-[560px]">
               <thead>
                 <tr className="border-b border-[#353535] text-left text-sm font-medium text-[#9A9A9A]">
                   <th className="pb-3 pr-4 font-medium">Fecha</th>
@@ -192,35 +280,44 @@ export function DriverDashboardPage() {
                 </tr>
               </thead>
               <tbody>
-                {allTrips.map((trip, i) => (
+                {(isDemo ? allTrips : realTripRows).map((trip, i) => (
                   <TripRow key={`${trip.date}-${trip.time}-${i}`} {...trip} />
                 ))}
               </tbody>
             </table>
-            {allTrips.length === 0 && (
+            {(isDemo ? allTrips : realTripRows).length === 0 && (
               <div className="py-8 text-center text-sm text-[#6B6B6B]">
-                No hay viajes completados todavía.
+                No hay viajes todavía.
               </div>
             )}
           </div>
         </div>
 
         {/* Pending Requests */}
-        <div className="flex-[35%]">
+        <div className="flex-1 xl:flex-[35%]">
           <h2 className="mb-4 text-lg font-bold text-white">Solicitudes nuevas</h2>
           <div className="flex flex-col gap-[14px]">
-            {pendingRequests.length === 0 ? (
+            {(isDemo ? pendingRequests : realPendingRequests).length === 0 ? (
               <div className="flex flex-col items-center justify-center rounded-[18px] border border-dashed border-[#353535] py-10">
                 <i className="bi bi-inbox text-3xl text-[#4A4A4A]" />
                 <p className="mt-2 text-sm text-[#6B6B6B]">No hay solicitudes pendientes</p>
               </div>
-            ) : (
+            ) : isDemo ? (
               pendingRequests.map((req) => (
                 <DashboardRequestCard
                   key={req.id}
                   request={req}
                   onAccept={() => handleDashboardAccept(req.id)}
                   onReject={() => handleDashboardReject(req.id)}
+                />
+              ))
+            ) : (
+              realPendingRequests.map((req) => (
+                <DashboardRequestCard
+                  key={req.id}
+                  request={req}
+                  onAccept={() => handleRealAccept(req.id)}
+                  onReject={() => handleRealReject(req.id)}
                 />
               ))
             )}

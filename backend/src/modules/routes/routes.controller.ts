@@ -1,14 +1,14 @@
 import type { Request, Response } from 'express';
 
-import { HttpError } from '../../shared/utils/http-error';
-import { createRouteSchema, searchRouteSchema, updateRouteSchema } from './routes.dto';
+import { HttpError } from '../../shared/utils/http-error.js';
+import { createRouteSchema, searchRouteSchema, updateRouteSchema } from './routes.dto.js';
 import {
   createNewRoute,
   deleteExistingRoute,
   getRouteById,
   listRoutes,
   updateExistingRoute,
-} from './routes.service';
+} from './routes.service.js';
 
 export async function listRoutesHandler(req: Request, res: Response): Promise<void> {
   const parsed = searchRouteSchema.safeParse(req.query);

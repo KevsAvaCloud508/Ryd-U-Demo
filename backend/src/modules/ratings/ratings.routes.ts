@@ -1,12 +1,12 @@
 import { Router } from 'express';
 
-import { requireAuth } from '../../shared/middlewares/auth.middleware';
-import { asyncHandler } from '../../shared/utils/async-handler';
+import { requireAuth } from '../../shared/middlewares/auth.middleware.js';
+import { asyncHandler } from '../../shared/utils/async-handler.js';
 import {
   getMyAverageRatingHandler,
   listMyRatingsHandler,
   submitRatingHandler,
-} from './ratings.controller';
+} from './ratings.controller.js';
 
 export const ratingsRouter = Router();
 

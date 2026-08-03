@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
-import { requireAuth } from '../../shared/middlewares/auth.middleware';
-import { asyncHandler } from '../../shared/utils/async-handler';
+import { requireAuth } from '../../shared/middlewares/auth.middleware.js';
+import { asyncHandler } from '../../shared/utils/async-handler.js';
 import {
   cancelRequestHandler,
   createRequestHandler,
@@ -9,7 +9,7 @@ import {
   listMyRequestsHandler,
   listTripRequestsHandler,
   updateRequestHandler,
-} from './requests.controller';
+} from './requests.controller.js';
 
 export const requestsRouter = Router();
 

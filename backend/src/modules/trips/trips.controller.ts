@@ -1,8 +1,8 @@
 import type { Response } from 'express';
 
-import type { AuthenticatedRequest } from '../../shared/middlewares/auth.middleware';
-import { HttpError } from '../../shared/utils/http-error';
-import { createTripSchema, searchTripSchema, updateTripSchema } from './trips.dto';
+import type { AuthenticatedRequest } from '../../shared/middlewares/auth.middleware.js';
+import { HttpError } from '../../shared/utils/http-error.js';
+import { createTripSchema, searchTripSchema, updateTripSchema } from './trips.dto.js';
 import {
   createNewTrip,
   deleteExistingTrip,
@@ -10,7 +10,7 @@ import {
   listAvailableTrips,
   listMyTripsAsDriver,
   updateExistingTrip,
-} from './trips.service';
+} from './trips.service.js';
 
 export async function listTripsHandler(req: AuthenticatedRequest, res: Response): Promise<void> {
   const parsed = searchTripSchema.safeParse(req.query);

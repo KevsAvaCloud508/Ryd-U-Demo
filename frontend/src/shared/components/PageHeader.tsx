@@ -10,18 +10,22 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, subtitle, action, className = '', compact = false }: PageHeaderProps) {
   return (
-    <div className={`flex items-start justify-between ${compact ? 'pt-[16px]' : 'pt-[38px]'} ${className}`}>
-      <div>
-        <h1 className="text-[42px] font-extrabold leading-tight tracking-tight text-white">
+    <div
+      className={`flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between ${
+        compact ? 'pt-[16px]' : 'pt-[38px]'
+      } ${className}`}
+    >
+      <div className="min-w-0">
+        <h1 className="text-[28px] font-extrabold leading-tight tracking-tight text-white sm:text-[34px] lg:text-[42px]">
           {title}
         </h1>
         {subtitle && (
-          <p className="mt-1 text-xl font-medium text-[#8F8F8F]">
+          <p className="mt-1 text-base font-medium text-[#8F8F8F] sm:text-lg lg:text-xl">
             {subtitle}
           </p>
         )}
       </div>
-      {action && <div className="shrink-0">{action}</div>}
+      {action && <div className="shrink-0 self-start sm:self-auto">{action}</div>}
     </div>
   );
 }

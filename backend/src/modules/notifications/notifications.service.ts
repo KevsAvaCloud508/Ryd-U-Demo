@@ -1,11 +1,11 @@
-import { HttpError } from '../../shared/utils/http-error';
+import { HttpError } from '../../shared/utils/http-error.js';
 import {
   findNotificationById,
   findNotificationsByUser,
   findUnreadNotificationsByUser,
   markAllNotificationsAsRead,
   markNotificationAsRead,
-} from './notifications.repository';
+} from './notifications.repository.js';
 
 export function listNotifications(userId: string) {
   return findNotificationsByUser(userId);

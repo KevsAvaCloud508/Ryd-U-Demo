@@ -4,6 +4,7 @@ import { DriverLayout } from '../features/driver/layout/DriverLayout';
 import { DriverDashboardPage } from '../features/driver/pages/DashboardPage';
 import { LoginPage } from '../features/auth/pages/LoginPage';
 import { SignupPage } from '../features/auth/pages/SignupPage';
+import { ForgotPasswordPage } from '../features/auth/pages/ForgotPasswordPage';
 import { LandingPage } from '../pages/LandingPage';
 import { DriverRequestsPage } from '../features/driver/pages/RequestsPage';
 import { DriverRoutesPage } from '../features/driver/pages/RoutesPage';
@@ -16,8 +17,12 @@ import { DProfileAccountPage } from '../features/driver/pages/AccountPage';
 import { DProfileNotificationsPage } from '../features/driver/pages/NotificationsPage';
 import { DProfileSecurityPage } from '../features/driver/pages/SecurityPage';
 import { PassengerHomePage } from '../features/passenger/pages/PassengerHomePage';
+import { PassengerSearchPage } from '../features/passenger/pages/PassengerSearchPage';
+import { PassengerActivityPage } from '../features/passenger/pages/PassengerActivityPage';
+import { PassengerProfilePage } from '../features/passenger/pages/PassengerProfilePage';
 import { VerificationPage } from '../features/verification/pages/VerificationPage';
 import { ProtectedRoute } from '../shared/routes/ProtectedRoute';
+import { VerificationGuard } from '../shared/routes/VerificationGuard';
 
 /**
  * Router raíz de la aplicación.
@@ -27,6 +32,7 @@ export const router = createBrowserRouter([
   { path: '/', element: <LandingPage /> },
   { path: '/acceso', element: <LoginPage /> },
   { path: '/registro', element: <SignupPage /> },
+  { path: '/olvidar-contrasena', element: <ForgotPasswordPage /> },
 
   // Rutas protegidas - Conductor
   {
@@ -54,17 +60,18 @@ export const router = createBrowserRouter([
 
   // Rutas protegidas - Pasajero
   {
-    path: '/pasajero/inicio',
     element: <ProtectedRoute allowedRoles={['STUDENT']} />,
     children: [
-      { index: true, element: <PassengerHomePage /> },
-    ],
-  },
-  {
-    path: '/pasajero/validacion',
-    element: <ProtectedRoute allowedRoles={['STUDENT']} />,
-    children: [
-      { index: true, element: <VerificationPage /> },
+      { path: '/pasajero/validacion', element: <VerificationPage /> },
+      {
+        element: <VerificationGuard allowedWithoutVerification={['/pasajero/perfil', '/pasajero/validacion']} />,
+        children: [
+          { path: '/pasajero/inicio', element: <PassengerHomePage /> },
+          { path: '/pasajero/buscar', element: <PassengerSearchPage /> },
+          { path: '/pasajero/actividad', element: <PassengerActivityPage /> },
+          { path: '/pasajero/perfil', element: <PassengerProfilePage /> },
+        ],
+      },
     ],
   },
 ]);

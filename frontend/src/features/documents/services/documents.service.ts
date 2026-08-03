@@ -20,10 +20,10 @@ export async function uploadDocumentFile(type: DocumentType, file: File): Promis
   formData.append('file', file);
   formData.append('type', type);
 
+  // Se declara multipart/form-data: en navegador axios lo deja al navegador para
+  // que añada el boundary correcto. La instancia ya no fija Content-Type por defecto.
   const { data } = await api.post<{ document: VerificationDocument }>('/documents/upload', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
+    headers: { 'Content-Type': 'multipart/form-data' },
   });
   return data.document;
 }

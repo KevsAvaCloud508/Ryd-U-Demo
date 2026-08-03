@@ -22,6 +22,10 @@ jobs:
         working-directory: ./backend
         run: npx prisma generate
         
+      - name: Compilar Backend (TypeScript)
+        working-directory: ./backend
+        run: npm run build
+        
       - name: Instalar dependencias del Frontend
         working-directory: ./frontend
         run: npm install
@@ -38,8 +42,55 @@ jobs:
       - name: Descargar el código aprobado
         uses: actions/checkout@v4
 
+      - name: Configurar variables de entorno (JWT_SECRET)
+        run: echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" > .env
+
       - name: Detener contenedores anteriores
         run: docker compose down
         
       - name: Construir y levantar nueva versión
         run: docker compose up -d --build
+
+      # ── Preparar la base de datos: esquema + datos de prueba ──
+      # Sin este paso, una BD nueva no tendría tablas (no hay migraciones)
+      # y los endpoints de Prisma fallarían con "relation does not exist".
+      # Ambos comandos son idempotentes: db push aplica el esquema y el seed
+      # usa upserts con IDs fijos, por lo que es seguro ejecutarlos en cada deploy.
+      - name: Preparar base de datos (esquema y seed)
+        shell: bash
+        run: |
+          # 1) Esperar a que PostgreSQL esté listo
+          for i in $(seq 1 30); do
+            if docker compose exec -T db pg_isready -U admin_rydu -d rydu_db > /dev/null 2>&1; then
+              echo "PostgreSQL listo"
+              break
+            fi
+            echo "Esperando a PostgreSQL... ($i/30)"
+            sleep 2
+          done
+          if ! docker compose exec -T db pg_isready -U admin_rydu -d rydu_db > /dev/null 2>&1; then
+            echo "ERROR: PostgreSQL no está listo después del tiempo de espera."
+            docker compose logs db --tail 50 || true
+            exit 1
+          fi
+
+          # 2) Esperar a que el contenedor del backend esté corriendo
+          for i in $(seq 1 15); do
+            if docker compose exec -T backend sh -c 'true' > /dev/null 2>&1; then
+              echo "Backend listo"
+              break
+            fi
+            echo "Esperando al backend... ($i/15)"
+            sleep 2
+          done
+          if ! docker compose exec -T backend sh -c 'true' > /dev/null 2>&1; then
+            echo "ERROR: el contenedor del backend no está corriendo."
+            docker compose ps backend || true
+            exit 1
+          fi
+
+          # 3) Aplicar el esquema (idempotente) usando la DATABASE_URL del contenedor
+          docker compose exec -T backend npx prisma db push --accept-data-loss --skip-generate
+
+          # 4) Sembrar datos de prueba (upserts con IDs fijos, idempotente)
+          docker compose exec -T backend npm run prisma:seed

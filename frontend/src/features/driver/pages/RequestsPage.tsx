@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 
+import { useRequests } from '../../requests/hooks/useRequests';
+import { useTrips } from '../../trips/hooks/useTrips';
 import { ActionButtons, Avatar, PageHeader, StatusBadge } from '../../../shared/components';
+import { isDemoSession } from '../../../shared/utils/session';
+import type { Trip } from '../../trips/types/trips.types';
 
 type FilterTab = 'pendientes' | 'aceptadas' | 'completadas';
 
@@ -113,10 +117,79 @@ function RequestCard({ request, onAccept, onReject, onComplete }: { request: Req
   );
 }
 
+// Convierte un viaje real + su solicitud en el RequestItem que usa la UI.
+// Devuelve null si la solicitud no es visible para el conductor (rechazada/cancelada).
+function toRequestItem(trip: Trip, request: { id: string; status: string; passenger?: { id: string; firstName: string; lastNamePaternal: string } | null }): RequestItem | null {
+  const fullName = [request.passenger?.firstName, request.passenger?.lastNamePaternal].filter(Boolean).join(' ') || 'Pasajero';
+  let status: FilterTab;
+  if (trip.status === 'Terminado') {
+    status = 'completadas';
+  } else if (request.status === 'Aceptado') {
+    status = 'aceptadas';
+  } else if (request.status === 'Pendiente') {
+    status = 'pendientes';
+  } else {
+    return null; // Rechazado / Cancelado no se muestran
+  }
+  return {
+    id: request.id,
+    name: fullName,
+    initial: request.passenger?.firstName?.[0] ?? 'P',
+    rating: '—',
+    route: `${trip.route?.origin ?? '—'} → ${trip.route?.destination ?? '—'}`,
+    seats: '1 asiento',
+    seatsNum: 1,
+    pricePerSeat: Number(trip.cost ?? 0),
+    time: trip.departureTime?.slice(0, 5) ?? '—',
+    status,
+    completedAt: trip.date ?? undefined,
+  };
+}
+
 export function DriverRequestsPage() {
+  const isDemo = isDemoSession();
   const [activeTab, setActiveTab] = useState<FilterTab>('pendientes');
   const [requests, setRequests] = useState<RequestItem[]>(loadRequests);
 
+  // ── Datos reales ──
+  const { trips, loadMine, update: updateTrip } = useTrips();
+  const { updateStatus } = useRequests();
+
+  useEffect(() => {
+    if (isDemo) return;
+    loadMine();
+  }, [isDemo, loadMine]);
+
+  const realRequests: RequestItem[] = trips.flatMap((trip) =>
+    (trip.requests ?? [])
+      .map((r) => toRequestItem(trip, r))
+      .filter((item): item is RequestItem => item !== null),
+  );
+
+  const handleRealAccept = async (id: string) => {
+    try {
+      await updateStatus(id, { status: 'Aceptado' });
+      await loadMine();
+      setActiveTab('aceptadas');
+    } catch { /* ignore */ }
+  };
+
+  const handleRealReject = async (id: string) => {
+    try {
+      await updateStatus(id, { status: 'Rechazado' });
+      await loadMine();
+    } catch { /* ignore */ }
+  };
+
+  const handleRealComplete = async (tripId: string) => {
+    try {
+      await updateTrip(tripId, { status: 'Terminado' });
+      await loadMine();
+      setActiveTab('completadas');
+    } catch { /* ignore */ }
+  };
+
+  // ── Lógica demo (localStorage) ──
   const persistAndSet = (updater: (prev: RequestItem[]) => RequestItem[]) => {
     setRequests((prev) => {
       const updated = updater(prev);
@@ -147,7 +220,7 @@ export function DriverRequestsPage() {
     setActiveTab('completadas');
   };
 
-  // Sincronizar cambios entre pestañas
+  // Sincronizar cambios entre pestañas (solo demo)
   useEffect(() => {
     const handleStorage = (e: StorageEvent) => {
       if (e.key === STORAGE_KEY) setRequests(loadRequests());
@@ -156,23 +229,23 @@ export function DriverRequestsPage() {
     return () => window.removeEventListener('storage', handleStorage);
   }, []);
 
-  const filteredRequests = requests.filter((r) => r.status === activeTab);
+  const filteredRequests = (isDemo ? requests : realRequests).filter((r) => r.status === activeTab);
 
   return (
-    <div className="px-10 pb-10">
+    <div className="px-4 pb-10 sm:px-6 lg:px-10">
       <PageHeader
         title="Solicitudes"
         subtitle="Revisa y gestiona las solicitudes de viaje"
       />
 
       {/* Filter tabs */}
-      <div className="mt-8 flex gap-2 rounded-[18px] bg-[#1A1A1A] p-1.5 w-fit">
+      <div className="mt-8 flex w-full gap-2 overflow-x-auto rounded-[18px] bg-[#1A1A1A] p-1.5 sm:w-fit">
         {filterTabs.map((tab) => (
           <button
             key={tab.key}
             type="button"
             onClick={() => setActiveTab(tab.key)}
-            className={`rounded-[14px] px-6 py-2.5 text-sm font-bold transition-all ${
+            className={`whitespace-nowrap rounded-[14px] px-6 py-2.5 text-sm font-bold transition-all ${
               activeTab === tab.key
                 ? 'bg-white text-black'
                 : 'text-[#8C8C8C] hover:text-white/70'
@@ -184,18 +257,25 @@ export function DriverRequestsPage() {
       </div>
 
       {/* Requests list */}
-      <div className="mt-6 grid grid-cols-2 gap-4">
+      <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
         {filteredRequests.map((req) => (
           <RequestCard
             key={req.id}
             request={req}
-            onAccept={() => handleAccept(req.id)}
-            onReject={() => handleReject(req.id)}
-            onComplete={() => handleComplete(req.id)}
+            onAccept={() => (isDemo ? handleAccept(req.id) : handleRealAccept(req.id))}
+            onReject={() => (isDemo ? handleReject(req.id) : handleRealReject(req.id))}
+            onComplete={() => {
+              if (isDemo) {
+                handleComplete(req.id);
+              } else {
+                const trip = trips.find((t) => t.requests?.some((r) => r.id === req.id));
+                if (trip) handleRealComplete(trip.id);
+              }
+            }}
           />
         ))}
         {filteredRequests.length === 0 && (
-          <div className="col-span-2 flex flex-col items-center justify-center rounded-[20px] border border-dashed border-[#353535] py-16">
+          <div className="col-span-1 flex flex-col items-center justify-center rounded-[20px] border border-dashed border-[#353535] py-16 md:col-span-2">
             <i className="bi bi-inbox text-5xl text-[#4A4A4A]" />
             <p className="mt-4 text-lg font-medium text-[#6B6B6B]">
               No hay solicitudes {activeTab}

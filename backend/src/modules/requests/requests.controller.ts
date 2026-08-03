@@ -1,8 +1,8 @@
 import type { Response } from 'express';
 
-import type { AuthenticatedRequest } from '../../shared/middlewares/auth.middleware';
-import { HttpError } from '../../shared/utils/http-error';
-import { createRequestSchema, updateRequestStatusSchema } from './requests.dto';
+import type { AuthenticatedRequest } from '../../shared/middlewares/auth.middleware.js';
+import { HttpError } from '../../shared/utils/http-error.js';
+import { createRequestSchema, updateRequestStatusSchema } from './requests.dto.js';
 import {
   cancelMyRequest,
   getRequestDetail,
@@ -10,7 +10,7 @@ import {
   listTripRequests,
   requestTrip,
   updateRequest,
-} from './requests.service';
+} from './requests.service.js';
 
 export async function createRequestHandler(req: AuthenticatedRequest, res: Response): Promise<void> {
   const parsed = createRequestSchema.safeParse(req.body);

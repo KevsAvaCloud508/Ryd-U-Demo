@@ -1,8 +1,8 @@
 import type { Response } from 'express';
 
-import type { AuthenticatedRequest } from '../../shared/middlewares/auth.middleware';
-import { HttpError } from '../../shared/utils/http-error';
-import { listNotifications, listUnreadNotifications, readAllNotifications, readNotification } from './notifications.service';
+import type { AuthenticatedRequest } from '../../shared/middlewares/auth.middleware.js';
+import { HttpError } from '../../shared/utils/http-error.js';
+import { listNotifications, listUnreadNotifications, readAllNotifications, readNotification } from './notifications.service.js';
 
 export async function listNotificationsHandler(req: AuthenticatedRequest, res: Response): Promise<void> {
   const notifications = await listNotifications(req.user!.sub);

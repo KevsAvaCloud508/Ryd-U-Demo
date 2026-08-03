@@ -96,12 +96,12 @@ export function LoginPage() {
   };
 
   return (
-    <div className="grid min-h-screen grid-cols-2 bg-black text-[#e5e7eb]">
-      <div className="flex flex-col border-r border-line bg-gradient-to-br from-surface to-black p-11">
+    <div className="grid min-h-screen grid-cols-1 bg-black text-[#e5e7eb] lg:grid-cols-2">
+      <div className="flex flex-col border-b border-line bg-gradient-to-br from-surface to-black p-6 sm:p-8 lg:border-b-0 lg:border-r lg:p-11">
         <Link to="/">
           <img className="h-6 w-auto" src="/logo.svg" alt="RydU" />
         </Link>
-        <div className="my-auto">
+        <div className="mt-4 mb-6 lg:my-auto">
           <h2 className="text-[30px] leading-tight text-white">
             Tu universidad,
             <br />a un viaje de distancia.
@@ -111,7 +111,7 @@ export function LoginPage() {
           </p>
         </div>
         {/* Demo credentials box */}
-        <div className="mb-6 rounded-xl border border-purple-500/25 bg-purple-500/10 p-4 backdrop-blur-sm">
+        <div className="mb-6 rounded-xl border border-purple-500/25 bg-purple-500/10 p-3.5 backdrop-blur-sm sm:p-4">
           <div className="mb-3 flex items-center gap-2 text-[13px] font-bold text-purple-300">
             <span></span> Credenciales de prueba
           </div>
@@ -138,12 +138,20 @@ export function LoginPage() {
             Haz clic en una credencial para iniciar sesión automáticamente.
           </div>
         </div>
+        <a
+          href="/dashboard.html"
+          className="mt-4 flex items-center gap-2.5 rounded-xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-[13px] text-amber-300 transition-all hover:bg-amber-500/20 hover:border-amber-500/30"
+        >
+          <i className="bi bi-bar-chart-fill text-base" />
+          <span className="font-semibold">Panel de Incidencias</span>
+          <i className="bi bi-arrow-right ml-auto text-[11px] text-amber-400/70" />
+        </a>
         <div className="flex items-center gap-2.5 text-[13px] text-muted">
           <i className="bi bi-shield-lock" /> Datos protegidos &nbsp; <i className="bi bi-check2-circle" /> Solo
           estudiantes
         </div>
       </div>
-      <div className="flex flex-col justify-center px-[52px] py-11">
+      <div className="flex flex-col justify-center px-5 py-10 sm:px-10 lg:px-[52px]">
         <h2 className="text-2xl font-extrabold tracking-tight text-white">Iniciar sesión</h2>
         <p className="mt-1 text-sm text-muted">Bienvenido de nuevo</p>
 

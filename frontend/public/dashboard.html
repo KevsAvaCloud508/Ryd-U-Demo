@@ -4,8 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard — RydU</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🚗</text></svg>" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'><path d='M4 2h8l1.5 3H14a2 2 0 0 1 2 2v3.5a2.5 2.5 0 0 1-1 2V14a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H4v1a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-1.5a2.5 2.5 0 0 1-1-2V7a2 2 0 0 1 2-2h.5L4 2Zm10 5H2v2h12V7Zm-8.5 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm5 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z'/></svg>" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
   <style>
     /* =============================================================
        Design System · RydU Dark Theme
@@ -537,7 +538,6 @@
     .badge.alta { background: rgba(239,68,68,.12); color: #fca5a5; }
     .badge.media { background: rgba(234,179,8,.12); color: #facc15; }
     .badge.baja { background: rgba(107,114,128,.15); color: #9ca3af; }
-    .badge.hardware { background: rgba(167,139,250,.15); color: #c4b5fd; }
     .badge.software { background: rgba(96,165,250,.15); color: #93bbfc; }
     .badge.red { background: rgba(52,211,153,.15); color: #6ee7b7; }
     .badge.acceso { background: rgba(249,115,22,.15); color: #fdba74; }
@@ -793,6 +793,36 @@
     }
 
     /* =============================================================
+       METRICS GRIDS (pasajeros / conductores)
+       ============================================================= */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .metrics-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+    @media (max-width: 1200px) {
+      .metrics-grid, .metrics-grid.cols-3 { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 400px) {
+      .metrics-grid, .metrics-grid.cols-3 { grid-template-columns: 1fr; }
+    }
+
+    /* =============================================================
+       LEADERBOARDS (top pasajeros / conductores)
+       ============================================================= */
+    .leaderboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+    @media (max-width: 900px) {
+      .leaderboard-grid { grid-template-columns: 1fr; }
+    }
+
+    /* =============================================================
        RESPONSIVE
        ============================================================= */
     @media (max-width: 1200px) {
@@ -855,23 +885,34 @@
         <p>Inicia sesión con tu correo institucional para acceder al panel de métricas.</p>
       </div>
       <div class="creds-box">
-        <div class="creds-header"><span>🧪</span> Credenciales de prueba</div>
+        <div class="creds-header"><i class="bi bi-flask"></i> Credenciales de prueba</div>
         <div class="creds-row">
           <span class="creds-label">Correo:</span>
           <span class="creds-value" id="demoEmail">admin@alumnos.upa.edu.mx</span>
-          <button class="creds-copy" onclick="copyCredential('demoEmail')" title="Copiar correo">📋</button>
+          <button class="creds-copy" onclick="copyCredential('demoEmail')" title="Copiar correo"><i class="bi bi-clipboard"></i></button>
         </div>
         <div class="creds-row">
           <span class="creds-label">Contraseña:</span>
           <span class="creds-value" id="demoPassword">Admin1234</span>
-          <button class="creds-copy" onclick="copyCredential('demoPassword')" title="Copiar contraseña">📋</button>
+          <button class="creds-copy" onclick="copyCredential('demoPassword')" title="Copiar contraseña"><i class="bi bi-clipboard"></i></button>
         </div>
         <div class="creds-footer">
-          <button class="creds-fill" onclick="fillCredentials()">↳ Rellenar automáticamente</button>
+          <div
+            class="creds-fill"
+            onclick="quickLoginAdmin()"
+            style="cursor:pointer;display:flex;align-items:center;gap:8px;width:100%;background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.2);border-radius:8px;color:#c084fc;font-size:12px;font-weight:600;padding:10px 12px;justify-content:center;transition:background .2s,border-color .2s;"
+            onmouseenter="this.style.background='rgba(168,85,247,.25)';this.style.borderColor='rgba(168,85,247,.35)'"
+            onmouseleave="this.style.background='rgba(168,85,247,.15)';this.style.borderColor='rgba(168,85,247,.2)'"
+          >
+            <i class="bi bi-person" style="font-size:16px;"></i>
+            <span>Admin:</span>
+            <span style="font-family:'SF Mono','Fira Code',monospace;font-size:11.5px;color:#e5e5ea;">admin@alumnos.upa.edu.mx</span>
+            <span style="margin-left:auto;font-size:11px;opacity:.7;">Admin1234</span>
+          </div>
         </div>
       </div>
       <div class="footer-badge">
-        <span>🔒</span> Datos protegidos &nbsp; <span>✓</span> Solo personal autorizado
+        <i class="bi bi-shield-lock"></i> Datos protegidos &nbsp; <i class="bi bi-check2-circle"></i> Solo personal autorizado
       </div>
     </div>
     <div class="login-form">
@@ -888,22 +929,41 @@
         <button type="submit" class="btn-primary" id="loginBtn">Entrar</button>
       </form>
       <div class="creds-box creds-box-mobile">
-        <div class="creds-header"><span>🧪</span> Credenciales de prueba</div>
+        <div class="creds-header"><i class="bi bi-flask"></i> Credenciales de prueba</div>
         <div class="creds-row">
           <span class="creds-label">Correo:</span>
           <span class="creds-value" id="demoEmailMobile">admin@alumnos.upa.edu.mx</span>
-          <button class="creds-copy" onclick="copyCredential('demoEmailMobile')" title="Copiar correo">📋</button>
+          <button class="creds-copy" onclick="copyCredential('demoEmailMobile')" title="Copiar correo"><i class="bi bi-clipboard"></i></button>
         </div>
         <div class="creds-row">
           <span class="creds-label">Contraseña:</span>
           <span class="creds-value" id="demoPasswordMobile">Admin1234</span>
-          <button class="creds-copy" onclick="copyCredential('demoPasswordMobile')" title="Copiar contraseña">📋</button>
+          <button class="creds-copy" onclick="copyCredential('demoPasswordMobile')" title="Copiar contraseña"><i class="bi bi-clipboard"></i></button>
         </div>
         <div class="creds-footer">
-          <button class="creds-fill" onclick="fillCredentialsMobile()">↳ Rellenar automáticamente</button>
+          <div
+            class="creds-fill"
+            onclick="quickLoginAdmin()"
+            style="cursor:pointer;display:flex;align-items:center;gap:8px;width:100%;background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.2);border-radius:8px;color:#c084fc;font-size:12px;font-weight:600;padding:10px 12px;justify-content:center;transition:background .2s,border-color .2s;"
+            onmouseenter="this.style.background='rgba(168,85,247,.25)';this.style.borderColor='rgba(168,85,247,.35)'"
+            onmouseleave="this.style.background='rgba(168,85,247,.15)';this.style.borderColor='rgba(168,85,247,.2)'"
+          >
+            <i class="bi bi-person" style="font-size:16px;"></i>
+            <span>Admin:</span>
+            <span style="font-family:'SF Mono','Fira Code',monospace;font-size:11px;color:#e5e5ea;">admin@alumnos.upa.edu.mx</span>
+            <span style="margin-left:auto;font-size:11px;opacity:.7;">Admin1234</span>
+          </div>
         </div>
       </div>
       <p class="register-link">¿No tienes cuenta? <a href="#">Regístrate</a></p>
+      <a
+        href="/acceso"
+        style="display:inline-flex;align-items:center;gap:8px;margin-top:16px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);padding:10px 16px;font-size:13px;color:#8e8e93;transition:all .2s;align-self:stretch;justify-content:center;text-decoration:none;"
+        onmouseenter="this.style.background='rgba(255,255,255,.08)';this.style.borderColor='rgba(255,255,255,.15)';this.style.color='#e5e7eb'"
+        onmouseleave="this.style.background='rgba(255,255,255,.03)';this.style.borderColor='rgba(255,255,255,.08)';this.style.color='#8e8e93'"
+      >
+        ← Volver al login principal
+      </a>
     </div>
   </div>
 
@@ -912,18 +972,19 @@
        ============================================================ -->
   <div id="dashboardScreen" class="dashboard-wrapper hidden">
     <header class="topbar">
-      <svg class="logo" viewBox="0 0 100 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <text x="0" y="20" font-size="20" font-weight="800" fill="white" letter-spacing="1">RydU</text>
-      </svg>
+      <img class="logo" src="/logo.svg" alt="RydU" />
       <nav class="nav-links" id="navLinks">
         <a data-page="dashboard" class="active">Dashboard</a>
         <a data-page="incidencias">Incidencias</a>
         <a data-page="usuarios">Usuarios</a>
+        <a data-page="pasajeros">Pasajeros</a>
+        <a data-page="conductores">Conductores</a>
         <a data-page="reportes">Reportes</a>
         <a data-page="configuracion">Configuración</a>
       </nav>
       <div class="topbar-right">
         <span id="userEmailDisplay" style="font-size:13px;color:var(--muted);font-weight:600;"></span>
+        <a href="/" class="btn-small" style="text-decoration:none;">← RydU</a>
         <button class="btn-ghost" onclick="handleLogout()">Cerrar sesión</button>
       </div>
     </header>
@@ -935,22 +996,58 @@
            ============================================================ -->
       <div class="page-section active" id="pageDashboard">
         <div class="dashboard-header">
-          <h1>Dashboard de incidencias</h1>
+          <h1>Dashboard</h1>
           <span class="last-update" id="lastUpdateText">Cargando…</span>
         </div>
         <div class="stats-grid">
-          <div class="stat-card"><div class="stat-icon icon-total">📊</div><div class="stat-label">Total de incidencias</div><div class="stat-value" id="statTotal">—</div></div>
-          <div class="stat-card"><div class="stat-icon icon-pending">⏳</div><div class="stat-label">Pendientes</div><div class="stat-value" id="statPending">—</div></div>
-          <div class="stat-card"><div class="stat-icon icon-progress">🔄</div><div class="stat-label">En proceso</div><div class="stat-value" id="statInProgress">—</div></div>
-          <div class="stat-card"><div class="stat-icon icon-done">✅</div><div class="stat-label">Resueltas</div><div class="stat-value" id="statResolved">—</div></div>
-          <div class="stat-card"><div class="stat-icon icon-critical">🚨</div><div class="stat-label">Críticas</div><div class="stat-value" id="statCritical">—</div></div>
-          <div class="stat-card"><div class="stat-icon icon-clock">⏱️</div><div class="stat-label">Resolución promedio</div><div class="stat-value" id="statAvgResolution">—</div><div class="stat-sub">horas</div></div>
+          <div class="stat-card"><div class="stat-icon icon-total"><i class="bi bi-person-walking"></i></div><div class="stat-label">Pasajeros registrados</div><div class="stat-value" id="statPasajeros">—</div></div>
+          <div class="stat-card"><div class="stat-icon icon-progress"><i class="bi bi-car-front"></i></div><div class="stat-label">Conductores registrados</div><div class="stat-value" id="statConductores">—</div></div>
+          <div class="stat-card"><div class="stat-icon icon-done"><i class="bi bi-clock-history"></i></div><div class="stat-label">Viajes completados</div><div class="stat-value" id="statViajes">—</div><div class="stat-sub">viajes de conductores</div></div>
+          <div class="stat-card"><div class="stat-icon icon-pending"><i class="bi bi-cash-stack"></i></div><div class="stat-label">Ganancias totales</div><div class="stat-value" id="statGanancias">—</div></div>
+          <div class="stat-card"><div class="stat-icon icon-critical"><i class="bi bi-star"></i></div><div class="stat-label">Rating promedio</div><div class="stat-value" id="statRating">—</div></div>
+          <div class="stat-card"><div class="stat-icon icon-clock"><i class="bi bi-person-check"></i></div><div class="stat-label">Viajes de pasajeros</div><div class="stat-value" id="statViajesPasajeros">—</div><div class="stat-sub">asientos ocupados</div></div>
         </div>
         <div class="charts-grid">
-          <div class="chart-card doughnut"><div class="chart-title"><span class="dot" style="background:#a78bfa;"></span>Distribución por estado</div><div class="chart-container"><canvas id="chartEstado"></canvas></div></div>
-          <div class="chart-card"><div class="chart-title"><span class="dot" style="background:#60a5fa;"></span>Incidencias por categoría</div><div class="chart-container"><canvas id="chartCategoria"></canvas></div></div>
-          <div class="chart-card"><div class="chart-title"><span class="dot" style="background:#f59e0b;"></span>Incidencias por prioridad</div><div class="chart-container"><canvas id="chartPrioridad"></canvas></div></div>
-          <div class="chart-card"><div class="chart-title"><span class="dot" style="background:#34d399;"></span>Tiempo de resolución por categoría</div><div class="chart-container"><canvas id="chartResolucion"></canvas></div></div>
+          <div class="chart-card doughnut"><div class="chart-title"><span class="dot" style="background:#a78bfa;"></span>Usuarios por rol</div><div class="chart-container"><canvas id="chartUsuarios"></canvas></div></div>
+          <div class="chart-card"><div class="chart-title"><span class="dot" style="background:#60a5fa;"></span>Viajes completados por conductor</div><div class="chart-container"><canvas id="chartViajes"></canvas></div></div>
+          <div class="chart-card"><div class="chart-title"><span class="dot" style="background:#34d399;"></span>Top pasajeros por viajes</div><div class="chart-container"><canvas id="chartTopPasajeros"></canvas></div></div>
+          <div class="chart-card"><div class="chart-title"><span class="dot" style="background:#f59e0b;"></span>Top conductores por ganancias</div><div class="chart-container"><canvas id="chartTopConductores"></canvas></div></div>
+        </div>
+        <div class="leaderboard-grid">
+          <div class="data-table-wrapper">
+            <div class="filter-bar" style="border-bottom:1px solid var(--line);">
+              <b style="color:var(--text-bright);font-size:14px;"><i class="bi bi-trophy-fill" style="color:#eab308;"></i> Top pasajeros</b>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Pasajero</th>
+                  <th>Rating</th>
+                  <th>Viajes</th>
+                  <th style="text-align:right;">Ahorro</th>
+                </tr>
+              </thead>
+              <tbody id="topPasajerosBody"></tbody>
+            </table>
+            <div id="topPasajerosEmpty" class="data-table-empty hidden"><div class="empty-icon"><i class="bi bi-person-walking"></i></div><p>Sin pasajeros todavía</p></div>
+          </div>
+          <div class="data-table-wrapper">
+            <div class="filter-bar" style="border-bottom:1px solid var(--line);">
+              <b style="color:var(--text-bright);font-size:14px;"><i class="bi bi-trophy-fill" style="color:#eab308;"></i> Top conductores</b>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Conductor</th>
+                  <th>Rating</th>
+                  <th>Completados</th>
+                  <th style="text-align:right;">Ganancias</th>
+                </tr>
+              </thead>
+              <tbody id="topConductoresBody"></tbody>
+            </table>
+            <div id="topConductoresEmpty" class="data-table-empty hidden"><div class="empty-icon"><i class="bi bi-car-front"></i></div><p>Sin conductores todavía</p></div>
+          </div>
         </div>
       </div>
 
@@ -1001,7 +1098,7 @@
             <tbody id="incTableBody"></tbody>
           </table>
           <div id="incEmpty" class="data-table-empty hidden">
-            <div class="empty-icon">🔍</div>
+            <div class="empty-icon"><i class="bi bi-search"></i></div>
             <p>No se encontraron incidencias</p>
           </div>
           <div class="table-pagination" id="incPagination">
@@ -1050,8 +1147,101 @@
             <tbody id="userTableBody"></tbody>
           </table>
           <div id="userEmpty" class="data-table-empty hidden">
-            <div class="empty-icon">👤</div>
+            <div class="empty-icon"><i class="bi bi-person"></i></div>
             <p>No se encontraron usuarios</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================================
+           PAGE: PASAJEROS (métricas reales)
+           ============================================================ -->
+      <div class="page-section" id="pagePasajeros">
+        <div class="dashboard-header">
+          <h1>Pasajeros</h1>
+          <span id="pasajerosCount" style="font-size:13px;color:var(--muted);align-self:center;"></span>
+        </div>
+
+        <div class="metrics-grid cols-3">
+          <div class="report-card">
+            <div class="report-value" id="pasTotal">—</div>
+            <div class="report-label">Pasajeros registrados</div>
+          </div>
+          <div class="report-card">
+            <div class="report-value" id="pasViajes">—</div>
+            <div class="report-label">Viajes realizados</div>
+          </div>
+          <div class="report-card">
+            <div class="report-value" id="pasRating">—</div>
+            <div class="report-label">Rating promedio</div>
+          </div>
+        </div>
+
+        <div class="data-table-wrapper" style="margin-top:18px;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Pasajero</th>
+                <th>Rating</th>
+                <th>Viajes</th>
+                <th>Ahorro estimado</th>
+                <th>Registro</th>
+              </tr>
+            </thead>
+            <tbody id="pasTableBody"></tbody>
+          </table>
+          <div id="pasEmpty" class="data-table-empty hidden">
+            <div class="empty-icon">🚶</div>
+            <p>No hay pasajeros registrados todavía</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================================
+           PAGE: CONDUCTORES (métricas reales)
+           ============================================================ -->
+      <div class="page-section" id="pageConductores">
+        <div class="dashboard-header">
+          <h1>Conductores</h1>
+          <span id="conductoresCount" style="font-size:13px;color:var(--muted);align-self:center;"></span>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="report-card">
+            <div class="report-value" id="conTotal">—</div>
+            <div class="report-label">Conductores registrados</div>
+          </div>
+          <div class="report-card">
+            <div class="report-value" id="conViajes">—</div>
+            <div class="report-label">Viajes completados</div>
+          </div>
+          <div class="report-card">
+            <div class="report-value" id="conGanancias">—</div>
+            <div class="report-label">Ganancias totales</div>
+          </div>
+          <div class="report-card">
+            <div class="report-value" id="conRating">—</div>
+            <div class="report-label">Rating promedio</div>
+          </div>
+        </div>
+
+        <div class="data-table-wrapper" style="margin-top:18px;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Conductor</th>
+                <th>Rating</th>
+                <th>Viajes completados</th>
+                <th>Ganancias</th>
+                <th>Rutas activas</th>
+                <th>Vehículos</th>
+              </tr>
+            </thead>
+            <tbody id="conTableBody"></tbody>
+          </table>
+          <div id="conEmpty" class="data-table-empty hidden">
+            <div class="empty-icon">🚗</div>
+            <p>No hay conductores registrados todavía</p>
           </div>
         </div>
       </div>
@@ -1066,9 +1256,9 @@
         </div>
 
         <div class="reports-actions">
-          <button class="btn-white-sm" onclick="exportCSV()">📥 Exportar CSV</button>
-          <button class="btn-ghost" onclick="window.print()">🖨️ Imprimir</button>
-          <button class="btn-ghost" onclick="refreshReports()">🔄 Actualizar</button>
+          <button class="btn-white-sm" onclick="exportCSV()"><i class="bi bi-download"></i> Exportar CSV</button>
+          <button class="btn-ghost" onclick="window.print()"><i class="bi bi-printer"></i> Imprimir</button>
+          <button class="btn-ghost" onclick="refreshReports()"><i class="bi bi-arrow-repeat"></i> Actualizar</button>
         </div>
 
         <div class="reports-grid" id="reportsGrid">
@@ -1109,13 +1299,13 @@
               <tbody id="reportTableBody"></tbody>
             </table>
             <div id="reportEmpty" class="data-table-empty hidden">
-              <div class="empty-icon">📊</div>
+              <div class="empty-icon"><i class="bi bi-bar-chart"></i></div>
               <p>No hay datos para mostrar</p>
             </div>
           </div>
 
           <div class="activity-log">
-            <div class="log-title">📋 Actividad reciente</div>
+            <div class="log-title"><i class="bi bi-list-check"></i> Actividad reciente</div>
             <div id="activityList"></div>
           </div>
         </div>
@@ -1129,7 +1319,7 @@
           <h1>Configuración</h1>
         </div>
         <div class="chart-card" style="padding:40px;text-align:center;">
-          <div style="font-size:48px;margin-bottom:16px;">⚙️</div>
+          <div style="font-size:48px;margin-bottom:16px;"><i class="bi bi-gear"></i></div>
           <p style="color:var(--muted);font-size:14px;">Página de configuración próximamente.</p>
         </div>
       </div>
@@ -1144,7 +1334,7 @@
     <div class="modal-box">
       <div class="modal-header">
         <h2 id="modalTitle">Nueva incidencia</h2>
-        <button class="modal-close" onclick="closeModal()">✕</button>
+        <button class="modal-close" onclick="closeModal()"><i class="bi bi-x-lg"></i></button>
       </div>
       <div class="modal-body">
         <div class="form-group">
@@ -1159,7 +1349,6 @@
           <div class="form-group">
             <label class="form-label">Categoría</label>
             <select class="form-select" id="formCategoria">
-              <option value="Hardware">Hardware</option>
               <option value="Software">Software</option>
               <option value="Red">Red</option>
               <option value="Acceso">Acceso</option>
@@ -1213,15 +1402,15 @@
       const lastUpdateText    = document.getElementById('lastUpdateText');
       const toastContainer    = document.getElementById('toastContainer');
 
-      const statTotal         = document.getElementById('statTotal');
-      const statPending       = document.getElementById('statPending');
-      const statInProgress    = document.getElementById('statInProgress');
-      const statResolved      = document.getElementById('statResolved');
-      const statCritical      = document.getElementById('statCritical');
-      const statAvgResolution = document.getElementById('statAvgResolution');
+      const statPasajeros     = document.getElementById('statPasajeros');
+      const statConductores   = document.getElementById('statConductores');
+      const statViajes        = document.getElementById('statViajes');
+      const statGanancias     = document.getElementById('statGanancias');
+      const statRating        = document.getElementById('statRating');
+      const statViajesPasajeros = document.getElementById('statViajesPasajeros');
 
       // Chart instances
-      let chartEstado = null, chartCategoria = null, chartPrioridad = null, chartResolucion = null;
+      let chartUsuarios = null, chartViajes = null, chartTopPasajeros = null, chartTopConductores = null;
 
       // =============================================================
       // API CONFIG
@@ -1274,10 +1463,10 @@
           const stats = await apiFetch('/dashboard');
           if (stats.total === 0) {
             await apiFetch('/seed', { method: 'POST' });
-            console.log('🌱 Datos de métricas sembrados');
+            console.log('Datos de métricas sembrados');
           }
         } catch (e) {
-          console.warn('⚠️ No se pudo conectar con el servidor:', e);
+          console.warn('No se pudo conectar con el servidor:', e);
         }
       }
 
@@ -1310,6 +1499,20 @@
 
       function getInitials(name) {
         return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+      }
+
+      function escapeHtml(str) {
+        return String(str ?? '').replace(/[&<>"']/g, (c) => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+        }[c]));
+      }
+
+      function ratingStars(rating) {
+        const r = Number(rating) || 0;
+        if (r <= 0) return '<span style="color:var(--muted2)">—</span>';
+        let stars = '';
+        for (let i = 1; i <= 5; i++) stars += i <= Math.round(r) ? '★' : '☆';
+        return `<span style="color:#eab308;letter-spacing:2px;">${stars}</span> <span style="color:var(--muted);font-size:12px;">${r.toFixed(2)}</span>`;
       }
 
       // =============================================================
@@ -1357,6 +1560,8 @@
         if (page === 'dashboard') loadDashboard();
         if (page === 'incidencias') renderIncidencias();
         if (page === 'usuarios') renderUsuarios();
+        if (page === 'pasajeros') renderPasajeros();
+        if (page === 'conductores') renderConductores();
         if (page === 'reportes') renderReportes();
       };
 
@@ -1374,79 +1579,153 @@
         if (!getToken()) { showLogin(); return; }
 
         try {
-          const data = await apiFetch('/dashboard');
-          renderDashboard(data);
+          const [pasajeros, conductores] = await Promise.allSettled([
+            apiFetch('/pasajeros'),
+            apiFetch('/conductores'),
+          ]);
+          const p = pasajeros.status === 'fulfilled' ? pasajeros.value : null;
+          const c = conductores.status === 'fulfilled' ? conductores.value : null;
+          if (!p && !c) throw new Error('No se pudieron cargar las métricas');
+          renderDashboard(p, c);
         } catch (e) {
-          toast('⚠️ Error al cargar dashboard: ' + e.message, 'error');
+          toast('<i class="bi bi-exclamation-triangle"></i> Error al cargar dashboard: ' + e.message, 'error');
         }
       }
 
-      function renderDashboard(data) {
-        const total = data.total ?? 0, pending = data.pendientes ?? 0, progress = data.enProceso ?? 0;
-        const resolved = data.resueltas ?? 0, critical = data.criticas ?? 0, avgHours = data.resolucionPromedioHoras ?? 0;
+      function renderDashboard(pasajeros, conductores) {
+        const p = pasajeros || { items: [], total: 0, totalViajes: 0, ratingGlobal: 0 };
+        const c = conductores || { items: [], total: 0, totalViajes: 0, totalGanancias: 0, ratingGlobal: 0 };
 
-        statTotal.textContent = Number(total).toLocaleString();
-        statPending.textContent = Number(pending).toLocaleString();
-        statInProgress.textContent = Number(progress).toLocaleString();
-        statResolved.textContent = Number(resolved).toLocaleString();
-        statCritical.textContent = Number(critical).toLocaleString();
-        statAvgResolution.textContent = Number(avgHours).toFixed(1);
+        // Coherencia: los viajes de pasajeros se hicieron en los viajes completados
+        // por los conductores (solicitudes aceptadas en viajes Terminado).
+        const viajesCompletados = Number(c.totalViajes || 0);
+        const viajesPasajeros = Number(p.totalViajes || 0);
+        const ganancias = Number(c.totalGanancias || 0);
+
+        // Rating global combinado (pasajeros + conductores)
+        const ratings = [p.ratingGlobal, c.ratingGlobal].filter(r => Number(r) > 0);
+        const ratingGlobal = ratings.length
+          ? (ratings.reduce((a, b) => Number(a) + Number(b), 0) / ratings.length).toFixed(2)
+          : 0;
+
+        statPasajeros.textContent = Number(p.total || 0).toLocaleString();
+        statConductores.textContent = Number(c.total || 0).toLocaleString();
+        statViajes.textContent = viajesCompletados.toLocaleString();
+        statGanancias.textContent = '$' + ganancias.toLocaleString('es-MX');
+        statRating.textContent = ratingGlobal > 0 ? ratingGlobal + ' ★' : '—';
+        statViajesPasajeros.textContent = viajesPasajeros.toLocaleString();
 
         const now = new Date();
         lastUpdateText.textContent = 'Última actualización: ' + now.toLocaleString('es-MX');
 
-        const porEstado = data.porEstado || { Pendiente: pending, 'En proceso': progress, Resuelta: resolved };
-        const porCategoria = data.porCategoria || { Hardware: 0, Software: 0, Red: 0, Acceso: 0, Otro: 0 };
-        const porPrioridad = data.porPrioridad || { Baja: 0, Media: 0, Alta: 0, Crítica: critical };
-        const resolucionCategoria = data.resolucionPorCategoria || {};
+        renderCharts(p, c);
 
-        if (Object.keys(resolucionCategoria).length === 0) {
-          Object.keys(porCategoria).forEach((cat, i) => {
-            resolucionCategoria[cat] = avgHours * (1 + (i - 2) * 0.15);
-          });
-        }
-        renderCharts(porEstado, porCategoria, porPrioridad, resolucionCategoria);
+        // Top 5 pasajeros por viajes realizados
+        const topPasajeros = (p.items || [])
+          .slice()
+          .sort((a, b) => Number(b.viajesRealizados || 0) - Number(a.viajesRealizados || 0))
+          .slice(0, 5);
+        renderLeaderboard('topPasajeros', topPasajeros, {
+          emptyId: 'topPasajerosEmpty',
+          viajesKey: 'viajesRealizados',
+          valueKey: 'ahorroEstimado',
+          valuePrefix: '$',
+        });
+
+        // Top 5 conductores por ganancias
+        const topConductores = (c.items || [])
+          .slice()
+          .sort((a, b) => Number(b.gananciasTotales || 0) - Number(a.gananciasTotales || 0))
+          .slice(0, 5);
+        renderLeaderboard('topConductores', topConductores, {
+          emptyId: 'topConductoresEmpty',
+          viajesKey: 'viajesCompletados',
+          valueKey: 'gananciasTotales',
+          valuePrefix: '$',
+        });
       }
 
-      function renderCharts(estado, categoria, prioridad, resolucion) {
+      function renderLeaderboard(tbodyId, items, cfg) {
+        const tbody = document.getElementById(tbodyId);
+        const empty = document.getElementById(cfg.emptyId);
+        tbody.innerHTML = '';
+        if (!items || items.length === 0) {
+          empty.classList.remove('hidden');
+          return;
+        }
+        empty.classList.add('hidden');
+        tbody.innerHTML = items.map((u, idx) => {
+          const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '';
+          return '<tr>' +
+            '<td><div class="user-cell">' +
+              '<span class="user-avatar-small" style="background:' + getAvatarColor(u.nombre) + '">' + getInitials(u.nombre) + '</span>' +
+              '<div class="user-info"><span class="user-name">' + medal + ' ' + escapeHtml(u.nombre) + '</span><span class="user-email">' + escapeHtml(u.email || '') + '</span></div>' +
+            '</div></td>' +
+            '<td>' + ratingStars(u.ratingPromedio) + '</td>' +
+            '<td><b>' + Number(u[cfg.viajesKey] || 0) + '</b></td>' +
+            '<td style="text-align:right;"><b>' + cfg.valuePrefix + Number(u[cfg.valueKey] || 0).toLocaleString('es-MX') + '</b></td>' +
+          '</tr>';
+        }).join('');
+      }
+
+      function renderCharts(p, c) {
         Chart.defaults.color = '#8e8e93';
         Chart.defaults.borderColor = 'rgba(255,255,255,.08)';
         Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
 
-        [chartEstado, chartCategoria, chartPrioridad, chartResolucion].forEach(c => { if (c) c.destroy(); });
-
-        const estadoColors = ['#3b82f6','#f59e0b','#22c55e'];
-        const categoriaColors = ['#a78bfa','#60a5fa','#34d399','#f97316','#f472b6'];
-        const prioridadColors = ['#6b7280','#3b82f6','#f59e0b','#ef4444'];
-        const resolucionColors = ['rgba(147,197,253,.7)','rgba(196,181,253,.7)','rgba(110,231,183,.7)','rgba(251,191,36,.7)','rgba(244,114,182,.7)'];
+        [chartUsuarios, chartViajes, chartTopPasajeros, chartTopConductores].forEach(ch => { if (ch) ch.destroy(); });
 
         const makeChart = (id, type, labels, dataArr, bgColors, opts) => {
           const ctx = document.getElementById(id).getContext('2d');
           return new Chart(ctx, { type, data: { labels, datasets: [{ data: dataArr, backgroundColor: bgColors, borderWidth: 0, borderRadius: type === 'bar' ? 6 : undefined, borderSkipped: type === 'bar' ? false : undefined }] }, options: opts });
         };
 
-        chartEstado = makeChart('chartEstado', 'doughnut', Object.keys(estado), Object.values(estado), estadoColors, {
+        const doughnutOpts = {
           responsive: true, maintainAspectRatio: false, cutout: '68%',
           plugins: { legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true, pointStyle: 'circle', font: { size: 12 } } } }
-        });
+        };
 
-        chartCategoria = makeChart('chartCategoria', 'bar', Object.keys(categoria), Object.values(categoria), categoriaColors, {
-          responsive: true, maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: { y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: 'rgba(255,255,255,.06)' } }, x: { grid: { display: false } } }
-        });
+        // Usuarios por rol
+        chartUsuarios = makeChart('chartUsuarios', 'doughnut', ['Pasajeros', 'Conductores'], [p.total, c.total], ['#a78bfa', '#60a5fa'], doughnutOpts);
 
-        chartPrioridad = makeChart('chartPrioridad', 'bar', Object.keys(prioridad), Object.values(prioridad), prioridadColors, {
-          responsive: true, maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: { y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: 'rgba(255,255,255,.06)' } }, x: { grid: { display: false } } }
-        });
+        // Viajes completados por conductor
+        const drivers = (c.items || []).slice().sort((a, b) => Number(b.viajesCompletados || 0) - Number(a.viajesCompletados || 0));
+        chartViajes = makeChart('chartViajes', 'bar',
+          drivers.map(u => (u.nombre || 'Conductor').split(' ')[0]),
+          drivers.map(u => Number(u.viajesCompletados || 0)),
+          'rgba(96,165,250,.85)',
+          {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 }, grid: { color: 'rgba(255,255,255,.06)' } }, x: { grid: { display: false } } }
+          }
+        );
 
-        chartResolucion = makeChart('chartResolucion', 'bar', Object.keys(resolucion), Object.values(resolucion), resolucionColors, {
-          indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-          plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.parsed.x + ' horas' } } },
-          scales: { x: { beginAtZero: true, title: { display: true, text: 'Horas', color: '#8e8e93', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,.06)' } }, y: { grid: { display: false } } }
-        });
+        // Top pasajeros por viajes
+        const topP = (p.items || []).slice().sort((a, b) => Number(b.viajesRealizados || 0) - Number(a.viajesRealizados || 0)).slice(0, 5);
+        chartTopPasajeros = makeChart('chartTopPasajeros', 'bar',
+          topP.map(u => (u.nombre || 'Usuario').split(' ')[0]),
+          topP.map(u => Number(u.viajesRealizados || 0)),
+          'rgba(52,211,153,.85)',
+          {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 }, grid: { color: 'rgba(255,255,255,.06)' } }, x: { grid: { display: false } } }
+          }
+        );
+
+        // Top conductores por ganancias (horizontal)
+        const topC = (c.items || []).slice().sort((a, b) => Number(b.gananciasTotales || 0) - Number(a.gananciasTotales || 0)).slice(0, 5);
+        chartTopConductores = makeChart('chartTopConductores', 'bar',
+          topC.map(u => (u.nombre || 'Conductor').split(' ')[0]),
+          topC.map(u => Number(u.gananciasTotales || 0)),
+          'rgba(245,158,11,.85)',
+          {
+            indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => '$' + Number(ctx.parsed.x).toLocaleString('es-MX') } } },
+            scales: { x: { beginAtZero: true, grid: { color: 'rgba(255,255,255,.06)' }, ticks: { callback: v => '$' + Number(v).toLocaleString('es-MX') } }, y: { grid: { display: false } } }
+          }
+        );
       }
 
       // =============================================================
@@ -1502,10 +1781,10 @@
               '<td>' + estadoBadge(inc.estado) + '</td>' +
               '<td style="color:var(--muted2);font-size:12px;">' + formatDate(inc.creado) + '</td>' +
               '<td><div class="cell-actions">' +
-                (canAvance ? '<button class="btn-small warning" onclick="avanceEstado(' + inc.id + ')" title="Pasar a En proceso">▶</button>' : '') +
-                (canResolver ? '<button class="btn-small success" onclick="resolverIncidencia(' + inc.id + ')" title="Resolver">✓</button>' : '') +
-                '<button class="btn-small" onclick="editarIncidencia(' + inc.id + ')">✎</button>' +
-                '<button class="btn-small danger" onclick="eliminarIncidencia(' + inc.id + ')">✕</button>' +
+                (canAvance ? '<button class="btn-small warning" onclick="avanceEstado(' + inc.id + ')" title="Pasar a En proceso"><i class="bi bi-play-fill"></i></button>' : '') +
+                (canResolver ? '<button class="btn-small success" onclick="resolverIncidencia(' + inc.id + ')" title="Resolver"><i class="bi bi-check-lg"></i></button>' : '') +
+                '<button class="btn-small" onclick="editarIncidencia(' + inc.id + ')"><i class="bi bi-pencil"></i></button>' +
+                '<button class="btn-small danger" onclick="eliminarIncidencia(' + inc.id + ')"><i class="bi bi-x-lg"></i></button>' +
               '</div></td>' +
             '</tr>';
           }).join('');
@@ -1522,7 +1801,7 @@
           html += '<button class="page-btn" onclick="nextIncPage()"' + (incPage >= pages ? ' disabled' : '') + '>›</button>';
           btns.innerHTML = html;
         } catch (e) {
-          toast('⚠️ Error al cargar incidencias: ' + e.message, 'error');
+          toast('<i class="bi bi-exclamation-triangle"></i> Error al cargar incidencias: ' + e.message, 'error');
         }
       };
 
@@ -1537,20 +1816,20 @@
       window.avanceEstado = async function (id) {
         try {
           await apiFetch('/incidencias/' + id + '/avanzar', { method: 'PATCH' });
-          toast('✅ Incidencia #' + id + ' pasó a "En proceso"', 'success');
+          toast('<i class="bi bi-check-circle"></i> Incidencia #' + id + ' pasó a "En proceso"', 'success');
           renderIncidencias();
         } catch (e) {
-          toast('⚠️ Error: ' + e.message, 'error');
+          toast('<i class="bi bi-exclamation-triangle"></i> Error: ' + e.message, 'error');
         }
       };
 
       window.resolverIncidencia = async function (id) {
         try {
           await apiFetch('/incidencias/' + id + '/resolver', { method: 'PATCH' });
-          toast('✅ Incidencia #' + id + ' resuelta', 'success');
+          toast('<i class="bi bi-check-circle"></i> Incidencia #' + id + ' resuelta', 'success');
           renderIncidencias();
         } catch (e) {
-          toast('⚠️ Error: ' + e.message, 'error');
+          toast('<i class="bi bi-exclamation-triangle"></i> Error: ' + e.message, 'error');
         }
       };
 
@@ -1558,10 +1837,10 @@
         if (!confirm('¿Eliminar la incidencia #' + id + '?')) return;
         try {
           await apiFetch('/incidencias/' + id, { method: 'DELETE' });
-          toast('🗑️ Incidencia #' + id + ' eliminada', 'warning');
+          toast('<i class="bi bi-trash"></i> Incidencia #' + id + ' eliminada', 'warning');
           renderIncidencias();
         } catch (e) {
-          toast('⚠️ Error: ' + e.message, 'error');
+          toast('<i class="bi bi-exclamation-triangle"></i> Error: ' + e.message, 'error');
         }
       };
 
@@ -1577,7 +1856,7 @@
           document.getElementById('formEstado').value = inc.estado;
           document.getElementById('incModal').classList.remove('hidden');
         } catch (e) {
-          toast('⚠️ Error: ' + e.message, 'error');
+          toast('<i class="bi bi-exclamation-triangle"></i> Error: ' + e.message, 'error');
         }
       };
 
@@ -1586,7 +1865,7 @@
         document.getElementById('formEditId').value = '';
         document.getElementById('formTitulo').value = '';
         document.getElementById('formDescripcion').value = '';
-        document.getElementById('formCategoria').value = 'Hardware';
+        document.getElementById('formCategoria').value = 'Software';
         document.getElementById('formPrioridad').value = 'Media';
         document.getElementById('formEstado').value = 'Pendiente';
         document.getElementById('incModal').classList.remove('hidden');
@@ -1604,8 +1883,8 @@
         const prioridad = document.getElementById('formPrioridad').value;
         const estado = document.getElementById('formEstado').value;
 
-        if (!titulo) { toast('⚠️ El título es obligatorio', 'warning'); return; }
-        if (!descripcion) { toast('⚠️ La descripción es obligatoria', 'warning'); return; }
+        if (!titulo) { toast('<i class="bi bi-exclamation-triangle"></i> El título es obligatorio', 'warning'); return; }
+        if (!descripcion) { toast('<i class="bi bi-exclamation-triangle"></i> La descripción es obligatoria', 'warning'); return; }
 
         try {
           if (editId) {
@@ -1613,20 +1892,20 @@
               method: 'PUT',
               body: { titulo, descripcion, categoria, prioridad, estado },
             });
-            toast('✅ Incidencia #' + editId + ' actualizada', 'success');
+            toast('<i class="bi bi-check-circle"></i> Incidencia #' + editId + ' actualizada', 'success');
           } else {
             const newInc = await apiFetch('/incidencias', {
               method: 'POST',
               body: { titulo, descripcion, categoria, prioridad, estado },
             });
-            toast('✅ Nueva incidencia #' + newInc.id + ' creada', 'success');
+            toast('<i class="bi bi-check-circle"></i> Nueva incidencia #' + newInc.id + ' creada', 'success');
           }
 
           incPage = 1;
           closeModal();
           renderIncidencias();
         } catch (e) {
-          toast('⚠️ Error: ' + e.message, 'error');
+          toast('<i class="bi bi-exclamation-triangle"></i> Error: ' + e.message, 'error');
         }
       };
 
@@ -1678,12 +1957,104 @@
               '<td><span class="status-dot ' + u.estado + '" style="display:inline-block;vertical-align:middle;margin-right:6px;"></span>' + capitalize(u.estado) + '</td>' +
               '<td style="color:var(--muted2);font-size:12px;">' + formatDate(u.registro) + '</td>' +
               '<td><div class="cell-actions">' +
-                '<button class="btn-small">✎</button>' +
+                '<button class="btn-small"><i class="bi bi-pencil"></i></button>' +
               '</div></td>' +
             '</tr>';
           }).join('');
         } catch (e) {
-          toast('⚠️ Error al cargar usuarios: ' + e.message, 'error');
+          toast('<i class="bi bi-exclamation-triangle"></i> Error al cargar usuarios: ' + e.message, 'error');
+        }
+      };
+
+      // =============================================================
+      // MÉTRICAS REALES: PASAJEROS
+      // =============================================================
+      window.renderPasajeros = async function () {
+        try {
+          const data = await apiFetch('/pasajeros');
+
+          document.getElementById('pasTotal').textContent = data.total;
+          document.getElementById('pasViajes').textContent = data.totalViajes;
+          document.getElementById('pasRating').textContent =
+            data.ratingGlobal > 0 ? Number(data.ratingGlobal).toFixed(2) + ' ★' : '—';
+
+          const tbody = document.getElementById('pasTableBody');
+          const empty = document.getElementById('pasEmpty');
+          tbody.innerHTML = '';
+          empty.classList.add('hidden');
+          if (!data.items || data.items.length === 0) empty.classList.remove('hidden');
+
+          (data.items || []).forEach((p) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>
+                <div class="user-cell">
+                  <span class="user-avatar-small" style="background:${getAvatarColor(p.nombre)}">${getInitials(p.nombre)}</span>
+                  <div class="user-info">
+                    <span class="user-name">${escapeHtml(p.nombre)}</span>
+                    <span class="user-email">${escapeHtml(p.email)}</span>
+                  </div>
+                </div>
+              </td>
+              <td>${ratingStars(p.ratingPromedio)}</td>
+              <td><b>${p.viajesRealizados}</b></td>
+              <td><b>$${Number(p.ahorroEstimado).toLocaleString('es-MX')}</b></td>
+              <td>${p.registro ? formatDate(p.registro) : '—'}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+
+          document.getElementById('pasajerosCount').textContent =
+            `${data.total} pasajero(s) · ${data.totalViajes} viaje(s) realizado(s)`;
+        } catch (e) {
+          toast('⚠️ Error al cargar pasajeros: ' + e.message, 'error');
+        }
+      };
+
+      // =============================================================
+      // MÉTRICAS REALES: CONDUCTORES
+      // =============================================================
+      window.renderConductores = async function () {
+        try {
+          const data = await apiFetch('/conductores');
+
+          document.getElementById('conTotal').textContent = data.total;
+          document.getElementById('conViajes').textContent = data.totalViajes;
+          document.getElementById('conGanancias').textContent = '$' + Number(data.totalGanancias).toLocaleString('es-MX');
+          document.getElementById('conRating').textContent =
+            data.ratingGlobal > 0 ? Number(data.ratingGlobal).toFixed(2) + ' ★' : '—';
+
+          const tbody = document.getElementById('conTableBody');
+          const empty = document.getElementById('conEmpty');
+          tbody.innerHTML = '';
+          empty.classList.add('hidden');
+          if (!data.items || data.items.length === 0) empty.classList.remove('hidden');
+
+          (data.items || []).forEach((c) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>
+                <div class="user-cell">
+                  <span class="user-avatar-small" style="background:${getAvatarColor(c.nombre)}">${getInitials(c.nombre)}</span>
+                  <div class="user-info">
+                    <span class="user-name">${escapeHtml(c.nombre)}</span>
+                    <span class="user-email">${escapeHtml(c.email)}</span>
+                  </div>
+                </div>
+              </td>
+              <td>${ratingStars(c.ratingPromedio)}</td>
+              <td><b>${c.viajesCompletados}</b></td>
+              <td><b>$${Number(c.gananciasTotales).toLocaleString('es-MX')}</b></td>
+              <td>${c.rutasActivas}</td>
+              <td>${c.vehiculos}${c.vehiculosVerificados > 0 ? `<span style="color:#22c55e;font-size:11px;"> (${c.vehiculosVerificados} verif.)</span>` : ''}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+
+          document.getElementById('conductoresCount').textContent =
+            `${data.total} conductor(es) · $${Number(data.totalGanancias).toLocaleString('es-MX')} ganados`;
+        } catch (e) {
+          toast('⚠️ Error al cargar conductores: ' + e.message, 'error');
         }
       };
 
@@ -1731,21 +2102,22 @@
           const activityLog = actividadRes.items;
           const list = document.getElementById('activityList');
           list.innerHTML = activityLog.slice(0, 8).map(a => {
-            const icons = ['🔧','📝','✅','🔄','📌','💻','🔐','📊'];
+            const icons = ['bi-tools','bi-pencil','bi-check','bi-repeat','bi-pin','bi-laptop','bi-lock','bi-bar-chart'];
             const idx = Math.abs(a.text.length) % icons.length;
+            const iconClass = (a.icon && a.icon.indexOf('bi-') === 0) ? a.icon : icons[idx];
             return '<div class="activity-item">' +
-              '<div class="activity-icon" style="background:' + ['rgba(59,130,246,.15)','rgba(168,85,247,.15)','rgba(34,197,94,.15)','rgba(234,179,8,.15)','rgba(239,68,68,.15)','rgba(249,115,22,.15)','rgba(244,114,182,.15)','rgba(20,184,166,.15)'][idx] + ';">' + icons[idx] + '</div>' +
+              '<div class="activity-icon" style="background:' + ['rgba(59,130,246,.15)','rgba(168,85,247,.15)','rgba(34,197,94,.15)','rgba(234,179,8,.15)','rgba(239,68,68,.15)','rgba(249,115,22,.15)','rgba(244,114,182,.15)','rgba(20,184,166,.15)'][idx] + ';"><i class="bi ' + iconClass + '"></i></div>' +
               '<div><div class="activity-text">' + a.text + '</div><div class="activity-time">' + a.time + '</div></div>' +
             '</div>';
           }).join('');
         } catch (e) {
-          toast('⚠️ Error al cargar reportes: ' + e.message, 'error');
+          toast('<i class="bi bi-exclamation-triangle"></i> Error al cargar reportes: ' + e.message, 'error');
         }
       };
 
       window.refreshReports = function () {
         renderReportes();
-        toast('🔄 Reportes actualizados', 'success');
+        toast('<i class="bi bi-arrow-repeat"></i> Reportes actualizados', 'success');
       };
 
       window.exportCSV = async function () {
@@ -1764,9 +2136,9 @@
           const a = document.createElement('a');
           a.href = url; a.download = 'incidencias_rydu.csv'; a.click();
           URL.revokeObjectURL(url);
-          toast('📥 CSV exportado correctamente', 'success');
+          toast('<i class="bi bi-download"></i> CSV exportado correctamente', 'success');
         } catch (e) {
-          toast('⚠️ Error al exportar: ' + e.message, 'error');
+          toast('<i class="bi bi-exclamation-triangle"></i> Error al exportar: ' + e.message, 'error');
         }
       };
 
@@ -1783,8 +2155,8 @@
       window.enterDashboard = function () {
         loginScreen.classList.add('hidden');
         dashboardScreen.classList.remove('hidden');
+        // navigateTo('dashboard') ya dispara loadDashboard() (lazy load)
         navigateTo('dashboard');
-        loadDashboard();
       };
 
       window.handleLogout = function () {
@@ -1809,10 +2181,17 @@
         });
         const btn = el.nextElementSibling;
         if (btn) {
-          btn.textContent = '✅';
+          btn.innerHTML = '<i class="bi bi-clipboard-check"></i>';
           btn.classList.add('copied');
-          setTimeout(() => { btn.textContent = '📋'; btn.classList.remove('copied'); }, 1500);
+          setTimeout(() => { btn.innerHTML = '<i class="bi bi-clipboard"></i>'; btn.classList.remove('copied'); }, 1500);
         }
+      };
+
+      window.quickLoginAdmin = function () {
+        loginEmail.value = DEMO_EMAIL;
+        loginPassword.value = DEMO_PASSWORD;
+        // Disparar el submit del formulario automáticamente
+        loginForm.dispatchEvent(new Event('submit'));
       };
 
       window.fillCredentials = function () {

@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 
-import { verifyAuthToken, type AuthTokenPayload } from '../utils/jwt';
+import { verifyAuthToken, type AuthTokenPayload } from '../utils/jwt.js';
 
 // Adjunta el payload del JWT a la request para que los controllers protegidos lo consulten.
 export interface AuthenticatedRequest extends Request {

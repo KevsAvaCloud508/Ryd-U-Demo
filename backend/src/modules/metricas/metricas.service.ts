@@ -23,18 +23,14 @@ export interface UsuarioFilters {
 // ──────────────────────────────────────────────
 
 const SEED_INCIDENCIAS = [
-  { id: 1, titulo: 'Proyector no enciende en aula 203', descripcion: 'El proyector no responde al encenderlo.', categoria: 'Hardware', prioridad: 'Alta', estado: 'Pendiente', creado: '2026-07-15' },
   { id: 2, titulo: 'Error al iniciar sesión en plataforma', descripcion: 'Varios estudiantes reportan error 500.', categoria: 'Software', prioridad: 'Crítica', estado: 'En proceso', creado: '2026-07-14' },
   { id: 3, titulo: 'Cableado de red dañado en laboratorio', descripcion: 'Se necesita reemplazar cable ethernet.', categoria: 'Red', prioridad: 'Media', estado: 'Pendiente', creado: '2026-07-14' },
   { id: 4, titulo: 'Cuenta de alumno bloqueada', descripcion: 'No puede acceder al portal académico.', categoria: 'Acceso', prioridad: 'Alta', estado: 'Resuelta', creado: '2026-07-13' },
   { id: 5, titulo: 'Actualizar software de biblioteca', descripcion: 'Versión desactualizada del gestor.', categoria: 'Software', prioridad: 'Baja', estado: 'Pendiente', creado: '2026-07-12' },
-  { id: 6, titulo: 'Impresora no funciona en sala de cómputo', descripcion: 'Atasco de papel frecuente.', categoria: 'Hardware', prioridad: 'Media', estado: 'En proceso', creado: '2026-07-12' },
   { id: 7, titulo: 'WiFi institucional lento', descripcion: 'Velocidad menor a 1 Mbps en edificio A.', categoria: 'Red', prioridad: 'Alta', estado: 'En proceso', creado: '2026-07-11' },
   { id: 8, titulo: 'Solicitud de acceso a base de datos', descripcion: 'Nuevo investigador requiere permisos.', categoria: 'Acceso', prioridad: 'Media', estado: 'Resuelta', creado: '2026-07-10' },
-  { id: 9, titulo: 'Teclado dañado en aula 105', descripcion: 'Teclas que no responden.', categoria: 'Hardware', prioridad: 'Baja', estado: 'Resuelta', creado: '2026-07-09' },
   { id: 10, titulo: 'Migrar correos a nuevo servidor', descripcion: 'Se requiere migración antes del corte.', categoria: 'Software', prioridad: 'Alta', estado: 'Pendiente', creado: '2026-07-08' },
   { id: 11, titulo: 'Certificado SSL expirado', descripcion: 'El certificado del portal expiró.', categoria: 'Red', prioridad: 'Crítica', estado: 'Resuelta', creado: '2026-07-07' },
-  { id: 12, titulo: 'Monitor roto en oficina de dirección', descripcion: 'Pantalla tiene líneas verticales.', categoria: 'Hardware', prioridad: 'Media', estado: 'Pendiente', creado: '2026-07-06' },
 ];
 
 const SEED_USUARIOS = [
@@ -51,12 +47,12 @@ const SEED_USUARIOS = [
 ];
 
 const SEED_ACTIVIDAD = [
-  { text: '<strong>Ana López</strong> creó la incidencia #1', time: 'Hace 15 min', icon: '📝' },
-  { text: '<strong>Carlos Vega</strong> cambió estado de #2 a "En proceso"', time: 'Hace 1 hora', icon: '🔄' },
-  { text: '<strong>María García</strong> resolvió la incidencia #8', time: 'Hace 2 horas', icon: '✅' },
-  { text: '<strong>Pedro Rojas</strong> actualizó la incidencia #6', time: 'Hace 3 horas', icon: '🔧' },
-  { text: '<strong>José Hernández</strong> registró nueva incidencia #11', time: 'Hace 5 horas', icon: '📌' },
-  { text: '<strong>Sofía Torres</strong> cerró la incidencia #4', time: 'Hace 6 horas', icon: '💻' },
+  { text: '<strong>Ana López</strong> creó la incidencia #5', time: 'Hace 15 min', icon: 'bi-pencil' },
+  { text: '<strong>Carlos Vega</strong> cambió estado de #2 a "En proceso"', time: 'Hace 1 hora', icon: 'bi-repeat' },
+  { text: '<strong>María García</strong> resolvió la incidencia #8', time: 'Hace 2 horas', icon: 'bi-check' },
+  { text: '<strong>Pedro Rojas</strong> actualizó la incidencia #7', time: 'Hace 3 horas', icon: 'bi-tools' },
+  { text: '<strong>José Hernández</strong> registró nueva incidencia #11', time: 'Hace 5 horas', icon: 'bi-pin' },
+  { text: '<strong>Sofía Torres</strong> cerró la incidencia #4', time: 'Hace 6 horas', icon: 'bi-laptop' },
 ];
 
 // ──────────────────────────────────────────────
@@ -97,7 +93,7 @@ export async function getDashboardStats(): Promise<{
   porPrioridad: Record<string, number>;
   resolucionPorCategoria: Record<string, number>;
 }> {
-  const all = await prisma.incidencia.findMany();
+  const all = (await prisma.incidencia.findMany()).filter(i => i.categoria !== 'Hardware');
   const total = all.length;
   const pendientes = all.filter(i => i.estado === 'Pendiente').length;
   const enProceso = all.filter(i => i.estado === 'En proceso').length;
@@ -140,7 +136,7 @@ export async function getIncidenciaById(id: number) {
 export async function listIncidencias(filters: IncidenciaFilters) {
   const { search, estado, prioridad, page = 1, limit = 8 } = filters;
 
-  const where: Record<string, unknown> = {};
+  const where: Record<string, unknown> = { categoria: { not: 'Hardware' } };
 
   if (estado) where.estado = estado;
   if (prioridad) where.prioridad = prioridad;
@@ -181,7 +177,7 @@ export async function createIncidencia(data: {
     data: {
       text: `<strong>Sistema</strong> creó la incidencia #${newId}`,
       time: 'Ahora',
-      icon: '📝',
+      icon: 'bi-pencil',
     },
   });
 
@@ -204,7 +200,7 @@ export async function updateIncidencia(
     data: {
       text: `<strong>Sistema</strong> actualizó la incidencia #${id}`,
       time: 'Ahora',
-      icon: '🔧',
+      icon: 'bi-tools',
     },
   });
 
@@ -224,7 +220,7 @@ export async function avanzarEstado(id: number) {
     data: {
       text: `<strong>Sistema</strong> cambió estado de #${id} a "En proceso"`,
       time: 'Ahora',
-      icon: '🔄',
+      icon: 'bi-repeat',
     },
   });
 
@@ -244,7 +240,7 @@ export async function resolverIncidencia(id: number) {
     data: {
       text: `<strong>Sistema</strong> resolvió la incidencia #${id}`,
       time: 'Ahora',
-      icon: '✅',
+      icon: 'bi-check',
     },
   });
 
@@ -261,7 +257,7 @@ export async function deleteIncidencia(id: number) {
     data: {
       text: `<strong>Sistema</strong> eliminó la incidencia #${id}`,
       time: 'Ahora',
-      icon: '🗑️',
+      icon: 'bi-trash',
     },
   });
 
@@ -312,7 +308,7 @@ export async function getActividad(limit = 8) {
 // ──────────────────────────────────────────────
 
 export async function getReportes() {
-  const all = await prisma.incidencia.findMany();
+  const all = (await prisma.incidencia.findMany()).filter(i => i.categoria !== 'Hardware');
   const total = all.length;
   const resueltas = all.filter(i => i.estado === 'Resuelta').length;
   const resueltasMes = all.filter(i => i.estado === 'Resuelta' && i.creado >= '2026-07-01').length;
@@ -324,11 +320,139 @@ export async function getReportes() {
     tiempoPromedio: avgTime,
     satisfaccion: '94%',
     tendencias: {
-      total: '📈 +12% respecto al mes anterior',
-      resueltas: '📈 +8% respecto al mes anterior',
-      tiempo: '📉 -3h respecto al mes anterior',
-      satisfaccion: '📈 +2% respecto al mes anterior',
+      total: '<i class="bi bi-arrow-up-right"></i> +12% respecto al mes anterior',
+      resueltas: '<i class="bi bi-arrow-up-right"></i> +8% respecto al mes anterior',
+      tiempo: '<i class="bi bi-arrow-down-right"></i> -3h respecto al mes anterior',
+      satisfaccion: '<i class="bi bi-arrow-up-right"></i> +2% respecto al mes anterior',
     },
     items: all.filter(i => i.estado === 'Resuelta').slice(0, 10),
+  };
+}
+
+// ──────────────────────────────────────────────
+//  MÉTRICAS REALES: PASAJEROS
+//  (Información de cada pasajero concorde con sus
+//  métricas calculadas de la base de datos real)
+// ──────────────────────────────────────────────
+
+function averageScore(scores: Array<number | null>): number {
+  const valid = scores.filter((s): s is number => typeof s === 'number');
+  if (valid.length === 0) return 0;
+  return Number((valid.reduce((a, b) => a + b, 0) / valid.length).toFixed(2));
+}
+
+function fullName(user: { firstName: string; lastNamePaternal: string; lastNameMaternal: string | null }): string {
+  return [user.firstName, user.lastNamePaternal, user.lastNameMaternal].filter(Boolean).join(' ');
+}
+
+/**
+ * Lista los pasajeros (rol "Pasajero") con sus métricas reales:
+ * calificación promedio recibida, viajes realizados (solicitudes aceptadas)
+ * y ahorro estimado (suma del costo de los viajes aceptados).
+ */
+export async function getPasajerosMetrics() {
+  const pasajeros = await prisma.user.findMany({
+    where: {
+      roles: { some: { role: { name: 'Pasajero' } } },
+    },
+    include: {
+      // Solo viajes REALIZADOS: solicitudes aceptadas en viajes terminados
+      // (los viajes que el conductor ya completó).
+      requests: {
+        where: { status: 'Aceptado', trip: { status: 'Terminado' } },
+        include: { trip: true },
+      },
+      ratingsReceived: true,
+    },
+    orderBy: { registeredAt: 'asc' },
+  });
+
+  const items = pasajeros.map((p) => {
+    const viajes = p.requests.length;
+    const ahorro = p.requests.reduce((sum, r) => sum + Number(r.trip.cost ?? 0), 0);
+    return {
+      id: p.id,
+      nombre: fullName(p),
+      email: p.email ?? '',
+      registro: p.registeredAt,
+      ratingPromedio: averageScore(p.ratingsReceived.map((r) => r.score)),
+      calificaciones: p.ratingsReceived.length,
+      viajesRealizados: viajes,
+      ahorroEstimado: ahorro,
+    };
+  });
+
+  const totalViajes = items.reduce((sum, i) => sum + i.viajesRealizados, 0);
+  const ratingGlobal = averageScore(
+    pasajeros.flatMap((p) => p.ratingsReceived.map((r) => r.score)),
+  );
+
+  return {
+    items,
+    total: items.length,
+    totalViajes,
+    ratingGlobal,
+  };
+}
+
+// ──────────────────────────────────────────────
+//  MÉTRICAS REALES: CONDUCTORES
+//  (Información de cada conductor concorde con sus
+//  métricas calculadas de la base de datos real)
+// ──────────────────────────────────────────────
+
+/**
+ * Lista los conductores (rol "Conductor") con sus métricas reales:
+ * calificación promedio recibida, viajes completados, ganancias totales,
+ * rutas activas y vehículos registrados.
+ */
+export async function getConductoresMetrics() {
+  const conductores = await prisma.user.findMany({
+    where: {
+      roles: { some: { role: { name: 'Conductor' } } },
+    },
+    include: {
+      tripsAsDriver: true,
+      ratingsReceived: true,
+      vehicles: true,
+    },
+    orderBy: { registeredAt: 'asc' },
+  });
+
+  const items = conductores.map((c) => {
+    const completados = c.tripsAsDriver.filter((t) => t.status === 'Terminado');
+    const activos = c.tripsAsDriver.filter(
+      (t) => t.status === 'Pendiente' || t.status === 'EnProceso',
+    );
+    const ganancias = completados.reduce((sum, t) => sum + Number(t.cost ?? 0), 0);
+    const verificados = c.vehicles.filter((v) => v.isVerified).length;
+
+    return {
+      id: c.id,
+      nombre: fullName(c),
+      email: c.email ?? '',
+      registro: c.registeredAt,
+      ratingPromedio: averageScore(c.ratingsReceived.map((r) => r.score)),
+      calificaciones: c.ratingsReceived.length,
+      viajesCompletados: completados.length,
+      rutasActivas: activos.length,
+      gananciasTotales: ganancias,
+      vehiculos: c.vehicles.length,
+      vehiculosVerificados: verificados,
+    };
+  });
+
+  const totalGanancias = items.reduce((sum, i) => sum + i.gananciasTotales, 0);
+  const totalViajes = items.reduce((sum, i) => sum + i.viajesCompletados, 0);
+  const ratingGlobal = averageScore(
+    conductores.flatMap((c) => c.ratingsReceived.map((r) => r.score)),
+  );
+
+  return {
+    items,
+    total: items.length,
+    totalViajes,
+    totalGanancias,
+    ratingGlobal,
   };
 }

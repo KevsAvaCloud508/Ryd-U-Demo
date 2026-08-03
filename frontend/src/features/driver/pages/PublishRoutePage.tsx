@@ -33,11 +33,11 @@ export function DriverPublishRoutePage() {
   return (
     <div className="flex min-h-0 flex-1">
       {/* Left — Form */}
-      <div className="flex flex-1 flex-col px-10 pb-10 pt-[38px]">
+      <div className="flex flex-1 flex-col px-4 pb-10 pt-[30px] sm:px-6 lg:px-10 lg:pt-[38px]">
         <PageHeader title="Publicar ruta" subtitle="Comparte tu trayecto y genera un ingreso extra" />
 
         {/* Form grid */}
-        <div className="mt-10 grid max-w-[680px] grid-cols-2 gap-x-5 gap-y-[18px]">
+        <div className="mt-10 grid max-w-[680px] grid-cols-1 gap-x-5 gap-y-[18px] sm:grid-cols-2">
           <IconInput
             icon="bi bi-circle"
             label="Origen"
@@ -92,7 +92,7 @@ export function DriverPublishRoutePage() {
         {/* Días recurrentes */}
         <div className="mt-8">
           <label className="text-[16px] font-semibold text-[#A0A0A0]">Días recurrentes</label>
-          <div className="mt-3 flex gap-3">
+          <div className="mt-3 flex flex-wrap gap-3">
             {DAYS.map((day, index) => {
               const isSelected = selectedDays.has(index);
               return (

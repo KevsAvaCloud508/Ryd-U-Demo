@@ -23,11 +23,25 @@ const IDS = {
   rutaJesusMaria: '44444444-dddd-4444-8444-000000000002',
   rutaPlazaVestir: '44444444-dddd-4444-8444-000000000003',
   rutaVillaSur: '44444444-dddd-4444-8444-000000000004',
+  rutaColoniaValle: '44444444-dddd-4444-8444-000000000005',
+  rutaSanAngel: '44444444-dddd-4444-8444-000000000006',
+  rutaLasLomas: '44444444-dddd-4444-8444-000000000007',
+  rutaHaciendas: '44444444-dddd-4444-8444-000000000008',
+  rutaBosques: '44444444-dddd-4444-8444-000000000009',
   viajeTerminado: '55555555-eeee-4555-8555-000000000001',
   viajeEnProceso: '55555555-eeee-4555-8555-000000000002',
   viajePendiente1: '55555555-eeee-4555-8555-000000000003',
   viajePendiente2: '55555555-eeee-4555-8555-000000000004',
   viajePendiente3: '55555555-eeee-4555-8555-000000000005',
+  viajeNuevo1: '55555555-eeee-4555-8555-000000000006',
+  viajeNuevo2: '55555555-eeee-4555-8555-000000000007',
+  viajeNuevo3: '55555555-eeee-4555-8555-000000000008',
+  viajeNuevo4: '55555555-eeee-4555-8555-000000000009',
+  viajeNuevo5: '55555555-eeee-4555-8555-000000000010',
+  viajeNuevo6: '55555555-eeee-4555-8555-000000000011',
+  viajeHist1: '55555555-eeee-4555-8555-000000000012',
+  viajeHist2: '55555555-eeee-4555-8555-000000000013',
+  viajeHist3: '55555555-eeee-4555-8555-000000000014',
 } as const;
 
 // Prisma serializa columnas TIME a partir de la hora UTC de un DateTime.
@@ -175,12 +189,14 @@ async function main() {
   }
 
   // --- Rutas ---------------------------------------------------------------
+  // Las descripciones guardan las coordenadas del punto de origen (formato "lat,lng")
+  // que la vista de búsqueda del pasajero usa para dibujar la ruta en el mapa.
   const rutas = [
     {
       id: IDS.rutaCentro,
       origin: 'UPA - Universidad Politécnica de Aguascalientes',
       destination: 'Centro de Aguascalientes',
-      description: 'Salida por Av. Aguascalientes Sur hacia el centro histórico.',
+      description: '21.807037,-102.296021;21.8826,-102.2966',
       distanceKm: 12.5,
       estimatedMinutes: 25,
     },
@@ -188,7 +204,7 @@ async function main() {
       id: IDS.rutaJesusMaria,
       origin: 'UPA - Universidad Politécnica de Aguascalientes',
       destination: 'Jesús María',
-      description: 'Ruta por Av. Aguascalientes Poniente y carretera a Jesús María.',
+      description: '21.807037,-102.296021;21.9615,-102.3430',
       distanceKm: 18.3,
       estimatedMinutes: 35,
     },
@@ -196,7 +212,7 @@ async function main() {
       id: IDS.rutaPlazaVestir,
       origin: 'Plaza Vestir',
       destination: 'UPA - Universidad Politécnica de Aguascalientes',
-      description: 'Recogida en Plaza Vestir rumbo a la universidad.',
+      description: '21.8611,-102.2783;21.807037,-102.296021',
       distanceKm: 9.8,
       estimatedMinutes: 20,
     },
@@ -204,13 +220,54 @@ async function main() {
       id: IDS.rutaVillaSur,
       origin: 'UPA - Universidad Politécnica de Aguascalientes',
       destination: 'Villas de Nuestra Señora de la Asunción',
-      description: 'Ruta al oriente de la ciudad por segundo anillo.',
+      description: '21.807037,-102.296021;21.8420,-102.2350',
       distanceKm: 15.0,
       estimatedMinutes: 30,
     },
+    // Rutas hacia la UPA (visibles en la búsqueda del pasajero).
+    {
+      id: IDS.rutaColoniaValle,
+      origin: 'Colonia del Valle',
+      destination: 'UPA - Universidad Politécnica de Aguascalientes',
+      description: '21.8786,-102.2972;21.807037,-102.296021',
+      distanceKm: 11.2,
+      estimatedMinutes: 22,
+    },
+    {
+      id: IDS.rutaSanAngel,
+      origin: 'Fracc. San Ángel',
+      destination: 'UPA - Universidad Politécnica de Aguascalientes',
+      description: '21.8712,-102.2763;21.807037,-102.296021',
+      distanceKm: 10.5,
+      estimatedMinutes: 20,
+    },
+    {
+      id: IDS.rutaLasLomas,
+      origin: 'Las Lomas',
+      destination: 'UPA - Universidad Politécnica de Aguascalientes',
+      description: '21.8420,-102.3050;21.807037,-102.296021',
+      distanceKm: 12.0,
+      estimatedMinutes: 24,
+    },
+    {
+      id: IDS.rutaHaciendas,
+      origin: 'Haciendas del Valle',
+      destination: 'UPA - Universidad Politécnica de Aguascalientes',
+      description: '21.7985,-102.2590;21.807037,-102.296021',
+      distanceKm: 8.5,
+      estimatedMinutes: 18,
+    },
+    {
+      id: IDS.rutaBosques,
+      origin: 'Bosques del Prado',
+      destination: 'UPA - Universidad Politécnica de Aguascalientes',
+      description: '21.8565,-102.3186;21.807037,-102.296021',
+      distanceKm: 13.0,
+      estimatedMinutes: 26,
+    },
   ];
   for (const r of rutas) {
-    await prisma.route.upsert({ where: { id: r.id }, update: {}, create: r });
+    await prisma.route.upsert({ where: { id: r.id }, update: r, create: r });
   }
 
   // --- Viajes ----------------------------------------------------------------
@@ -235,7 +292,7 @@ async function main() {
       departureTime: hora('07:00'),
       availableSeats: 2,
       cost: 45.0,
-      status: 'EnProceso' as const,
+      status: 'Terminado' as const,
     },
     {
       id: IDS.viajePendiente1,
@@ -246,7 +303,7 @@ async function main() {
       departureTime: hora('08:15'),
       availableSeats: 3,
       cost: 30.0,
-      status: 'Pendiente' as const,
+      status: 'Terminado' as const,
     },
     {
       id: IDS.viajePendiente2,
@@ -257,7 +314,7 @@ async function main() {
       departureTime: hora('15:45'),
       availableSeats: 4,
       cost: 35.0,
-      status: 'Pendiente' as const,
+      status: 'Terminado' as const,
     },
     {
       id: IDS.viajePendiente3,
@@ -268,11 +325,113 @@ async function main() {
       departureTime: hora('18:00'),
       availableSeats: 4,
       cost: 40.0,
+      status: 'Terminado' as const,
+    },
+    // Viajes nuevos con fecha futura y destino UPA: aparecen en la búsqueda
+    // del pasajero y en el panel del conductor.
+    {
+      id: IDS.viajeNuevo1,
+      driverId: IDS.maria,
+      vehicleId: IDS.vehMaria,
+      routeId: IDS.rutaColoniaValle,
+      date: new Date('2026-08-05'),
+      departureTime: hora('06:45'),
+      availableSeats: 4,
+      cost: 45.0,
       status: 'Pendiente' as const,
+    },
+    {
+      id: IDS.viajeNuevo2,
+      driverId: IDS.carlos,
+      vehicleId: IDS.vehCarlos,
+      routeId: IDS.rutaSanAngel,
+      date: new Date('2026-08-05'),
+      departureTime: hora('07:30'),
+      availableSeats: 3,
+      cost: 50.0,
+      status: 'Pendiente' as const,
+    },
+    {
+      id: IDS.viajeNuevo3,
+      driverId: IDS.carlos,
+      vehicleId: IDS.vehCarlos,
+      routeId: IDS.rutaLasLomas,
+      date: new Date('2026-08-06'),
+      departureTime: hora('09:00'),
+      availableSeats: 4,
+      cost: 35.0,
+      status: 'Pendiente' as const,
+    },
+    {
+      id: IDS.viajeNuevo4,
+      driverId: IDS.maria,
+      vehicleId: IDS.vehMaria,
+      routeId: IDS.rutaHaciendas,
+      date: new Date('2026-08-07'),
+      departureTime: hora('12:30'),
+      availableSeats: 4,
+      cost: 40.0,
+      status: 'Pendiente' as const,
+    },
+    {
+      id: IDS.viajeNuevo5,
+      driverId: IDS.carlos,
+      vehicleId: IDS.vehCarlos,
+      routeId: IDS.rutaPlazaVestir,
+      date: new Date('2026-08-08'),
+      departureTime: hora('08:15'),
+      availableSeats: 3,
+      cost: 30.0,
+      status: 'Pendiente' as const,
+    },
+    {
+      id: IDS.viajeNuevo6,
+      driverId: IDS.maria,
+      vehicleId: IDS.vehMaria,
+      routeId: IDS.rutaBosques,
+      date: new Date('2026-08-10'),
+      departureTime: hora('07:30'),
+      availableSeats: 4,
+      cost: 50.0,
+      status: 'Pendiente' as const,
+    },
+    // Viajes ya realizados (historial del pasajero): fecha pasada y terminados.
+    {
+      id: IDS.viajeHist1,
+      driverId: IDS.carlos,
+      vehicleId: IDS.vehCarlos,
+      routeId: IDS.rutaCentro,
+      date: new Date('2026-07-11'),
+      departureTime: hora('14:30'),
+      availableSeats: 0,
+      cost: 35.0,
+      status: 'Terminado' as const,
+    },
+    {
+      id: IDS.viajeHist2,
+      driverId: IDS.maria,
+      vehicleId: IDS.vehMaria,
+      routeId: IDS.rutaJesusMaria,
+      date: new Date('2026-07-15'),
+      departureTime: hora('07:00'),
+      availableSeats: 0,
+      cost: 45.0,
+      status: 'Terminado' as const,
+    },
+    {
+      id: IDS.viajeHist3,
+      driverId: IDS.carlos,
+      vehicleId: IDS.vehCarlos,
+      routeId: IDS.rutaPlazaVestir,
+      date: new Date('2026-07-18'),
+      departureTime: hora('08:15'),
+      availableSeats: 0,
+      cost: 30.0,
+      status: 'Terminado' as const,
     },
   ];
   for (const v of viajes) {
-    await prisma.trip.upsert({ where: { id: v.id }, update: {}, create: v });
+    await prisma.trip.upsert({ where: { id: v.id }, update: v, create: v });
   }
 
   // --- Solicitudes de viaje -----------------------------------------------
@@ -284,13 +443,27 @@ async function main() {
     { id: '66666666-aaaa-4666-8666-000000000003', tripId: IDS.viajeEnProceso, passengerId: IDS.luis, status: 'Aceptado' as const },
     { id: '66666666-aaaa-4666-8666-000000000004', tripId: IDS.viajeEnProceso, passengerId: IDS.sofia, status: 'Cancelado' as const },
     // Viajes pendientes: solicitudes en distintos estados.
-    { id: '66666666-aaaa-4666-8666-000000000005', tripId: IDS.viajePendiente1, passengerId: IDS.ana, status: 'Pendiente' as const },
+    { id: '66666666-aaaa-4666-8666-000000000005', tripId: IDS.viajePendiente1, passengerId: IDS.ana, status: 'Aceptado' as const },
     { id: '66666666-aaaa-4666-8666-000000000006', tripId: IDS.viajePendiente1, passengerId: IDS.luis, status: 'Aceptado' as const },
     { id: '66666666-aaaa-4666-8666-000000000007', tripId: IDS.viajePendiente2, passengerId: IDS.juan, status: 'Rechazado' as const },
-    { id: '66666666-aaaa-4666-8666-000000000008', tripId: IDS.viajePendiente2, passengerId: IDS.sofia, status: 'Pendiente' as const },
+    { id: '66666666-aaaa-4666-8666-000000000008', tripId: IDS.viajePendiente2, passengerId: IDS.sofia, status: 'Aceptado' as const },
+    // Viajes nuevos: solicitudes aceptadas (viajes realizados) y pendientes.
+    { id: '66666666-aaaa-4666-8666-000000000009', tripId: IDS.viajeNuevo1, passengerId: IDS.juan, status: 'Aceptado' as const },
+    { id: '66666666-aaaa-4666-8666-000000000010', tripId: IDS.viajeNuevo2, passengerId: IDS.ana, status: 'Aceptado' as const },
+    { id: '66666666-aaaa-4666-8666-000000000011', tripId: IDS.viajeNuevo3, passengerId: IDS.luis, status: 'Aceptado' as const },
+    { id: '66666666-aaaa-4666-8666-000000000012', tripId: IDS.viajeNuevo4, passengerId: IDS.sofia, status: 'Aceptado' as const },
+    { id: '66666666-aaaa-4666-8666-000000000013', tripId: IDS.viajeNuevo5, passengerId: IDS.juan, status: 'Pendiente' as const },
+    { id: '66666666-aaaa-4666-8666-000000000014', tripId: IDS.viajeNuevo6, passengerId: IDS.ana, status: 'Pendiente' as const },
+    // Viajes ya realizados (historial): solicitudes aceptadas.
+    { id: '66666666-aaaa-4666-8666-000000000015', tripId: IDS.viajeHist1, passengerId: IDS.juan, status: 'Aceptado' as const },
+    { id: '66666666-aaaa-4666-8666-000000000016', tripId: IDS.viajeHist1, passengerId: IDS.luis, status: 'Aceptado' as const },
+    { id: '66666666-aaaa-4666-8666-000000000017', tripId: IDS.viajeHist2, passengerId: IDS.ana, status: 'Aceptado' as const },
+    { id: '66666666-aaaa-4666-8666-000000000018', tripId: IDS.viajeHist2, passengerId: IDS.sofia, status: 'Aceptado' as const },
+    { id: '66666666-aaaa-4666-8666-000000000019', tripId: IDS.viajeHist3, passengerId: IDS.juan, status: 'Aceptado' as const },
+    { id: '66666666-aaaa-4666-8666-000000000020', tripId: IDS.viajeHist3, passengerId: IDS.ana, status: 'Aceptado' as const },
   ];
   for (const s of solicitudes) {
-    await prisma.tripRequest.upsert({ where: { id: s.id }, update: {}, create: s });
+    await prisma.tripRequest.upsert({ where: { id: s.id }, update: s, create: s });
   }
 
   // --- Calificaciones (del viaje terminado) ---------------------------------
@@ -299,9 +472,30 @@ async function main() {
     { id: '77777777-bbbb-4777-8777-000000000002', tripId: IDS.viajeTerminado, raterId: IDS.ana, rateeId: IDS.carlos, score: 4 },
     { id: '77777777-bbbb-4777-8777-000000000003', tripId: IDS.viajeTerminado, raterId: IDS.carlos, rateeId: IDS.juan, score: 5 },
     { id: '77777777-bbbb-4777-8777-000000000004', tripId: IDS.viajeTerminado, raterId: IDS.carlos, rateeId: IDS.ana, score: 5 },
+    // Calificaciones mutuas en los viajes nuevos (ambas direcciones).
+    { id: '77777777-bbbb-4777-8777-000000000005', tripId: IDS.viajeNuevo1, raterId: IDS.juan, rateeId: IDS.maria, score: 5 },
+    { id: '77777777-bbbb-4777-8777-000000000006', tripId: IDS.viajeNuevo1, raterId: IDS.maria, rateeId: IDS.juan, score: 5 },
+    { id: '77777777-bbbb-4777-8777-000000000007', tripId: IDS.viajeNuevo2, raterId: IDS.ana, rateeId: IDS.carlos, score: 5 },
+    { id: '77777777-bbbb-4777-8777-000000000008', tripId: IDS.viajeNuevo2, raterId: IDS.carlos, rateeId: IDS.ana, score: 4 },
+    { id: '77777777-bbbb-4777-8777-000000000009', tripId: IDS.viajeNuevo3, raterId: IDS.luis, rateeId: IDS.carlos, score: 4 },
+    { id: '77777777-bbbb-4777-8777-000000000010', tripId: IDS.viajeNuevo3, raterId: IDS.carlos, rateeId: IDS.luis, score: 5 },
+    { id: '77777777-bbbb-4777-8777-000000000011', tripId: IDS.viajeNuevo4, raterId: IDS.sofia, rateeId: IDS.maria, score: 5 },
+    { id: '77777777-bbbb-4777-8777-000000000012', tripId: IDS.viajeNuevo4, raterId: IDS.maria, rateeId: IDS.sofia, score: 4 },
+    // Calificaciones mutuas en los viajes ya realizados.
+    { id: '77777777-bbbb-4777-8777-000000000013', tripId: IDS.viajeHist1, raterId: IDS.juan, rateeId: IDS.carlos, score: 5 },
+    { id: '77777777-bbbb-4777-8777-000000000014', tripId: IDS.viajeHist1, raterId: IDS.carlos, rateeId: IDS.juan, score: 5 },
+    { id: '77777777-bbbb-4777-8777-000000000015', tripId: IDS.viajeHist1, raterId: IDS.luis, rateeId: IDS.carlos, score: 4 },
+    { id: '77777777-bbbb-4777-8777-000000000016', tripId: IDS.viajeHist2, raterId: IDS.ana, rateeId: IDS.maria, score: 5 },
+    { id: '77777777-bbbb-4777-8777-000000000017', tripId: IDS.viajeHist2, raterId: IDS.maria, rateeId: IDS.ana, score: 4 },
+    { id: '77777777-bbbb-4777-8777-000000000018', tripId: IDS.viajeHist2, raterId: IDS.sofia, rateeId: IDS.maria, score: 4 },
+    { id: '77777777-bbbb-4777-8777-000000000019', tripId: IDS.viajeHist2, raterId: IDS.maria, rateeId: IDS.sofia, score: 5 },
+    { id: '77777777-bbbb-4777-8777-000000000020', tripId: IDS.viajeHist3, raterId: IDS.juan, rateeId: IDS.carlos, score: 5 },
+    { id: '77777777-bbbb-4777-8777-000000000021', tripId: IDS.viajeHist3, raterId: IDS.carlos, rateeId: IDS.juan, score: 5 },
+    { id: '77777777-bbbb-4777-8777-000000000022', tripId: IDS.viajeHist3, raterId: IDS.ana, rateeId: IDS.carlos, score: 4 },
+    { id: '77777777-bbbb-4777-8777-000000000023', tripId: IDS.viajeHist3, raterId: IDS.carlos, rateeId: IDS.ana, score: 5 },
   ];
   for (const c of calificaciones) {
-    await prisma.rating.upsert({ where: { id: c.id }, update: {}, create: c });
+    await prisma.rating.upsert({ where: { id: c.id }, update: c, create: c });
   }
 
   // --- Notificaciones --------------------------------------------------------
@@ -386,6 +580,51 @@ async function main() {
       });
     }
     console.log(`Documentos aceptados para ${juanRamon.email}: ${tiposDocumento.length}`);
+
+    // Historial de viajes del usuario registrado en la app: viajes ya hechos
+    // (Aceptado) y un próximo viaje (Pendiente) para que Inicio y Actividad
+    // muestren información consistente.
+    const historialViajes = [
+      { tripId: IDS.viajeTerminado, status: 'Aceptado' as const },
+      { tripId: IDS.viajeHist1, status: 'Aceptado' as const },
+      { tripId: IDS.viajeHist2, status: 'Aceptado' as const },
+      { tripId: IDS.viajeHist3, status: 'Aceptado' as const },
+      { tripId: IDS.viajeNuevo2, status: 'Pendiente' as const },
+    ];
+    for (const [i, viaje] of historialViajes.entries()) {
+      await prisma.tripRequest.upsert({
+        where: { id: `66666666-aaaa-4666-8666-00000000003${i}` },
+        update: { tripId: viaje.tripId, status: viaje.status },
+        create: {
+          id: `66666666-aaaa-4666-8666-00000000003${i}`,
+          tripId: viaje.tripId,
+          passengerId: juanRamon.id,
+          status: viaje.status,
+        },
+      });
+    }
+
+    // Calificaciones recibidas por el usuario en sus viajes ya realizados.
+    const calificacionesHistorial = [
+      { tripId: IDS.viajeTerminado, raterId: IDS.carlos, score: 5 },
+      { tripId: IDS.viajeHist1, raterId: IDS.carlos, score: 5 },
+      { tripId: IDS.viajeHist2, raterId: IDS.maria, score: 4 },
+      { tripId: IDS.viajeHist3, raterId: IDS.carlos, score: 5 },
+    ];
+    for (const [i, cal] of calificacionesHistorial.entries()) {
+      await prisma.rating.upsert({
+        where: { id: `77777777-bbbb-4777-8777-00000000003${i}` },
+        update: { tripId: cal.tripId, rateeId: juanRamon.id, score: cal.score },
+        create: {
+          id: `77777777-bbbb-4777-8777-00000000003${i}`,
+          tripId: cal.tripId,
+          raterId: cal.raterId,
+          rateeId: juanRamon.id,
+          score: cal.score,
+        },
+      });
+    }
+    console.log(`Historial y calificaciones para ${juanRamon.email}`);
   }
 
   console.log('Seed completado:');

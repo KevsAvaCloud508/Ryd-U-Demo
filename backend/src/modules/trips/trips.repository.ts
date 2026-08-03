@@ -1,6 +1,6 @@
-import { prisma } from '../../prisma/client';
+import { prisma } from '../../prisma/client.js';
 import type { Prisma } from '@prisma/client';
-import type { CreateTripInput, SearchTripInput, UpdateTripInput } from './trips.dto';
+import type { CreateTripInput, SearchTripInput, UpdateTripInput } from './trips.dto.js';
 
 export function findTripsByQuery(input: SearchTripInput) {
   const where: Prisma.TripWhereInput = {};
@@ -37,7 +37,13 @@ export function findTripById(id: string) {
 export function findTripsByDriver(driverId: string) {
   return prisma.trip.findMany({
     where: { driverId },
-    include: { route: true, vehicle: true, requests: true },
+    include: {
+      route: true,
+      vehicle: true,
+      requests: {
+        include: { passenger: { select: { id: true, firstName: true, lastNamePaternal: true, photoUrl: true } } },
+      },
+    },
     orderBy: { date: 'desc' },
   });
 }

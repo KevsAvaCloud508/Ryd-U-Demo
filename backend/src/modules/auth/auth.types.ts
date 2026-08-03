@@ -1,4 +1,4 @@
-import type { AppRole } from './auth.dto';
+import type { AppRole } from './auth.dto.js';
 
 export interface AuthUser {
   id: string;
