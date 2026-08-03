@@ -23,18 +23,14 @@ export interface UsuarioFilters {
 // ──────────────────────────────────────────────
 
 const SEED_INCIDENCIAS = [
-  { id: 1, titulo: 'Proyector no enciende en aula 203', descripcion: 'El proyector no responde al encenderlo.', categoria: 'Hardware', prioridad: 'Alta', estado: 'Pendiente', creado: '2026-07-15' },
   { id: 2, titulo: 'Error al iniciar sesión en plataforma', descripcion: 'Varios estudiantes reportan error 500.', categoria: 'Software', prioridad: 'Crítica', estado: 'En proceso', creado: '2026-07-14' },
   { id: 3, titulo: 'Cableado de red dañado en laboratorio', descripcion: 'Se necesita reemplazar cable ethernet.', categoria: 'Red', prioridad: 'Media', estado: 'Pendiente', creado: '2026-07-14' },
   { id: 4, titulo: 'Cuenta de alumno bloqueada', descripcion: 'No puede acceder al portal académico.', categoria: 'Acceso', prioridad: 'Alta', estado: 'Resuelta', creado: '2026-07-13' },
   { id: 5, titulo: 'Actualizar software de biblioteca', descripcion: 'Versión desactualizada del gestor.', categoria: 'Software', prioridad: 'Baja', estado: 'Pendiente', creado: '2026-07-12' },
-  { id: 6, titulo: 'Impresora no funciona en sala de cómputo', descripcion: 'Atasco de papel frecuente.', categoria: 'Hardware', prioridad: 'Media', estado: 'En proceso', creado: '2026-07-12' },
   { id: 7, titulo: 'WiFi institucional lento', descripcion: 'Velocidad menor a 1 Mbps en edificio A.', categoria: 'Red', prioridad: 'Alta', estado: 'En proceso', creado: '2026-07-11' },
   { id: 8, titulo: 'Solicitud de acceso a base de datos', descripcion: 'Nuevo investigador requiere permisos.', categoria: 'Acceso', prioridad: 'Media', estado: 'Resuelta', creado: '2026-07-10' },
-  { id: 9, titulo: 'Teclado dañado en aula 105', descripcion: 'Teclas que no responden.', categoria: 'Hardware', prioridad: 'Baja', estado: 'Resuelta', creado: '2026-07-09' },
   { id: 10, titulo: 'Migrar correos a nuevo servidor', descripcion: 'Se requiere migración antes del corte.', categoria: 'Software', prioridad: 'Alta', estado: 'Pendiente', creado: '2026-07-08' },
   { id: 11, titulo: 'Certificado SSL expirado', descripcion: 'El certificado del portal expiró.', categoria: 'Red', prioridad: 'Crítica', estado: 'Resuelta', creado: '2026-07-07' },
-  { id: 12, titulo: 'Monitor roto en oficina de dirección', descripcion: 'Pantalla tiene líneas verticales.', categoria: 'Hardware', prioridad: 'Media', estado: 'Pendiente', creado: '2026-07-06' },
 ];
 
 const SEED_USUARIOS = [
@@ -51,10 +47,10 @@ const SEED_USUARIOS = [
 ];
 
 const SEED_ACTIVIDAD = [
-  { text: '<strong>Ana López</strong> creó la incidencia #1', time: 'Hace 15 min', icon: '📝' },
+  { text: '<strong>Ana López</strong> creó la incidencia #5', time: 'Hace 15 min', icon: '📝' },
   { text: '<strong>Carlos Vega</strong> cambió estado de #2 a "En proceso"', time: 'Hace 1 hora', icon: '🔄' },
   { text: '<strong>María García</strong> resolvió la incidencia #8', time: 'Hace 2 horas', icon: '✅' },
-  { text: '<strong>Pedro Rojas</strong> actualizó la incidencia #6', time: 'Hace 3 horas', icon: '🔧' },
+  { text: '<strong>Pedro Rojas</strong> actualizó la incidencia #7', time: 'Hace 3 horas', icon: '🔧' },
   { text: '<strong>José Hernández</strong> registró nueva incidencia #11', time: 'Hace 5 horas', icon: '📌' },
   { text: '<strong>Sofía Torres</strong> cerró la incidencia #4', time: 'Hace 6 horas', icon: '💻' },
 ];
@@ -97,7 +93,7 @@ export async function getDashboardStats(): Promise<{
   porPrioridad: Record<string, number>;
   resolucionPorCategoria: Record<string, number>;
 }> {
-  const all = await prisma.incidencia.findMany();
+  const all = (await prisma.incidencia.findMany()).filter(i => i.categoria !== 'Hardware');
   const total = all.length;
   const pendientes = all.filter(i => i.estado === 'Pendiente').length;
   const enProceso = all.filter(i => i.estado === 'En proceso').length;
@@ -140,7 +136,7 @@ export async function getIncidenciaById(id: number) {
 export async function listIncidencias(filters: IncidenciaFilters) {
   const { search, estado, prioridad, page = 1, limit = 8 } = filters;
 
-  const where: Record<string, unknown> = {};
+  const where: Record<string, unknown> = { categoria: { not: 'Hardware' } };
 
   if (estado) where.estado = estado;
   if (prioridad) where.prioridad = prioridad;
@@ -312,7 +308,7 @@ export async function getActividad(limit = 8) {
 // ──────────────────────────────────────────────
 
 export async function getReportes() {
-  const all = await prisma.incidencia.findMany();
+  const all = (await prisma.incidencia.findMany()).filter(i => i.categoria !== 'Hardware');
   const total = all.length;
   const resueltas = all.filter(i => i.estado === 'Resuelta').length;
   const resueltasMes = all.filter(i => i.estado === 'Resuelta' && i.creado >= '2026-07-01').length;
