@@ -5,7 +5,7 @@ export function findRequestById(id: string) {
   return prisma.tripRequest.findUnique({
     where: { id },
     include: {
-      trip: { include: { route: true, driver: { select: { id: true, firstName: true, lastNamePaternal: true, photoUrl: true } } } },
+      trip: { include: { route: true, vehicle: true, driver: { select: { id: true, firstName: true, lastNamePaternal: true, photoUrl: true } } } },
       passenger: { select: { id: true, firstName: true, lastNamePaternal: true, photoUrl: true } },
     },
   });
@@ -23,7 +23,7 @@ export function findRequestsByPassenger(passengerId: string) {
   return prisma.tripRequest.findMany({
     where: { passengerId },
     include: {
-      trip: { include: { route: true, driver: { select: { id: true, firstName: true, lastNamePaternal: true, photoUrl: true } } } },
+      trip: { include: { route: true, vehicle: true, driver: { select: { id: true, firstName: true, lastNamePaternal: true, photoUrl: true } } } },
     },
     orderBy: { requestedAt: 'desc' },
   });

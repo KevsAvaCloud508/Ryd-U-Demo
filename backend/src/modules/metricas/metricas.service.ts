@@ -356,8 +356,10 @@ export async function getPasajerosMetrics() {
       roles: { some: { role: { name: 'Pasajero' } } },
     },
     include: {
+      // Solo viajes REALIZADOS: solicitudes aceptadas en viajes terminados
+      // (los viajes que el conductor ya completó).
       requests: {
-        where: { status: 'Aceptado' },
+        where: { status: 'Aceptado', trip: { status: 'Terminado' } },
         include: { trip: true },
       },
       ratingsReceived: true,

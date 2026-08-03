@@ -7,10 +7,12 @@ const UPA_coords: [number, number] = [21.807037, -102.296021];
 interface MapRouteProps {
   originCoords?: L.LatLngExpression;
   originLabel?: string;
+  destinationCoords?: L.LatLngExpression;
+  destinationLabel?: string;
   className?: string;
 }
 
-export function MapRoute({ originCoords, originLabel, className = '' }: MapRouteProps) {
+export function MapRoute({ originCoords, originLabel, destinationCoords, destinationLabel, className = '' }: MapRouteProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
@@ -33,18 +35,6 @@ export function MapRoute({ originCoords, originLabel, className = '' }: MapRoute
 
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    // Marcador de UPA
-    const upaIcon = L.divIcon({
-      html: `<div style="background:#10b981;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3)"><i class="bi bi-mortarboard-fill" style="color:white;font-size:14px"></i></div>`,
-      className: '',
-      iconSize: [32, 32],
-      iconAnchor: [16, 16],
-    });
-
-    L.marker(UPA_coords, { icon: upaIcon })
-      .addTo(map)
-      .bindPopup('<b>Universidad Politecnica de Aguascalientes</b><br>Destino');
-
     mapInstance.current = map;
 
     return () => {
@@ -53,7 +43,7 @@ export function MapRoute({ originCoords, originLabel, className = '' }: MapRoute
     };
   }, []);
 
-  // Actualizar origen y ruta cuando cambia
+  // Actualizar marcadores y ruta cuando cambia
   useEffect(() => {
     const map = mapInstance.current;
     if (!map) return;
@@ -66,13 +56,7 @@ export function MapRoute({ originCoords, originLabel, className = '' }: MapRoute
       polylineRef.current = null;
     }
 
-    if (!originCoords) {
-      // Sin origen seleccionado, centrar en UPA
-      map.setView(UPA_coords, 12);
-      return;
-    }
-
-    // Marcador de origen
+    // Icono de origen (rojo)
     const originIcon = L.divIcon({
       html: `<div style="background:#ef4444;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3)"><i class="bi bi-geo-alt-fill" style="color:white;font-size:12px"></i></div>`,
       className: '',
@@ -80,39 +64,82 @@ export function MapRoute({ originCoords, originLabel, className = '' }: MapRoute
       iconAnchor: [14, 14],
     });
 
-    const originMarker = L.marker(originCoords, { icon: originIcon })
-      .addTo(map)
-      .bindPopup(`<b>${originLabel ?? 'Origen'}</b><br>Punto de partida`);
+    // Icono de destino (verde; con birrete si es la UPA)
+    const isUpa = destinationLabel?.toLowerCase().includes('upa') ?? false;
+    const destinationIcon = L.divIcon({
+      html: `<div style="background:#10b981;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3)"><i class="bi ${isUpa ? 'bi-mortarboard-fill' : 'bi-flag-fill'}" style="color:white;font-size:14px"></i></div>`,
+      className: '',
+      iconSize: [32, 32],
+      iconAnchor: [16, 16],
+    });
 
-    markersRef.current.push(originMarker);
+    // Caso 1: origen y destino conocidos → dibujar la ruta completa
+    if (originCoords && destinationCoords) {
+      const originMarker = L.marker(originCoords, { icon: originIcon })
+        .addTo(map)
+        .bindPopup(`<b>${originLabel ?? 'Origen'}</b><br>Punto de partida`);
+      const destMarker = L.marker(destinationCoords, { icon: destinationIcon })
+        .addTo(map)
+        .bindPopup(`<b>${destinationLabel ?? 'Destino'}</b><br>Punto de llegada`);
 
-    // Dibujar linea de ruta (curva suave)
-    const [oLat, oLng] = originCoords as [number, number];
-    const [dLat, dLng] = UPA_coords;
-    const midLat = (oLat + dLat) / 2;
-    const midLng = (oLng + dLng) / 2;
-    const offset = 0.02;
+      markersRef.current.push(originMarker, destMarker);
 
-    const routePath = [
-      originCoords,
-      [midLat + offset, midLng - offset] as [number, number],
-      UPA_coords,
-    ];
+      const polyline = L.polyline([originCoords, destinationCoords], {
+        color: '#3b82f6',
+        weight: 4,
+        opacity: 0.8,
+        dashArray: '10, 6',
+        lineCap: 'round',
+      }).addTo(map);
 
-    const polyline = L.polyline(routePath, {
-      color: '#3b82f6',
-      weight: 4,
-      opacity: 0.8,
-      dashArray: '10, 6',
-      lineCap: 'round',
-    }).addTo(map);
+      polylineRef.current = polyline;
 
-    polylineRef.current = polyline;
+      const bounds = L.latLngBounds([originCoords as [number, number], destinationCoords as [number, number]]);
+      map.fitBounds(bounds, { padding: [60, 60] });
+      return;
+    }
 
-    // Ajustar vista para mostrar ambos marcadores
-    const bounds = L.latLngBounds([originCoords as [number, number], UPA_coords]);
-    map.fitBounds(bounds, { padding: [60, 60] });
-  }, [originCoords, originLabel]);
+    // Caso 2: solo origen → dibujar hacia la UPA (comportamiento previo)
+    if (originCoords) {
+      const originMarker = L.marker(originCoords, { icon: originIcon })
+        .addTo(map)
+        .bindPopup(`<b>${originLabel ?? 'Origen'}</b><br>Punto de partida`);
+      const upaMarker = L.marker(UPA_coords, { icon: destinationIcon })
+        .addTo(map)
+        .bindPopup('<b>Universidad Politecnica de Aguascalientes</b><br>Destino');
+
+      markersRef.current.push(originMarker, upaMarker);
+
+      const [oLat, oLng] = originCoords as [number, number];
+      const [dLat, dLng] = UPA_coords;
+      const midLat = (oLat + dLat) / 2;
+      const midLng = (oLng + dLng) / 2;
+      const offset = 0.02;
+
+      const routePath = [
+        originCoords,
+        [midLat + offset, midLng - offset] as [number, number],
+        UPA_coords,
+      ];
+
+      const polyline = L.polyline(routePath, {
+        color: '#3b82f6',
+        weight: 4,
+        opacity: 0.8,
+        dashArray: '10, 6',
+        lineCap: 'round',
+      }).addTo(map);
+
+      polylineRef.current = polyline;
+
+      const bounds = L.latLngBounds([originCoords as [number, number], UPA_coords]);
+      map.fitBounds(bounds, { padding: [60, 60] });
+      return;
+    }
+
+    // Sin origen seleccionado, centrar en UPA
+    map.setView(UPA_coords, 12);
+  }, [originCoords, originLabel, destinationCoords, destinationLabel]);
 
   return (
     <div

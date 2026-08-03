@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import { extractErrorMessage } from '../../../shared/utils/error-message';
 import { isDemoMode } from '../../../shared/utils/token-storage';
+import { DEMO_AVERAGE_RATING } from '../../trips/demo-data';
 import { fetchMyAverageRating, fetchMyRatings, submitRating } from '../services/ratings.service';
 import type { AverageRating, Rating, RatingInput } from '../types/ratings.types';
 
@@ -35,7 +36,7 @@ export const loadAverageRating = createAsyncThunk('ratings/loadAverage', async (
   try {
     // En modo demo se devuelve un promedio simulado.
     if (isDemoMode()) {
-      return { average: 4.9, count: 3 };
+      return { average: DEMO_AVERAGE_RATING, count: 3 };
     }
     return await fetchMyAverageRating();
   } catch (error) {
