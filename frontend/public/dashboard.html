@@ -792,6 +792,23 @@
     }
 
     /* =============================================================
+       METRICS GRIDS (pasajeros / conductores)
+       ============================================================= */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .metrics-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+    @media (max-width: 1200px) {
+      .metrics-grid, .metrics-grid.cols-3 { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 400px) {
+      .metrics-grid, .metrics-grid.cols-3 { grid-template-columns: 1fr; }
+    }
+
+    /* =============================================================
        RESPONSIVE
        ============================================================= */
     @media (max-width: 1200px) {
@@ -948,6 +965,8 @@
         <a data-page="dashboard" class="active">Dashboard</a>
         <a data-page="incidencias">Incidencias</a>
         <a data-page="usuarios">Usuarios</a>
+        <a data-page="pasajeros">Pasajeros</a>
+        <a data-page="conductores">Conductores</a>
         <a data-page="reportes">Reportes</a>
         <a data-page="configuracion">Configuración</a>
       </nav>
@@ -1082,6 +1101,99 @@
           <div id="userEmpty" class="data-table-empty hidden">
             <div class="empty-icon">👤</div>
             <p>No se encontraron usuarios</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================================
+           PAGE: PASAJEROS (métricas reales)
+           ============================================================ -->
+      <div class="page-section" id="pagePasajeros">
+        <div class="dashboard-header">
+          <h1>Pasajeros</h1>
+          <span id="pasajerosCount" style="font-size:13px;color:var(--muted);align-self:center;"></span>
+        </div>
+
+        <div class="metrics-grid cols-3">
+          <div class="report-card">
+            <div class="report-value" id="pasTotal">—</div>
+            <div class="report-label">Pasajeros registrados</div>
+          </div>
+          <div class="report-card">
+            <div class="report-value" id="pasViajes">—</div>
+            <div class="report-label">Viajes realizados</div>
+          </div>
+          <div class="report-card">
+            <div class="report-value" id="pasRating">—</div>
+            <div class="report-label">Rating promedio</div>
+          </div>
+        </div>
+
+        <div class="data-table-wrapper" style="margin-top:18px;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Pasajero</th>
+                <th>Rating</th>
+                <th>Viajes</th>
+                <th>Ahorro estimado</th>
+                <th>Registro</th>
+              </tr>
+            </thead>
+            <tbody id="pasTableBody"></tbody>
+          </table>
+          <div id="pasEmpty" class="data-table-empty hidden">
+            <div class="empty-icon">🚶</div>
+            <p>No hay pasajeros registrados todavía</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================================
+           PAGE: CONDUCTORES (métricas reales)
+           ============================================================ -->
+      <div class="page-section" id="pageConductores">
+        <div class="dashboard-header">
+          <h1>Conductores</h1>
+          <span id="conductoresCount" style="font-size:13px;color:var(--muted);align-self:center;"></span>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="report-card">
+            <div class="report-value" id="conTotal">—</div>
+            <div class="report-label">Conductores registrados</div>
+          </div>
+          <div class="report-card">
+            <div class="report-value" id="conViajes">—</div>
+            <div class="report-label">Viajes completados</div>
+          </div>
+          <div class="report-card">
+            <div class="report-value" id="conGanancias">—</div>
+            <div class="report-label">Ganancias totales</div>
+          </div>
+          <div class="report-card">
+            <div class="report-value" id="conRating">—</div>
+            <div class="report-label">Rating promedio</div>
+          </div>
+        </div>
+
+        <div class="data-table-wrapper" style="margin-top:18px;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Conductor</th>
+                <th>Rating</th>
+                <th>Viajes completados</th>
+                <th>Ganancias</th>
+                <th>Rutas activas</th>
+                <th>Vehículos</th>
+              </tr>
+            </thead>
+            <tbody id="conTableBody"></tbody>
+          </table>
+          <div id="conEmpty" class="data-table-empty hidden">
+            <div class="empty-icon">🚗</div>
+            <p>No hay conductores registrados todavía</p>
           </div>
         </div>
       </div>
@@ -1341,6 +1453,20 @@
         return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
       }
 
+      function escapeHtml(str) {
+        return String(str ?? '').replace(/[&<>"']/g, (c) => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+        }[c]));
+      }
+
+      function ratingStars(rating) {
+        const r = Number(rating) || 0;
+        if (r <= 0) return '<span style="color:var(--muted2)">—</span>';
+        let stars = '';
+        for (let i = 1; i <= 5; i++) stars += i <= Math.round(r) ? '★' : '☆';
+        return `<span style="color:#eab308;letter-spacing:2px;">${stars}</span> <span style="color:var(--muted);font-size:12px;">${r.toFixed(2)}</span>`;
+      }
+
       // =============================================================
       // LOGIN
       // =============================================================
@@ -1386,6 +1512,8 @@
         if (page === 'dashboard') loadDashboard();
         if (page === 'incidencias') renderIncidencias();
         if (page === 'usuarios') renderUsuarios();
+        if (page === 'pasajeros') renderPasajeros();
+        if (page === 'conductores') renderConductores();
         if (page === 'reportes') renderReportes();
       };
 
@@ -1713,6 +1841,98 @@
           }).join('');
         } catch (e) {
           toast('⚠️ Error al cargar usuarios: ' + e.message, 'error');
+        }
+      };
+
+      // =============================================================
+      // MÉTRICAS REALES: PASAJEROS
+      // =============================================================
+      window.renderPasajeros = async function () {
+        try {
+          const data = await apiFetch('/pasajeros');
+
+          document.getElementById('pasTotal').textContent = data.total;
+          document.getElementById('pasViajes').textContent = data.totalViajes;
+          document.getElementById('pasRating').textContent =
+            data.ratingGlobal > 0 ? Number(data.ratingGlobal).toFixed(2) + ' ★' : '—';
+
+          const tbody = document.getElementById('pasTableBody');
+          const empty = document.getElementById('pasEmpty');
+          tbody.innerHTML = '';
+          empty.classList.add('hidden');
+          if (!data.items || data.items.length === 0) empty.classList.remove('hidden');
+
+          (data.items || []).forEach((p) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>
+                <div class="user-cell">
+                  <span class="user-avatar-small" style="background:${getAvatarColor(p.nombre)}">${getInitials(p.nombre)}</span>
+                  <div class="user-info">
+                    <span class="user-name">${escapeHtml(p.nombre)}</span>
+                    <span class="user-email">${escapeHtml(p.email)}</span>
+                  </div>
+                </div>
+              </td>
+              <td>${ratingStars(p.ratingPromedio)}</td>
+              <td><b>${p.viajesRealizados}</b></td>
+              <td><b>$${Number(p.ahorroEstimado).toLocaleString('es-MX')}</b></td>
+              <td>${p.registro ? formatDate(p.registro) : '—'}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+
+          document.getElementById('pasajerosCount').textContent =
+            `${data.total} pasajero(s) · ${data.totalViajes} viaje(s) realizado(s)`;
+        } catch (e) {
+          toast('⚠️ Error al cargar pasajeros: ' + e.message, 'error');
+        }
+      };
+
+      // =============================================================
+      // MÉTRICAS REALES: CONDUCTORES
+      // =============================================================
+      window.renderConductores = async function () {
+        try {
+          const data = await apiFetch('/conductores');
+
+          document.getElementById('conTotal').textContent = data.total;
+          document.getElementById('conViajes').textContent = data.totalViajes;
+          document.getElementById('conGanancias').textContent = '$' + Number(data.totalGanancias).toLocaleString('es-MX');
+          document.getElementById('conRating').textContent =
+            data.ratingGlobal > 0 ? Number(data.ratingGlobal).toFixed(2) + ' ★' : '—';
+
+          const tbody = document.getElementById('conTableBody');
+          const empty = document.getElementById('conEmpty');
+          tbody.innerHTML = '';
+          empty.classList.add('hidden');
+          if (!data.items || data.items.length === 0) empty.classList.remove('hidden');
+
+          (data.items || []).forEach((c) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>
+                <div class="user-cell">
+                  <span class="user-avatar-small" style="background:${getAvatarColor(c.nombre)}">${getInitials(c.nombre)}</span>
+                  <div class="user-info">
+                    <span class="user-name">${escapeHtml(c.nombre)}</span>
+                    <span class="user-email">${escapeHtml(c.email)}</span>
+                  </div>
+                </div>
+              </td>
+              <td>${ratingStars(c.ratingPromedio)}</td>
+              <td><b>${c.viajesCompletados}</b></td>
+              <td><b>$${Number(c.gananciasTotales).toLocaleString('es-MX')}</b></td>
+              <td>${c.rutasActivas}</td>
+              <td>${c.vehiculos}${c.vehiculosVerificados > 0 ? `<span style="color:#22c55e;font-size:11px;"> (${c.vehiculosVerificados} verif.)</span>` : ''}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+
+          document.getElementById('conductoresCount').textContent =
+            `${data.total} conductor(es) · $${Number(data.totalGanancias).toLocaleString('es-MX')} ganados`;
+        } catch (e) {
+          toast('⚠️ Error al cargar conductores: ' + e.message, 'error');
         }
       };
 

@@ -14,6 +14,8 @@ import {
   listUsuariosHandler,
   actividadHandler,
   reportesHandler,
+  pasajerosMetricsHandler,
+  conductoresMetricsHandler,
 } from './metricas.controller.js';
 
 export const metricasRouter = Router();
@@ -41,3 +43,7 @@ metricasRouter.get('/actividad', asyncHandler(actividadHandler));
 
 // Reportes
 metricasRouter.get('/reportes', asyncHandler(reportesHandler));
+
+// Métricas reales de pasajeros y conductores
+metricasRouter.get('/pasajeros', asyncHandler(pasajerosMetricsHandler));
+metricasRouter.get('/conductores', asyncHandler(conductoresMetricsHandler));

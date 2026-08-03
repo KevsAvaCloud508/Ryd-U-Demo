@@ -57,7 +57,7 @@ export function PassengerActivityPage() {
           </>
         }
       />
-      <div className="px-12 py-[30px]">
+      <div className="px-4 py-[30px] sm:px-8 lg:px-12">
         {/* Modal de calificacion */}
         <RatingModal
           open={ratingModalOpen}
@@ -66,15 +66,17 @@ export function PassengerActivityPage() {
           userName={selectedTrip?.driverName ?? 'Conductor'}
           isSubmitting={isSubmittingRating}
         />
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h2 className="text-2xl font-extrabold tracking-tight text-white">Actividad</h2>
             <p className="mt-1 text-sm text-muted">Tu historial de viajes</p>
           </div>
-          <Segmented activeIndex={0} options={[{ label: 'Historial' }, { label: 'Calificaciones' }]} onSelect={() => {}} />
+          <div className="w-full overflow-x-auto lg:w-auto">
+            <Segmented activeIndex={0} options={[{ label: 'Historial' }, { label: 'Calificaciones' }]} onSelect={() => {}} />
+          </div>
         </div>
 
-        <div className="my-[22px] grid grid-cols-3 gap-4">
+        <div className="my-[22px] grid grid-cols-1 gap-4 sm:grid-cols-3">
           <StatCard icon="bi bi-clock-history" label="Viajes totales" value={String(requests.length)} />
           <StatCard icon="bi bi-piggy-bank" label="Ahorro estimado" value={`$${requests.length * 50}`} />
           <StatCard icon="bi bi-star" label="Calificación media" value={average?.average?.toFixed(1) ?? '—'} />

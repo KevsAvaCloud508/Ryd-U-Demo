@@ -101,9 +101,9 @@ export function PassengerSearchPage() {
           </>
         }
       />
-      <div className="grid h-[calc(100vh-64px)]" style={{ gridTemplateColumns: '330px 1fr 320px' }}>
+      <div className="grid grid-cols-1 lg:h-[calc(100vh-64px)] lg:grid-cols-[330px_1fr_320px]">
         {/* Listado de rutas */}
-        <div className="overflow-auto border-r border-line p-5">
+        <div className="border-b border-line p-5 lg:overflow-auto lg:border-b-0 lg:border-r">
           <div className="relative">
             <i className="bi bi-search absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
             <input
@@ -115,7 +115,7 @@ export function PassengerSearchPage() {
             />
           </div>
 
-          <div className="flex gap-2 my-3.5">
+          <div className="flex gap-2 overflow-x-auto pb-1 my-3.5">
             <Pill variant={selectedTime === 0 ? 'white' : 'outline'} onClick={() => setSelectedTime(0)}>Todos</Pill>
             <Pill variant={selectedTime === 1 ? 'white' : 'outline'} onClick={() => setSelectedTime(1)}>Manana</Pill>
             <Pill variant={selectedTime === 2 ? 'white' : 'outline'} onClick={() => setSelectedTime(2)}>Tarde</Pill>
@@ -169,7 +169,7 @@ export function PassengerSearchPage() {
         </div>
 
         {/* Mapa */}
-        <div className="relative">
+        <div className="relative h-[260px] border-b border-line lg:h-auto lg:border-b-0">
           <MapRoute
             originCoords={selectedOriginCoords ?? undefined}
             originLabel={selectedTrip?.route?.origin}
@@ -197,7 +197,7 @@ export function PassengerSearchPage() {
         </div>
 
         {/* Detalle de la ruta seleccionada */}
-        <div className="overflow-auto border-l border-line p-5">
+        <div className="border-t border-line p-5 lg:overflow-auto lg:border-l lg:border-t-0">
           {selectedTrip ? (
             <>
               <b className="text-base font-extrabold tracking-tight text-white">{DESTINATION}</b>
@@ -266,7 +266,7 @@ export function PassengerSearchPage() {
               </Button>
             </>
           ) : (
-            <div className="flex h-full items-center justify-center text-center">
+            <div className="flex min-h-[220px] items-center justify-center text-center lg:h-full lg:min-h-0">
               <div>
                 <i className="bi bi-arrow-left text-3xl text-muted block mb-3" />
                 <p className="text-sm text-muted">Selecciona un viaje para ver la ruta en el mapa</p>

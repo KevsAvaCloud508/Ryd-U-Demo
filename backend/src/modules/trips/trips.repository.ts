@@ -37,7 +37,13 @@ export function findTripById(id: string) {
 export function findTripsByDriver(driverId: string) {
   return prisma.trip.findMany({
     where: { driverId },
-    include: { route: true, vehicle: true, requests: true },
+    include: {
+      route: true,
+      vehicle: true,
+      requests: {
+        include: { passenger: { select: { id: true, firstName: true, lastNamePaternal: true, photoUrl: true } } },
+      },
+    },
     orderBy: { date: 'desc' },
   });
 }

@@ -103,18 +103,18 @@ export function VerificationPage() {
           </>
         }
       />
-      <div className="mx-auto grid max-w-[1100px] grid-cols-2 items-center gap-[30px] px-12 py-11">
+      <div className="mx-auto grid max-w-[1100px] grid-cols-1 items-center gap-[30px] px-4 py-11 sm:px-8 lg:grid-cols-2 lg:px-12">
         {/* Columna izquierda - Info */}
         <div>
           <Pill variant="outline">
             <i className="bi bi-hourglass-split" /> Cuenta en revision
           </Pill>
-          <h2 className="my-3.5 text-[28px] tracking-tight text-white">Verifica tu identidad</h2>
+          <h2 className="my-3.5 text-2xl tracking-tight text-white sm:text-[28px]">Verifica tu identidad</h2>
           <p className="text-[15px] leading-relaxed text-muted">
             Para proteger la comunidad, sube una fotografia legible de los siguientes documentos. El pasajero{' '}
             <b className="text-white">no</b> requiere documentos vehiculares.
           </p>
-          <div className="mt-5 flex gap-2.5">
+          <div className="mt-5 flex flex-wrap gap-2.5">
             <Pill variant="dark"><i className="bi bi-shield-lock" /> Cifrado</Pill>
             <Pill variant="dark"><i className="bi bi-eye-slash" /> Uso interno</Pill>
             <Pill variant="dark"><i className="bi bi-clock" /> Revision ~24h</Pill>

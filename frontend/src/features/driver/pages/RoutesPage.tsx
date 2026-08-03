@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 
+import { useToast } from '../../../shared/toast/ToastProvider';
+import { useTrips } from '../../trips/hooks/useTrips';
+import { createRoute } from '../../trips/services/routes.service';
+import { useVehicles } from '../../vehicles/hooks/useVehicles';
 import { Button, IconInput, PageHeader } from '../../../shared/components';
+import { isDemoSession } from '../../../shared/utils/session';
+import type { Trip } from '../../trips/types/trips.types';
 
 const STORAGE_KEY = 'rydu_driver_routes';
 const VERSION_KEY = 'rydu_driver_routes_v';
@@ -59,9 +65,40 @@ function saveRoutes(routes: PublishedRoute[]) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(routes));
 }
 
+// Convierte un viaje real en la tarjeta de ruta que usa la UI.
+function toPublishedRoute(trip: Trip): PublishedRoute {
+  return {
+    id: trip.id,
+    origin: trip.route?.origin ?? '—',
+    destination: trip.route?.destination ?? '—',
+    date: trip.date,
+    time: trip.departureTime?.slice(0, 5) ?? '—',
+    seats: String(trip.availableSeats ?? 0),
+    price: `$${trip.cost ?? 0}`,
+    days: '',
+    createdAt: trip.date ? new Date(trip.date).toLocaleDateString('es-MX') : '—',
+  };
+}
+
 export function DriverRoutesPage() {
+  const isDemo = isDemoSession();
+  const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState<RoutesTab>('actuales');
   const [routes, setRoutes] = useState<PublishedRoute[]>(loadRoutes);
+
+  // ── Datos reales ──
+  const { trips, loadMine, create: createTrip } = useTrips();
+  const { vehicles } = useVehicles();
+
+  useEffect(() => {
+    if (isDemo) return;
+    loadMine();
+  }, [isDemo, loadMine]);
+
+  // Solo rutas activas (Pendiente/EnProceso): las terminadas pertenecen al historial.
+  const realRoutes: PublishedRoute[] = trips
+    .filter((t) => t.status === 'Pendiente' || t.status === 'EnProceso')
+    .map(toPublishedRoute);
 
   // Publicar ruta form state
   const [origin, setOrigin] = useState('');
@@ -71,6 +108,7 @@ export function DriverRoutesPage() {
   const [seats] = useState('4');
   const [price] = useState('$50');
   const [selectedDays, setSelectedDays] = useState<Set<number>>(DEFAULT_DAYS);
+  const [isPublishing, setIsPublishing] = useState(false);
 
   const toggleDay = (index: number) => {
     setSelectedDays((prev) => {
@@ -81,44 +119,77 @@ export function DriverRoutesPage() {
     });
   };
 
-  const handlePublish = useCallback(() => {
+  const handlePublish = useCallback(async () => {
     if (!origin.trim() || !date || !time) return;
 
-    const dayLabels = Array.from(selectedDays)
-      .sort()
-      .map((i) => DAYS[i])
-      .join(', ');
+    if (isDemo) {
+      const dayLabels = Array.from(selectedDays)
+        .sort()
+        .map((i) => DAYS[i])
+        .join(', ');
 
-    setRoutes((prev) => {
-      const maxId = prev.reduce(
-        (max, r) => Math.max(max, parseInt(r.id.replace('route-', ''), 10) || 0),
-        0,
-      ) + 1;
+      setRoutes((prev) => {
+        const maxId = prev.reduce(
+          (max, r) => Math.max(max, parseInt(r.id.replace('route-', ''), 10) || 0),
+          0,
+        ) + 1;
 
-      const newRoute: PublishedRoute = {
-        id: `route-${maxId}`,
-        origin: origin.trim(),
-        destination,
+        const newRoute: PublishedRoute = {
+          id: `route-${maxId}`,
+          origin: origin.trim(),
+          destination,
+          date,
+          time,
+          seats,
+          price,
+          days: dayLabels,
+          createdAt: new Date().toLocaleString('es-MX'),
+        };
+
+        const updated = [newRoute, ...prev];
+        saveRoutes(updated);
+        return updated;
+      });
+      setOrigin('');
+      setDate('');
+      setTime('');
+      setSelectedDays(DEFAULT_DAYS);
+      setActiveTab('actuales');
+      return;
+    }
+
+    // ── Modo real: crear ruta + viaje en la API ──
+    if (vehicles.length === 0) {
+      showToast('Registra un vehículo antes de publicar una ruta.', 'error');
+      return;
+    }
+    setIsPublishing(true);
+    try {
+      const route = await createRoute({ origin: origin.trim(), destination });
+      const cost = parseInt(price.replace(/[^0-9]/g, ''), 10) || undefined;
+      await createTrip({
+        vehicleId: vehicles[0].id,
+        routeId: route.id,
         date,
-        time,
-        seats,
-        price,
-        days: dayLabels,
-        createdAt: new Date().toLocaleString('es-MX'),
-      };
+        departureTime: time,
+        availableSeats: parseInt(seats, 10) || 4,
+        cost,
+      });
+      showToast('Ruta publicada correctamente.', 'success');
+      await loadMine();
+      setOrigin('');
+      setDate('');
+      setTime('');
+      setSelectedDays(DEFAULT_DAYS);
+      setActiveTab('actuales');
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'No se pudo publicar la ruta.', 'error');
+    } finally {
+      setIsPublishing(false);
+    }
+  }, [isDemo, origin, destination, date, time, seats, price, selectedDays, vehicles, createRoute, createTrip, loadMine, showToast]);
 
-      const updated = [newRoute, ...prev];
-      saveRoutes(updated);
-      return updated;
-    });
-    setOrigin('');
-    setDate('');
-    setTime('');
-    setSelectedDays(DEFAULT_DAYS);
-    setActiveTab('actuales');
-  }, [origin, destination, date, time, seats, price, selectedDays]);
-
-  // Sincronizar cambios hechos desde otra pestaña (opcional pero buena práctica)
+  // Sincronizar cambios hechos desde otra pestaña (solo demo)
   useEffect(() => {
     const handleStorage = (e: StorageEvent) => {
       if (e.key === STORAGE_KEY) {
@@ -134,19 +205,21 @@ export function DriverRoutesPage() {
     .map((i) => DAYS[i])
     .join(', ');
 
+  const displayRoutes = isDemo ? routes : realRoutes;
+
   return (
     <div className="flex min-h-0 flex-1">
-      <div className="flex flex-1 flex-col px-10 pb-10 pt-[38px]">
+      <div className="flex flex-1 flex-col px-4 pb-10 pt-[30px] sm:px-6 lg:px-10 lg:pt-[38px]">
         <PageHeader title="Rutas" subtitle="Gestiona y publica tus rutas de viaje" />
 
         {/* Filter tabs */}
-        <div className="mt-8 flex gap-2 rounded-[18px] bg-[#1A1A1A] p-1.5 w-fit">
+        <div className="mt-8 flex w-full gap-2 overflow-x-auto rounded-[18px] bg-[#1A1A1A] p-1.5 sm:w-fit">
           {filterTabs.map((tab) => (
             <button
               key={tab.key}
               type="button"
               onClick={() => setActiveTab(tab.key)}
-              className={`rounded-[14px] px-6 py-2.5 text-sm font-bold transition-all ${
+              className={`whitespace-nowrap rounded-[14px] px-6 py-2.5 text-sm font-bold transition-all ${
                 activeTab === tab.key
                   ? 'bg-white text-black'
                   : 'text-[#8C8C8C] hover:text-white/70'
@@ -162,7 +235,7 @@ export function DriverRoutesPage() {
             ================================================================ */}
         {activeTab === 'actuales' && (
           <div className="mt-6">
-            {routes.length === 0 ? (
+            {displayRoutes.length === 0 ? (
               <div className="flex flex-col items-center justify-center rounded-[20px] border border-dashed border-[#353535] py-20">
                 <i className="bi bi-archive text-5xl text-[#4A4A4A]" />
                 <p className="mt-4 text-lg font-medium text-[#6B6B6B]">
@@ -180,8 +253,8 @@ export function DriverRoutesPage() {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-4">
-                {routes.map((route) => (
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                {displayRoutes.map((route) => (
                   <div
                     key={route.id}
                     className="rounded-[20px] border border-[#353535] bg-[#1F1F1F] p-5"
@@ -221,11 +294,11 @@ export function DriverRoutesPage() {
                     <div className="mt-3 flex items-center gap-2 text-xs text-[#8F8F8F]">
                       <i className="bi bi-calendar3" />
                       <span>
-                        {new Date(route.date).toLocaleDateString('es-MX', {
+                        {route.date ? new Date(route.date).toLocaleDateString('es-MX', {
                           day: '2-digit',
                           month: 'short',
                           year: 'numeric',
-                        })}
+                        }) : '—'}
                       </span>
                       {route.days && (
                         <>
@@ -247,7 +320,7 @@ export function DriverRoutesPage() {
             ================================================================ */}
         {activeTab === 'publicar' && (
           <div className="mt-10">
-            <div className="grid max-w-[680px] grid-cols-2 gap-x-5 gap-y-[18px]">
+            <div className="grid max-w-[680px] grid-cols-1 gap-x-5 gap-y-[18px] sm:grid-cols-2">
               <IconInput
                 icon="bi bi-circle"
                 label="Origen"
@@ -303,7 +376,7 @@ export function DriverRoutesPage() {
             {/* Días recurrentes */}
             <div className="mt-8">
               <label className="text-[16px] font-semibold text-[#A0A0A0]">Días recurrentes</label>
-              <div className="mt-3 flex gap-3">
+              <div className="mt-3 flex flex-wrap gap-3">
                 {DAYS.map((day, index) => {
                   const isSelected = selectedDays.has(index);
                   return (
@@ -334,10 +407,10 @@ export function DriverRoutesPage() {
             <div className="mt-10">
               <Button
                 onClick={handlePublish}
-                disabled={!origin.trim() || !date || !time}
+                disabled={!origin.trim() || !date || !time || isPublishing}
                 className="rounded-full bg-white px-10 py-4 text-xl font-bold text-black hover:bg-white/90 disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                Publicar ruta
+                {isPublishing ? 'Publicando…' : 'Publicar ruta'}
                 <i className="bi bi-arrow-right ml-2" />
               </Button>
             </div>
