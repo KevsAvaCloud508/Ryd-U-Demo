@@ -292,7 +292,7 @@ async function main() {
       departureTime: hora('07:00'),
       availableSeats: 2,
       cost: 45.0,
-      status: 'EnProceso' as const,
+      status: 'Terminado' as const,
     },
     {
       id: IDS.viajePendiente1,
@@ -303,7 +303,7 @@ async function main() {
       departureTime: hora('08:15'),
       availableSeats: 3,
       cost: 30.0,
-      status: 'Pendiente' as const,
+      status: 'Terminado' as const,
     },
     {
       id: IDS.viajePendiente2,
@@ -314,7 +314,7 @@ async function main() {
       departureTime: hora('15:45'),
       availableSeats: 4,
       cost: 35.0,
-      status: 'Pendiente' as const,
+      status: 'Terminado' as const,
     },
     {
       id: IDS.viajePendiente3,
@@ -325,7 +325,7 @@ async function main() {
       departureTime: hora('18:00'),
       availableSeats: 4,
       cost: 40.0,
-      status: 'Pendiente' as const,
+      status: 'Terminado' as const,
     },
     // Viajes nuevos con fecha futura y destino UPA: aparecen en la búsqueda
     // del pasajero y en el panel del conductor.
@@ -431,7 +431,7 @@ async function main() {
     },
   ];
   for (const v of viajes) {
-    await prisma.trip.upsert({ where: { id: v.id }, update: {}, create: v });
+    await prisma.trip.upsert({ where: { id: v.id }, update: v, create: v });
   }
 
   // --- Solicitudes de viaje -----------------------------------------------
@@ -443,10 +443,10 @@ async function main() {
     { id: '66666666-aaaa-4666-8666-000000000003', tripId: IDS.viajeEnProceso, passengerId: IDS.luis, status: 'Aceptado' as const },
     { id: '66666666-aaaa-4666-8666-000000000004', tripId: IDS.viajeEnProceso, passengerId: IDS.sofia, status: 'Cancelado' as const },
     // Viajes pendientes: solicitudes en distintos estados.
-    { id: '66666666-aaaa-4666-8666-000000000005', tripId: IDS.viajePendiente1, passengerId: IDS.ana, status: 'Pendiente' as const },
+    { id: '66666666-aaaa-4666-8666-000000000005', tripId: IDS.viajePendiente1, passengerId: IDS.ana, status: 'Aceptado' as const },
     { id: '66666666-aaaa-4666-8666-000000000006', tripId: IDS.viajePendiente1, passengerId: IDS.luis, status: 'Aceptado' as const },
     { id: '66666666-aaaa-4666-8666-000000000007', tripId: IDS.viajePendiente2, passengerId: IDS.juan, status: 'Rechazado' as const },
-    { id: '66666666-aaaa-4666-8666-000000000008', tripId: IDS.viajePendiente2, passengerId: IDS.sofia, status: 'Pendiente' as const },
+    { id: '66666666-aaaa-4666-8666-000000000008', tripId: IDS.viajePendiente2, passengerId: IDS.sofia, status: 'Aceptado' as const },
     // Viajes nuevos: solicitudes aceptadas (viajes realizados) y pendientes.
     { id: '66666666-aaaa-4666-8666-000000000009', tripId: IDS.viajeNuevo1, passengerId: IDS.juan, status: 'Aceptado' as const },
     { id: '66666666-aaaa-4666-8666-000000000010', tripId: IDS.viajeNuevo2, passengerId: IDS.ana, status: 'Aceptado' as const },
@@ -463,7 +463,7 @@ async function main() {
     { id: '66666666-aaaa-4666-8666-000000000020', tripId: IDS.viajeHist3, passengerId: IDS.ana, status: 'Aceptado' as const },
   ];
   for (const s of solicitudes) {
-    await prisma.tripRequest.upsert({ where: { id: s.id }, update: {}, create: s });
+    await prisma.tripRequest.upsert({ where: { id: s.id }, update: s, create: s });
   }
 
   // --- Calificaciones (del viaje terminado) ---------------------------------
@@ -495,7 +495,7 @@ async function main() {
     { id: '77777777-bbbb-4777-8777-000000000023', tripId: IDS.viajeHist3, raterId: IDS.carlos, rateeId: IDS.ana, score: 5 },
   ];
   for (const c of calificaciones) {
-    await prisma.rating.upsert({ where: { id: c.id }, update: {}, create: c });
+    await prisma.rating.upsert({ where: { id: c.id }, update: c, create: c });
   }
 
   // --- Notificaciones --------------------------------------------------------

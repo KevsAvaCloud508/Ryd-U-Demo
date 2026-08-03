@@ -4,7 +4,7 @@ import { Avatar, Button, Card, Navbar, Pill, Segmented, StatCard } from '../../.
 import { NotificationBell } from '../../notifications/components/NotificationBell';
 import { useAuth } from '../../auth/hooks/useAuth';
 import { useRatings } from '../../ratings/hooks/useRatings';
-import { DEMO_TRIPS } from '../../trips/demo-data';
+import { DEMO_HISTORY_REQUESTS, DEMO_AVERAGE_RATING } from '../../trips/demo-data';
 import { useRequests } from '../../requests/hooks/useRequests';
 import { usePassengerStats } from '../hooks/usePassengerStats';
 import { isDemoSession } from '../../../shared/utils/session';
@@ -41,7 +41,19 @@ export function PassengerHomePage() {
   // Viajes del pasajero. En modo demo se simulan con los viajes demo.
   const myTrips = useMemo<MyTrip[]>(() => {
     if (isDemo) {
-      return DEMO_TRIPS.map((t) => ({ trip: t, status: 'Próximo' as const }));
+      // Modo demo: mismas solicitudes simuladas que Actividad (3 realizadas + 2 próximas).
+      return DEMO_HISTORY_REQUESTS
+        .map((r) => {
+          const past = r.trip.date.slice(0, 10) < TODAY;
+          const status: TripStatus =
+            r.status === 'Rechazado' ? 'Rechazado'
+            : r.status === 'Cancelado' ? 'Cancelado'
+            : past ? 'Completado'
+            : r.status === 'Aceptado' ? 'Confirmado'
+            : 'Solicitado';
+          return { trip: r.trip, status };
+        })
+        .sort((a, b) => b.trip.date.slice(0, 10).localeCompare(a.trip.date.slice(0, 10)));
     }
     return requests
       .map((r) => {
@@ -79,6 +91,10 @@ export function PassengerHomePage() {
   };
 
   const filteredTrips = getFilteredTrips();
+
+  // Desglose del listado filtrado (siempre cuadra con el Resumen, incluso con filtro de horario).
+  const realizedCount = filteredTrips.filter((t) => t.status === 'Completado').length;
+  const upcomingCount = filteredTrips.length - realizedCount;
 
   return (
     <div className="min-h-screen bg-black text-[#e5e7eb]">
@@ -128,7 +144,7 @@ export function PassengerHomePage() {
                 <div className="flex-1">
                   <b className="text-xs">{currentTrip.driver?.firstName ?? 'Conductor'}</b>
                   <div className="text-[11px] text-[#555]">
-                    <i className="bi bi-star-fill mr-0.5 text-[#f5b301]" /> {average?.average?.toFixed(1) ?? '—'} · {currentTrip.vehicle?.brand ?? ''} {currentTrip.vehicle?.model ?? ''} · {currentTrip.vehicle?.color ?? ''}
+                    <i className="bi bi-star-fill mr-0.5 text-[#f5b301]" /> {average?.average?.toFixed(1) ?? (isDemo ? String(DEMO_AVERAGE_RATING) : '—')} · {currentTrip.vehicle?.brand ?? ''} {currentTrip.vehicle?.model ?? ''} · {currentTrip.vehicle?.color ?? ''}
                   </div>
                 </div>
               </div>
@@ -160,7 +176,7 @@ export function PassengerHomePage() {
           <Card className="p-4">
             <b className="font-extrabold tracking-tight text-white">Resumen</b>
             <div className="mt-3 grid grid-cols-2 gap-2.5">
-              <StatCard compact icon="bi bi-clock-history" label="Viajes" value={String(tripsCount)} />
+              <StatCard compact icon="bi bi-clock-history" label="Realizados" value={String(tripsCount)} />
               <StatCard compact icon="bi bi-piggy-bank" label="Ahorrado" value={`$${savings}`} />
               <StatCard compact icon="bi bi-star" label="Rating" value={rating ?? '—'} />
               <StatCard compact icon="bi bi-tree" label="CO2" value={`-${co2Saved}kg`} />
@@ -170,7 +186,7 @@ export function PassengerHomePage() {
 
         <div className="my-[26px] mt-[26px] flex items-center justify-between">
           <b className="text-lg font-extrabold tracking-tight text-white">Mis viajes</b>
-          <span className="text-[13px] text-muted">{filteredTrips.length} viajes</span>
+          <span className="text-[13px] text-muted">{realizedCount} realizados · {upcomingCount} próximos</span>
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filteredTrips.length > 0 ? (
