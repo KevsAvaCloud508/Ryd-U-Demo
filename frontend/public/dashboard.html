@@ -537,7 +537,6 @@
     .badge.alta { background: rgba(239,68,68,.12); color: #fca5a5; }
     .badge.media { background: rgba(234,179,8,.12); color: #facc15; }
     .badge.baja { background: rgba(107,114,128,.15); color: #9ca3af; }
-    .badge.hardware { background: rgba(167,139,250,.15); color: #c4b5fd; }
     .badge.software { background: rgba(96,165,250,.15); color: #93bbfc; }
     .badge.red { background: rgba(52,211,153,.15); color: #6ee7b7; }
     .badge.acceso { background: rgba(249,115,22,.15); color: #fdba74; }
@@ -1190,7 +1189,6 @@
           <div class="form-group">
             <label class="form-label">Categoría</label>
             <select class="form-select" id="formCategoria">
-              <option value="Hardware">Hardware</option>
               <option value="Software">Software</option>
               <option value="Red">Red</option>
               <option value="Acceso">Acceso</option>
@@ -1427,7 +1425,7 @@
         lastUpdateText.textContent = 'Última actualización: ' + now.toLocaleString('es-MX');
 
         const porEstado = data.porEstado || { Pendiente: pending, 'En proceso': progress, Resuelta: resolved };
-        const porCategoria = data.porCategoria || { Hardware: 0, Software: 0, Red: 0, Acceso: 0, Otro: 0 };
+        const porCategoria = data.porCategoria || { Software: 0, Red: 0, Acceso: 0, Otro: 0 };
         const porPrioridad = data.porPrioridad || { Baja: 0, Media: 0, Alta: 0, Crítica: critical };
         const resolucionCategoria = data.resolucionPorCategoria || {};
 
@@ -1617,7 +1615,7 @@
         document.getElementById('formEditId').value = '';
         document.getElementById('formTitulo').value = '';
         document.getElementById('formDescripcion').value = '';
-        document.getElementById('formCategoria').value = 'Hardware';
+        document.getElementById('formCategoria').value = 'Software';
         document.getElementById('formPrioridad').value = 'Media';
         document.getElementById('formEstado').value = 'Pendiente';
         document.getElementById('incModal').classList.remove('hidden');
