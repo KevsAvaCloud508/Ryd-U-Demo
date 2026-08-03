@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import { extractErrorMessage } from '../../../shared/utils/error-message';
+import { isDemoMode } from '../../../shared/utils/token-storage';
 import { fetchMyAverageRating, fetchMyRatings, submitRating } from '../services/ratings.service';
 import type { AverageRating, Rating, RatingInput } from '../types/ratings.types';
 
@@ -20,6 +21,10 @@ const initialState: RatingsState = {
 
 export const loadMyRatings = createAsyncThunk('ratings/loadMine', async (_: void, { rejectWithValue }) => {
   try {
+    // En modo demo no hay backend: se devuelve una lista vacía.
+    if (isDemoMode()) {
+      return [];
+    }
     return await fetchMyRatings();
   } catch (error) {
     return rejectWithValue(extractErrorMessage(error, 'No se pudieron cargar las calificaciones.'));
@@ -28,6 +33,10 @@ export const loadMyRatings = createAsyncThunk('ratings/loadMine', async (_: void
 
 export const loadAverageRating = createAsyncThunk('ratings/loadAverage', async (_: void, { rejectWithValue }) => {
   try {
+    // En modo demo se devuelve un promedio simulado.
+    if (isDemoMode()) {
+      return { average: 4.9, count: 3 };
+    }
     return await fetchMyAverageRating();
   } catch (error) {
     return rejectWithValue(extractErrorMessage(error, 'No se pudo cargar el promedio.'));
@@ -36,6 +45,23 @@ export const loadAverageRating = createAsyncThunk('ratings/loadAverage', async (
 
 export const rateTrip = createAsyncThunk('ratings/submit', async (input: RatingInput, { rejectWithValue }) => {
   try {
+    // En modo demo se simula la calificación en el cliente.
+    if (isDemoMode()) {
+      return {
+        id: `demo-rating-${Date.now()}`,
+        tripId: input.tripId,
+        raterId: 'demo-user',
+        rateeId: input.rateeId,
+        score: input.score,
+        requestedAt: new Date().toISOString(),
+        rater: { id: 'demo-user', firstName: 'Pasajero', lastNamePaternal: 'Demo', photoUrl: null },
+        trip: {
+          id: input.tripId,
+          date: new Date().toISOString().slice(0, 10),
+          route: { origin: 'UPA', destination: 'Centro' },
+        },
+      };
+    }
     return await submitRating(input);
   } catch (error) {
     return rejectWithValue(extractErrorMessage(error, 'No se pudo calificar.'));
