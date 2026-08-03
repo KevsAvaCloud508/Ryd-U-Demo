@@ -5,12 +5,28 @@ import { NotificationBell } from '../../notifications/components/NotificationBel
 import { useToast } from '../../../shared/toast/ToastProvider';
 import { useRequests } from '../../requests/hooks/useRequests';
 import { useRatings } from '../../ratings/hooks/useRatings';
+import { usePassengerStats } from '../hooks/usePassengerStats';
+import { formatTime } from '../../../shared/utils/format-time';
+import { formatDate } from '../../../shared/utils/format-date';
+import type { TripRequest } from '../../requests/types/requests.types';
+
+const TODAY = new Date().toISOString().slice(0, 10);
+
+// Misma lógica de estado que Inicio: aceptada y pasada = Completado, aceptada futura = Confirmado.
+const statusLabel = (req: TripRequest): 'Completado' | 'Confirmado' | 'Rechazado' | 'Cancelado' | 'Pendiente' => {
+  const past = req.trip.date.slice(0, 10) < TODAY;
+  if (req.status === 'Rechazado') return 'Rechazado';
+  if (req.status === 'Cancelado') return 'Cancelado';
+  if (req.status === 'Aceptado') return past ? 'Completado' : 'Confirmado';
+  return 'Pendiente';
+};
 
 // Vista P5 · Actividad: historial de viajes y calificaciones del pasajero
 export function PassengerActivityPage() {
   const navigate = useNavigate();
   const { requests, loadMine } = useRequests();
-  const { ratings, average, loadMine: loadRatings, loadAverage, submit } = useRatings();
+  const { ratings, loadMine: loadRatings, loadAverage, submit } = useRatings();
+  const { tripsCount, savings, rating } = usePassengerStats();
   const { showToast } = useToast();
   const [ratingModalOpen, setRatingModalOpen] = useState(false);
   const [selectedTrip, setSelectedTrip] = useState<{ tripId: string; rateeId: string; driverName: string } | null>(null);
@@ -77,9 +93,9 @@ export function PassengerActivityPage() {
         </div>
 
         <div className="my-[22px] grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <StatCard icon="bi bi-clock-history" label="Viajes totales" value={String(requests.length)} />
-          <StatCard icon="bi bi-piggy-bank" label="Ahorro estimado" value={`$${requests.length * 50}`} />
-          <StatCard icon="bi bi-star" label="Calificación media" value={average?.average?.toFixed(1) ?? '—'} />
+          <StatCard icon="bi bi-clock-history" label="Viajes totales" value={String(tripsCount)} />
+          <StatCard icon="bi bi-piggy-bank" label="Ahorro estimado" value={`$${savings}`} />
+          <StatCard icon="bi bi-star" label="Calificación media" value={rating ?? '—'} />
         </div>
 
         <Card>
@@ -87,9 +103,17 @@ export function PassengerActivityPage() {
             <b className="text-white">Historial de viajes</b>
             <Pill variant="dark">Pasajero</Pill>
           </div>
+          {requests.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-14 text-center">
+              <i className="bi bi-clock-history text-4xl text-muted block mb-3" />
+              <p className="text-muted">Todavía no tienes viajes</p>
+              <p className="text-xs text-muted mt-1">Reserva un asiento para verlo aquí</p>
+            </div>
+          ) : (
           <DataTable
             columns={[
               { label: 'Fecha' },
+              { label: 'Hora' },
               { label: 'Ruta' },
               { label: 'Conductor' },
               { label: 'Calificación' },
@@ -98,9 +122,8 @@ export function PassengerActivityPage() {
               { label: '', align: 'right' },
             ]}
             rows={requests.map((req) => [
-              req.requestedAt
-                ? new Date(req.requestedAt).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })
-                : '—',
+              req.trip?.date ? formatDate(req.trip.date) : '—',
+              formatTime(req.trip?.departureTime),
               `${req.trip?.route?.origin ?? '—'} → ${req.trip?.route?.destination ?? '—'}`,
               req.trip?.driver?.firstName ?? '—',
               <span key={req.id} className="text-xs text-white">
@@ -111,10 +134,10 @@ export function PassengerActivityPage() {
                 )}
               </span>,
               <Pill key={req.id} variant={req.status === 'Aceptado' ? 'dark' : 'outline'}>
-                {req.status === 'Aceptado' ? 'Completado' : req.status === 'Cancelado' ? 'Cancelado' : 'Pendiente'}
+                {statusLabel(req)}
               </Pill>,
               <b key={req.id} className="text-white">${req.trip?.cost ?? '—'}</b>,
-              req.status === 'Aceptado' && !ratings.find((r) => r.tripId === req.tripId) ? (
+              req.status === 'Aceptado' && statusLabel(req) === 'Completado' && !ratings.find((r) => r.tripId === req.tripId) ? (
                 <Button
                   key={req.id}
                   size="sm"
@@ -131,6 +154,7 @@ export function PassengerActivityPage() {
               ),
             ])}
           />
+          )}
         </Card>
       </div>
     </div>

@@ -6,16 +6,20 @@ import { ProfileEditModal } from '../../auth/components/ProfileEditModal';
 import { useAuth } from '../../auth/hooks/useAuth';
 import { useDocuments } from '../../documents/hooks/useDocuments';
 import { useRatings } from '../../ratings/hooks/useRatings';
+import { useRequests } from '../../requests/hooks/useRequests';
+import { usePassengerStats } from '../hooks/usePassengerStats';
 
 // Vista P6 · Perfil: cuenta del pasajero y ajustes
 export function PassengerProfilePage() {
   const { user, logout } = useAuth();
-  const { average, loadAverage } = useRatings();
+  const { loadAverage } = useRatings();
   const { documents, load: loadDocs } = useDocuments();
+  const { loadMine } = useRequests();
+  const { tripsCount, savings, rating } = usePassengerStats();
   const navigate = useNavigate();
   const [editModalOpen, setEditModalOpen] = useState(false);
 
-  useEffect(() => { loadAverage(); loadDocs(); }, [loadAverage, loadDocs]);
+  useEffect(() => { loadMine(); loadAverage(); loadDocs(); }, [loadMine, loadAverage, loadDocs]);
 
   // Determina el estado general de los documentos
   const getDocStatusLabel = (): { text: string; color: string } => {
@@ -27,11 +31,6 @@ export function PassengerProfilePage() {
     return { text: 'En revisión', color: 'text-yellow-400' };
   };
   const docStatus = getDocStatusLabel();
-
-  // Valores numéricos protegidos (el backend puede devolverlos como null/string).
-  const rating = Number(average?.average ?? 0).toFixed(1);
-  const tripsCount = Number(average?.count ?? 0);
-  const savings = `$${(tripsCount * 50).toFixed(0)}`;
 
   const handleLogout = () => {
     logout();
@@ -65,7 +64,7 @@ export function PassengerProfilePage() {
           </Pill>
           <div className="mt-5 grid grid-cols-3 gap-2.5">
             <Card className="flex-1 p-3">
-              <b className="text-lg text-white">{rating}</b>
+              <b className="text-lg text-white">{rating ?? '—'}</b>
               <div className="text-[11px] text-muted">Rating</div>
             </Card>
             <Card className="flex-1 p-3">
@@ -73,7 +72,7 @@ export function PassengerProfilePage() {
               <div className="text-[11px] text-muted">Viajes</div>
             </Card>
             <Card className="flex-1 p-3">
-              <b className="text-lg text-white">{savings}</b>
+              <b className="text-lg text-white">${savings}</b>
               <div className="text-[11px] text-muted">Ahorro</div>
             </Card>
           </div>
