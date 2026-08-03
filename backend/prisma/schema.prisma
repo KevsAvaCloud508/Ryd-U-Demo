@@ -216,7 +216,7 @@ model Actividad {
   id        Int      @id @default(autoincrement()) @map("id_actividad")
   text      String   @map("texto")
   time      String   @map("hora")
-  icon      String   @default("📝") @map("icono") @db.VarChar(10)
+  icon      String   @default("bi-pencil") @map("icono") @db.VarChar(10)
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
 
   @@map("actividad")
