@@ -6,9 +6,11 @@ import { useAuth } from '../../auth/hooks/useAuth';
 import { useRatings } from '../../ratings/hooks/useRatings';
 import { useTrips } from '../../trips/hooks/useTrips';
 import { useRequests } from '../../requests/hooks/useRequests';
+import { isDemoSession } from '../../../shared/utils/session';
 
 // Vista P2 - Inicio del pasajero: proximo viaje, resumen y rutas sugeridas
 export function PassengerHomePage() {
+  const isDemo = isDemoSession();
   const { user } = useAuth();
   const navigate = useNavigate();
   const { trips, search } = useTrips();
@@ -17,10 +19,12 @@ export function PassengerHomePage() {
   const [timeFilter, setTimeFilter] = useState(0);
 
   useEffect(() => {
+    // En modo demo no hay API: no disparar llamadas con token mock.
+    if (isDemo) return;
     search({});
     loadAverage();
     loadMine();
-  }, [search, loadAverage, loadMine]);
+  }, [isDemo, search, loadAverage, loadMine]);
 
   const upcomingTrips = trips.filter((t) => t.status === 'Pendiente').slice(0, 3);
   const currentTrip = upcomingTrips[0];
@@ -60,8 +64,8 @@ export function PassengerHomePage() {
           </>
         }
       />
-      <div className="px-12 py-[30px]">
-        <div className="flex items-center justify-between">
+      <div className="px-4 py-[30px] sm:px-8 lg:px-12">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h2 className="text-2xl font-extrabold tracking-tight text-white">
               Hola, {user?.firstName ?? 'Estudiante'}!
@@ -71,7 +75,7 @@ export function PassengerHomePage() {
           <Segmented activeIndex={timeFilter} options={[{ label: 'Mañana' }, { label: 'Tarde' }, { label: 'Noche' }]} onSelect={setTimeFilter} />
         </div>
 
-        <div className="mt-[22px] grid gap-5" style={{ gridTemplateColumns: '1.3fr 1fr' }}>
+        <div className="mt-[22px] grid gap-5 lg:grid-cols-[1.3fr_1fr]">
           {currentTrip ? (
             <Card inverted className="p-4 flex flex-col justify-between cursor-pointer hover:opacity-95 transition-opacity" onClick={() => navigate('/pasajero/buscar')}>
               <div className="flex items-center justify-between">
@@ -129,7 +133,7 @@ export function PassengerHomePage() {
           <b className="text-lg font-extrabold tracking-tight text-white">Rutas disponibles</b>
           <span className="text-[13px] text-muted">{filteredTrips.length} viajes</span>
         </div>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filteredTrips.length > 0 ? (
             filteredTrips.slice(0, 6).map((trip) => (
               <Card key={trip.id} className="p-4 cursor-pointer hover:opacity-90 transition-opacity" onClick={() => navigate('/pasajero/buscar')}>
@@ -154,7 +158,7 @@ export function PassengerHomePage() {
               </Card>
             ))
           ) : (
-            <Card className="col-span-3 p-8 flex items-center justify-center text-center">
+            <Card className="col-span-full p-8 flex items-center justify-center text-center">
               <div>
                 <i className="bi bi-calendar-x text-4xl text-muted block mb-3" />
                 <p className="text-muted">No hay viajes disponibles en este horario</p>

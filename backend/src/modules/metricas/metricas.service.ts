@@ -332,3 +332,129 @@ export async function getReportes() {
     items: all.filter(i => i.estado === 'Resuelta').slice(0, 10),
   };
 }
+
+// ──────────────────────────────────────────────
+//  MÉTRICAS REALES: PASAJEROS
+//  (Información de cada pasajero concorde con sus
+//  métricas calculadas de la base de datos real)
+// ──────────────────────────────────────────────
+
+function averageScore(scores: Array<number | null>): number {
+  const valid = scores.filter((s): s is number => typeof s === 'number');
+  if (valid.length === 0) return 0;
+  return Number((valid.reduce((a, b) => a + b, 0) / valid.length).toFixed(2));
+}
+
+function fullName(user: { firstName: string; lastNamePaternal: string; lastNameMaternal: string | null }): string {
+  return [user.firstName, user.lastNamePaternal, user.lastNameMaternal].filter(Boolean).join(' ');
+}
+
+/**
+ * Lista los pasajeros (rol "Pasajero") con sus métricas reales:
+ * calificación promedio recibida, viajes realizados (solicitudes aceptadas)
+ * y ahorro estimado (suma del costo de los viajes aceptados).
+ */
+export async function getPasajerosMetrics() {
+  const pasajeros = await prisma.user.findMany({
+    where: {
+      roles: { some: { role: { name: 'Pasajero' } } },
+    },
+    include: {
+      requests: {
+        where: { status: 'Aceptado' },
+        include: { trip: true },
+      },
+      ratingsReceived: true,
+    },
+    orderBy: { registeredAt: 'asc' },
+  });
+
+  const items = pasajeros.map((p) => {
+    const viajes = p.requests.length;
+    const ahorro = p.requests.reduce((sum, r) => sum + Number(r.trip.cost ?? 0), 0);
+    return {
+      id: p.id,
+      nombre: fullName(p),
+      email: p.email ?? '',
+      registro: p.registeredAt,
+      ratingPromedio: averageScore(p.ratingsReceived.map((r) => r.score)),
+      calificaciones: p.ratingsReceived.length,
+      viajesRealizados: viajes,
+      ahorroEstimado: ahorro,
+    };
+  });
+
+  const totalViajes = items.reduce((sum, i) => sum + i.viajesRealizados, 0);
+  const ratingGlobal = averageScore(
+    pasajeros.flatMap((p) => p.ratingsReceived.map((r) => r.score)),
+  );
+
+  return {
+    items,
+    total: items.length,
+    totalViajes,
+    ratingGlobal,
+  };
+}
+
+// ──────────────────────────────────────────────
+//  MÉTRICAS REALES: CONDUCTORES
+//  (Información de cada conductor concorde con sus
+//  métricas calculadas de la base de datos real)
+// ──────────────────────────────────────────────
+
+/**
+ * Lista los conductores (rol "Conductor") con sus métricas reales:
+ * calificación promedio recibida, viajes completados, ganancias totales,
+ * rutas activas y vehículos registrados.
+ */
+export async function getConductoresMetrics() {
+  const conductores = await prisma.user.findMany({
+    where: {
+      roles: { some: { role: { name: 'Conductor' } } },
+    },
+    include: {
+      tripsAsDriver: true,
+      ratingsReceived: true,
+      vehicles: true,
+    },
+    orderBy: { registeredAt: 'asc' },
+  });
+
+  const items = conductores.map((c) => {
+    const completados = c.tripsAsDriver.filter((t) => t.status === 'Terminado');
+    const activos = c.tripsAsDriver.filter(
+      (t) => t.status === 'Pendiente' || t.status === 'EnProceso',
+    );
+    const ganancias = completados.reduce((sum, t) => sum + Number(t.cost ?? 0), 0);
+    const verificados = c.vehicles.filter((v) => v.isVerified).length;
+
+    return {
+      id: c.id,
+      nombre: fullName(c),
+      email: c.email ?? '',
+      registro: c.registeredAt,
+      ratingPromedio: averageScore(c.ratingsReceived.map((r) => r.score)),
+      calificaciones: c.ratingsReceived.length,
+      viajesCompletados: completados.length,
+      rutasActivas: activos.length,
+      gananciasTotales: ganancias,
+      vehiculos: c.vehicles.length,
+      vehiculosVerificados: verificados,
+    };
+  });
+
+  const totalGanancias = items.reduce((sum, i) => sum + i.gananciasTotales, 0);
+  const totalViajes = items.reduce((sum, i) => sum + i.viajesCompletados, 0);
+  const ratingGlobal = averageScore(
+    conductores.flatMap((c) => c.ratingsReceived.map((r) => r.score)),
+  );
+
+  return {
+    items,
+    total: items.length,
+    totalViajes,
+    totalGanancias,
+    ratingGlobal,
+  };
+}

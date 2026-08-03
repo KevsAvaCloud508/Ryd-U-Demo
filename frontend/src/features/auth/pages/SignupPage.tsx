@@ -51,12 +51,12 @@ export function SignupPage() {
   };
 
   return (
-    <div className="grid min-h-screen grid-cols-2 bg-black text-[#e5e7eb]">
-      <div className="flex flex-col border-r border-line bg-gradient-to-br from-surface to-black p-11">
+    <div className="grid min-h-screen grid-cols-1 bg-black text-[#e5e7eb] lg:grid-cols-2">
+      <div className="flex flex-col border-b border-line bg-gradient-to-br from-surface to-black p-6 sm:p-8 lg:border-b-0 lg:border-r lg:p-11">
         <Link to="/">
           <img className="h-6 w-auto" src="/logo.svg" alt="RydU" />
         </Link>
-        <div className="my-auto">
+        <div className="mt-4 mb-6 lg:my-auto">
           <h2 className="text-[30px] leading-tight text-white">
             Únete a la comunidad
             <br />
@@ -72,12 +72,12 @@ export function SignupPage() {
           estudiantes
         </div>
       </div>
-      <div className="flex flex-col justify-center px-[52px] py-10">
+      <div className="flex flex-col justify-center px-5 py-10 sm:px-10 lg:px-[52px]">
         <h2 className="text-2xl font-extrabold tracking-tight text-white">Crear cuenta</h2>
         <p className="mt-1 text-sm text-muted">Paso 1 de 2 · Tus datos</p>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
-          <div className="flex gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row">
             <div className="flex-1">
               <FieldLabel>Nombre(s)</FieldLabel>
               <input
@@ -117,7 +117,7 @@ export function SignupPage() {
           />
           {errors.email && <p className="mt-1 text-xs text-red-400">{errors.email.message}</p>}
 
-          <div className="flex gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row">
             <div className="flex-1">
               <FieldLabel>Contraseña</FieldLabel>
               <input

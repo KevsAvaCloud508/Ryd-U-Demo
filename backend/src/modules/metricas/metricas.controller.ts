@@ -13,6 +13,8 @@ import {
   listUsuarios,
   getActividad,
   getReportes,
+  getPasajerosMetrics,
+  getConductoresMetrics,
 } from './metricas.service.js';
 
 export async function seedHandler(_req: Request, res: Response): Promise<void> {
@@ -179,6 +181,26 @@ export async function reportesHandler(_req: Request, res: Response): Promise<voi
     res.status(200).json(reportes);
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Error al obtener reportes';
+    res.status(500).json({ message });
+  }
+}
+
+export async function pasajerosMetricsHandler(_req: Request, res: Response): Promise<void> {
+  try {
+    const data = await getPasajerosMetrics();
+    res.status(200).json(data);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Error al obtener métricas de pasajeros';
+    res.status(500).json({ message });
+  }
+}
+
+export async function conductoresMetricsHandler(_req: Request, res: Response): Promise<void> {
+  try {
+    const data = await getConductoresMetrics();
+    res.status(200).json(data);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Error al obtener métricas de conductores';
     res.status(500).json({ message });
   }
 }
